@@ -1,0 +1,81 @@
+<div class="card">
+    <div class="py-3">
+        <div class="title">
+            <span class="ms-3">Manufacturing Register</span>
+        </div>
+        <hr>
+        <app-date-filter (dateChange)="onDateChange($event)"></app-date-filter>
+    </div>
+</div>
+
+<div class="card mb-0">
+    <div class="p-3">
+        <div class="row ">
+            <div class="col-3 title">
+                <span>TRANSACTIONS</span>
+            </div>
+            <div class="col-9 d-flex justify-content-end ps-4">
+                <i class=" text-success fa-solid fa-file-excel mx-3 download-pdf-excel" *ngIf="data.length>0"
+                    (click)="download()"></i>
+                <i class=" text-danger fa-solid fa-file-pdf mx-3 download-pdf-excel" [matMenuTriggerFor]="menu"
+                    *ngIf="data.length>0"></i>
+
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <div mat-menu-item class="menu-item" (click)="downloadAsPdf('LANDSCAPE')">
+                        <span class="text-primary me-2"><i class="fa-solid fa-image"></i></span> Landscape
+                    </div>
+                    <hr class="m-0" />
+                    <div mat-menu-item class="menu-item" (click)="downloadAsPdf('PORTRAIT')">
+                        <span class="text-danger me-2"><i class="fa-solid fa-image-portrait"></i></span> Portrait
+                    </div>
+                </mat-menu>
+            </div>
+        </div>
+        <div class="mt-4">
+            <div style="max-height: 53vh;min-height: 53vh; overflow-y: auto;">
+                <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                    <thead class="border-bottom">
+                        <tr class="border-bottom stock-journal-header">
+                            <th class="text-start"  scope="col">#</th>
+                            <th class="text-start" scope="col">Date</th>
+                            <th class="text-start" scope="col">Product Name</th>
+                            <th class="text-start" scope="col" *ngIf="isBatchEnabled">Batch Name</th>
+                            <th class="text-start" scope="col">Product Group</th>
+                            <th class="text-start" scope="col" *ngIf="isWarehouseEnabled">Warehouse</th>
+                            <th class="text-end" scope="col">Sale Price</th>
+                            <th class="text-end" scope="col">Purchase Price</th>
+                            <th class="text-end" scope="col">Quantity</th>
+                            <th class="text-end" scope="col">Stock Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of data; let idx=index" class="border-bottom">
+                            <td class="text-start">{{idx+1}}</td>
+                            <td class="text-start">{{item.date | date:'dd-MM-yyyy'}}</td>
+                            <td class="text-start ellipse-transaction" [title]="item.productName">
+                                {{item.productName}}</td>
+                            <td class="text-start ellipse-transaction" [title]="item.batchName" *ngIf="isBatchEnabled"
+                                [title]="item.batchName">
+                                {{item.batchName}}
+                            </td>
+                            <td class="text-start ellipse-transaction" [title]="item.productGroup">
+                                {{item.productGroup}}</td>
+                            <td class="text-start ellipse-transaction" [title]="item.warehouseName"
+                                *ngIf="isWarehouseEnabled" [title]="item.warehouseName">
+                                {{item.warehouseName}}</td>
+                            <td class="text-end">{{item.salePrice|currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-end">{{item.purchasePrice|currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-end">{{item.stockQuantity}}</td>
+                            <td class="text-end">{{item.stockValue|currency:'INR':'symbol':'1.2-2'}}</td>
+                        </tr>
+                        <tr *ngIf="data.length==0">
+                            <td colspan="10">
+                                No Transactions Available
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

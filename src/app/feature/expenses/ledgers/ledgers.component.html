@@ -1,0 +1,82 @@
+<div class="card mb-0" *ngIf="data.length != 0">
+  <div class="title p-3 d-flex justify-content-between align-items-center">
+    <div>
+      <span class="ms-1">Ledgers</span>
+    </div>
+    <div>
+      <button class="btn btn-primary" (click)="openModal()" *ngIf="hasPermission(constants.Add)">Add Ledger</button>
+    </div>
+  </div>
+  <hr class="m-0" />
+  <div class="p-3">
+    <div style="max-width: 380px">
+      <i class="fa-solid fa-magnifying-glass" style="position: absolute; margin-top: 11px; margin-left: 10px"></i>
+      <input type="text" class="form-control" [(ngModel)]="filterLedgerText" placeholder="Search Ledgers"
+        style="text-align: left; padding-left: 40px" (keyup)="filterLedger()" />
+    </div>
+  </div>
+  <div class="p-3">
+    <div style="min-height: 62vh; max-height: 62vh; overflow-y: auto;">
+      <table style="width: 100%; border: 1px solid rgb(170, 170, 170)">
+        <thead class="border-bottom">
+          <tr class="border-bottom purchase-header">
+            <th class="text-start ps-3" scope="col" style="border-right: 0px"> Name</th>
+            <th class="text-start ps-3" scope="col" style="border-right: 0px"> Group Name </th>
+            <!-- <th class="text-start ps-3" scope="col" style="border-right: 0px"> Sub Group </th> -->
+            <th class="text-end" scope="col">Amount</th>
+            <th class="text-end" scope="col" *ngIf="hasPermission(constants.Edit) || hasPermission(constants.Delete)">
+              Actions </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ledger of filteredData; let idx = index" class="pointer border-bottom"
+            (click)="openTransactionModal(ledger)">
+            <td class="text-start ps-3">{{ ledger.name }}</td>
+            <td class="text-start ps-3">{{ ledger.masterGroupName }}</td>
+            <!-- <td class="text-start ps-3">{{ledger.subGroup}}</td> -->
+            <td class="text-end ps-3">
+              <span [ngClass]="ledger.totalAmount > 0 ? 'text-success' : 'text-danger'">
+                {{ getTotalAmount(ledger.totalAmount)| currency : "INR" : "symbol" : "1.2-2"}}</span>
+            </td>
+            <td *ngIf="hasPermission(constants.Edit) || hasPermission(constants.Delete)">
+              <div class="d-flex justify-content-end">
+                <div *ngIf="hasPermission(constants.Edit)" (click)="openEdit(ledger,$event)">
+                  <span class="text-primary pointer" style="font-size: 17px"><i
+                      class="fa-regular fa-pen-to-square me-3"></i></span>
+                </div>
+                <div *ngIf="hasPermission(constants.Delete) && ledger.id!=0" (click)="openDeleteDialog(idx,$event)">
+                  <span class="text-danger ms-3 pointer" style="font-size: 17px"><i class="fa fa-trash"></i></span>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="filteredData.length == 0">
+            <td colspan="4">No Ledgers</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-0" *ngIf="data.length == 0">
+  <div>
+    <div class="row d-flex align-items-center" style="height: 86vh">
+      <div class="d-flex justify-content-center">
+        <div>
+          <div class="d-flex justify-content-center">
+            <img src="assets/images/empty-dashboard.png" width="300px" />
+          </div>
+          <div class="d-flex justify-content-center mt-4">
+            <span style="font-size: 20px"> Add your first ledger</span><br />
+          </div>
+          <div class="d-flex justify-content-center mt-3" *ngIf="hasPermission(constants.Add)">
+            <button class="btn btn-outline-primary" (click)="openModal()">
+              Add Your First Ledger
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

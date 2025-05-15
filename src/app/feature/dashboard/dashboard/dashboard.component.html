@@ -1,0 +1,492 @@
+<div class="row">
+    <div class="col-3">
+        <div class="card top-item-dashboard" style="cursor: pointer;">
+            <div class="card-header">
+                <div class="card-icon bg-yellow">
+                    <i class="fas fa-dollar"></i>
+                </div>
+                <div class="card-title">
+                    <p class="title">Today Sale</p>
+                    <p class="value">{{ todaySale.data==null? 0 :todaySale.data| currency:'INR':'symbol':'1.2-2' }}</p>
+                </div>
+            </div>
+
+            <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="70" aria-valuemin="0"
+                aria-valuemax="100">
+                <div class="progress-bar bg-yellow" style="width: 75%"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-3">
+        <div class="card top-item-dashboard" style="cursor: pointer;">
+            <div class="card-header">
+                <div class="card-icon bg-blue">
+                    <i class="fas fa-dollar"></i>
+                </div>
+                <div class="card-title">
+                    <p class="title">This Month Sale</p>
+                    <p class="value">{{ thisMonthSale.data==null? 0 :thisMonthSale.data| currency:'INR':'symbol':'1.2-2'
+                        }}</p>
+                </div>
+            </div>
+
+            <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
+                aria-valuemax="100">
+                <div class="progress-bar bg-blue" style="width: 75%"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-3">
+        <div class="card top-item-dashboard" style="cursor: pointer;">
+            <div class="card-header">
+                <div class="card-icon bg-green">
+                    <i class="fas fa-dollar"></i>
+                </div>
+                <div class="card-title">
+                    <p class="title">Last Month Sale</p>
+                    <p class="value">
+                        {{ (lastMonthSale.data==null ? 0 : lastMonthSale.data) | currency:'INR':'symbol':'1.2-2' }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
+                aria-valuemax="100">
+                <div class="progress-bar bg-green" style="width: 75%"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-3">
+        <div class="card top-item-dashboard" style="cursor: pointer;">
+            <div class="card-header">
+                <div class="card-icon bg-purple">
+                    <i class="fas fa-dollar"></i>
+                </div>
+                <div class="card-title">
+                    <p class="title">This Year Sale</p>
+                    <p class="value">
+                        {{ (yearlySale.data==null ? 0 : yearlySale.data) | currency:'INR':'symbol':'1.2-2' }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
+                aria-valuemax="100">
+                <div class="progress-bar bg-purple" style="width: 75%"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row my-4 mt-3">
+    <div class="col-3">
+        <div class="chart-container shadow-sm pointer" [routerLink]="'/app/report/cash-book'">
+            <p class="value pt-3 ps-1">Cash In Hand</p>
+            <p class="title pb-3 ps-1">{{ cashInHand==null? 0 :cashInHand| currency:'INR':'symbol':'1.2-2' }}</p>
+            <div>
+                <canvas baseChart [data]="chartDataCash" [options]="chartOptions" [type]="'line'"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="chart-container shadow-sm pointer" [routerLink]="'/app/report/bank-book'">
+            <p class="value pt-3 ps-1">Cash In Bank</p>
+            <p class="title pb-3 ps-1">{{ cashInBank==null? 0 :cashInBank| currency:'INR':'symbol':'1.2-2' }}</p>
+            <div>
+                <canvas baseChart [data]="chartDataBank" [options]="chartOptions" [type]="'line'"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-3 ">
+        <div class="chart-container shadow-sm pointer" [routerLink]="'/app/report/receivable'">
+            <p class="value pt-3 ps-1">Total Receivables</p>
+            <p class="title pb-3 ps-1">{{ receivableAmount==null? 0 :receivableAmount| currency:'INR':'symbol':'1.2-2'
+                }}</p>
+            <div>
+                <canvas baseChart [data]="chartDataReceivables" [options]="chartOptions" [type]="'line'"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="chart-container shadow-sm pointer" [routerLink]="'/app/report/payable'">
+            <p class="value pt-3 ps-1">Total Payable</p>
+            <p class="title pb-3 ps-1">{{payableAmount==null? 0 :payableAmount| currency:'INR':'symbol':'1.2-2' }}</p>
+            <div>
+                <canvas baseChart [data]="chartDataPayables" [options]="chartOptions" [type]="'line'"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- <div class="row">
+    <div class="col-3">
+        <div class="card top-item-dashboard" style="cursor: pointer;">
+            <div class="card-header">
+                <div class="card-icon bg-yellow">
+                    <i class="fas fa-dollar"></i>
+                </div>
+                <div class="card-title">
+                    <p class="title">Cash In Hand</p>
+                    <p class="value">{{ cashInHand==null? 0 :cashInHand| currency:'INR':'symbol':'1.2-2' }}</p>
+                </div>
+            </div>
+
+            <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="70" aria-valuemin="0"
+                aria-valuemax="100">
+                <div class="progress-bar bg-yellow" style="width: 75%"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-3">
+        <div class="card top-item-dashboard" style="cursor: pointer;" [routerLink]="'/app/report/bank-book'">
+            <div class="card-header">
+                <div class="card-icon bg-blue">
+                    <i class="fas fa-dollar"></i>
+                </div>
+                <div class="card-title">
+                    <p class="title">Cash In Bank</p>
+                    <p class="value">{{ cashInBank==null? 0 :cashInBank| currency:'INR':'symbol':'1.2-2' }}</p>
+                </div>
+            </div>
+
+            <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
+                aria-valuemax="100">
+                <div class="progress-bar bg-blue" style="width: 75%"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-3">
+        <div class="card top-item-dashboard" style="cursor: pointer;" [routerLink]="'/app/report/receivable'">
+            <div class="card-header">
+                <div class="card-icon bg-green">
+                    <i class="fas fa-dollar"></i>
+                </div>
+                <div class="card-title">
+                    <p class="title">Total Receivables</p>
+                    <p class="value">
+                        {{ (receivableAmount==null ? 0 : receivableAmount) | currency:'INR':'symbol':'1.2-2' }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
+                aria-valuemax="100">
+                <div class="progress-bar bg-green" style="width: 75%"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-3">
+        <div class="card top-item-dashboard" style="cursor: pointer;" [routerLink]="'/app/report/payable'">
+            <div class="card-header">
+                <div class="card-icon bg-purple">
+                    <i class="fas fa-dollar"></i>
+                </div>
+                <div class="card-title">
+                    <p class="title">Total Payable</p>
+                    <p class="value">
+                        {{ (payableAmount==null ? 0 : payableAmount) | currency:'INR':'symbol':'1.2-2' }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
+                aria-valuemax="100">
+                <div class="progress-bar bg-purple" style="width: 75%"></div>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+
+<div class="row">
+    <div class="col-3">
+        <div class="card top-item-dashboard" style="cursor: pointer;">
+            <div class="card-header">
+                <div class="card-icon bg-yellow">
+                    <i class="fas fa-dollar"></i>
+                </div>
+                <div class="card-title">
+                    <p class="title">Today Purchase</p>
+                    <p class="value">{{ todayPurchase.data==null? 0 :todayPurchase.data| currency:'INR':'symbol':'1.2-2'
+                        }}</p>
+                </div>
+            </div>
+
+            <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="70" aria-valuemin="0"
+                aria-valuemax="100">
+                <div class="progress-bar bg-yellow" style="width: 75%"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-3">
+        <div class="card top-item-dashboard" style="cursor: pointer;">
+            <div class="card-header">
+                <div class="card-icon bg-blue">
+                    <i class="fas fa-dollar"></i>
+                </div>
+                <div class="card-title">
+                    <p class="title">This Month Purchase</p>
+                    <p class="value">{{ thisMonthPurchase.data==null? 0 :thisMonthPurchase.data|
+                        currency:'INR':'symbol':'1.2-2' }}</p>
+                </div>
+            </div>
+
+            <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
+                aria-valuemax="100">
+                <div class="progress-bar bg-blue" style="width: 75%"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-3">
+        <div class="card top-item-dashboard" style="cursor: pointer;">
+            <div class="card-header">
+                <div class="card-icon bg-green">
+                    <i class="fas fa-dollar"></i>
+                </div>
+                <div class="card-title">
+                    <p class="title">Last Month Purchase</p>
+                    <p class="value">
+                        {{ (lastMonthPurchase.data==null ? 0 : lastMonthPurchase.data) | currency:'INR':'symbol':'1.2-2'
+                        }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
+                aria-valuemax="100">
+                <div class="progress-bar bg-green" style="width: 75%"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-3">
+        <div class="card top-item-dashboard" style="cursor: pointer;">
+            <div class="card-header">
+                <div class="card-icon bg-purple">
+                    <i class="fas fa-dollar"></i>
+                </div>
+                <div class="card-title">
+                    <p class="title">This Year Purchase</p>
+                    <p class="value">
+                        {{ (yearlyPurchase.data==null ? 0 : yearlyPurchase.data) | currency:'INR':'symbol':'1.2-2' }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
+                aria-valuemax="100">
+                <div class="progress-bar bg-purple" style="width: 75%"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-6 mt-2">
+        <div class="card row m-0 h-100">
+            <div class="col-12 py-2 px-3 d-flex justify-content-between align-items-center">
+                <div class="d-flex flex-column">
+                    <span class="chart-title">SALES</span>
+                    <span style="font-size: 14px;">
+                        Total Sales : <strong>{{totalSale | currency:'INR':'symbol':'1.2-2'}}</strong>
+                    </span>
+                </div>
+                <app-date-filter (dateChange)="onSaleDateChange($event)" [showCustomOption]="false"></app-date-filter>
+            </div>
+            <hr />
+            <div class="col-12 mb-4 d-flex justify-content-center flex-column align-items-center">
+                <canvas *ngIf="saleChartData.labels.length>0" baseChart [data]="saleChartData"
+                    [options]="saleChartOptions" [type]="'line'"></canvas>
+
+                <img *ngIf="saleChartData.labels.length===0" src="assets/images/no-data.jpg" width="250px" />
+                <span *ngIf="saleChartData.labels.length===0" class="no-data">No Data to Show</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 mt-2">
+        <div class="card row m-0 h-100">
+            <div class="col-12 py-2 px-3 d-flex justify-content-between align-items-center">
+                <div class="d-flex flex-column">
+                    <span class="chart-title">Purchases</span>
+                    <span style="font-size: 14px;">
+                        Total Purchases : <strong>{{totalPurchase | currency:'INR':'symbol':'1.2-2'}}</strong>
+                    </span>
+                </div>
+                <app-date-filter (dateChange)="onPurchaseDateChange($event)"
+                    [showCustomOption]="false"></app-date-filter>
+            </div>
+            <hr />
+            <div class="col-12 mb-4 d-flex justify-content-center flex-column align-items-center">
+                <canvas *ngIf="purchaseChartData.labels.length>0" baseChart [data]="purchaseChartData"
+                    [options]="purchaseChartOptions" [type]="'line'"></canvas>
+
+                <img *ngIf="purchaseChartData.labels.length===0" src="assets/images/no-data.jpg" width="250px" />
+                <span *ngIf="purchaseChartData.labels.length===0" class="no-data">No Data to Show</span>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- 
+    <div class="col-4 mt-2">
+        <div class="card row m-0 h-100">
+            <div class="col-12 py-2 px-3 d-flex justify-content-between align-items-center">
+                <div class="d-flex flex-column">
+                    <span class="chart-title">EXPENSE</span>
+                    <span style="font-size: 14px;">
+                        Total Expenses (Dec) : <strong>{{expenseData?.totalAmount |
+                            currency:'INR':'symbol':'1.2-2'}}</strong>
+                    </span>
+                </div>
+            </div>
+            <hr />
+            <div class="col-12 mb-4 px-4 d-flex justify-content-center flex-column align-items-center">
+                <canvas *ngIf="pieChartLabels?.length>0" baseChart [type]="'pie'" [datasets]="pieChartDatasets"
+                    [labels]="pieChartLabels" [options]="pieChartOptions" [legend]="true"></canvas>
+
+                <img *ngIf="pieChartLabels.length===0" src="assets/images/no-data.jpg" width="250px" />
+                <span *ngIf="pieChartLabels.length===0" class="no-data">No Data to Show</span>
+            </div>
+        </div>
+    </div> -->
+</div>
+
+<!-- <div class="row mt-4 mb-4">
+    <div class="col-6 mt-2">
+        <div class="card row m-0 h-100">
+            <div class="col-12 py-2 px-3 d-flex justify-content-between align-items-center">
+                <div class="d-flex flex-column">
+                    <span class="chart-title">Recent Invoices</span>
+                </div>
+                <button type="button" class="btn btn-primary" [routerLink]="'/app/sale/invoice'">View All</button>
+            </div>
+            <hr />
+
+            <div class="col-12 mb-1">
+                <div class="progress progress-md rounded-pill mb-3">
+                    <div role="progressbar" class="progress-bar bg-success" [ngStyle]="{'width':paidInvoiceWidth}">
+                    </div>
+                    <div role="progressbar" class="progress-bar bg-danger" [ngStyle]="{'width':unpaidInvoiceWidth}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 mb-3 d-flex align-items-center ">
+                <span class="legend-success me-2 ms-2"><i class="fas fa-circle"></i></span>
+                <span class="me-4">Paid</span>
+                <span class="text-danger me-2"><i class="fas fa-circle"></i></span>
+                <span>Unpaid</span>
+            </div>
+
+            <div class="col-12 mb-4">
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                            <th class="text-start">Customer</th>
+                            <th class="text-start">Ref Num</th>
+                            <th class="text-start">Date</th>
+                            <th class="text-start">Amount</th>
+                            <th class="text-start">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let inv of sales">
+                            <td class="text-start">{{inv.partyName ? inv.partyName : inv.customerName}}</td>
+                            <td class="text-start">{{inv.orderPrefix}}{{inv.orderNumber}}{{inv.orderSuffix}}</td>
+                            <td class="text-start">{{inv.orderDate | date:'dd-MM-yyyy'}}</td>
+                            <td class="text-start">{{inv.amount | currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-start">
+                                <span class="badge rounded-pill"
+                                    [ngClass]="{'text-bg-success': inv.paymentStatus=='Paid', 
+                                        'text-bg-primary':inv.paymentStatus=='Partial','text-bg-danger':inv.paymentStatus=='Unpaid' } ">
+                                    {{inv.paymentStatus}}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr *ngIf="sales.length===0">
+                            <td class="text-start" colspan="5" style="color: rgba(0, 0, 0, 0.6)">
+                                <strong>No Recent Purchases</strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 mt-2">
+        <div class="card row m-0 h-100">
+            <div class="col-12 py-2 px-3 d-flex justify-content-between align-items-center">
+                <div class="d-flex flex-column">
+                    <span class="chart-title">Recent Purchases</span>
+                </div>
+                <button type="button" class="btn btn-primary" [routerLink]="'/app/purchase/bills'">View All</button>
+            </div>
+            <hr />
+
+            <div class="col-12 mb-1">
+                <div class="progress progress-md rounded-pill mb-3">
+                    <div role="progressbar" class="progress-bar bg-success" [ngStyle]="{'width':paidPurchaseWidth}">
+                    </div>
+                    <div role="progressbar" class="progress-bar bg-danger" [ngStyle]="{'width':unpaidPurchaseWidth}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 mb-3 d-flex align-items-center ">
+                <span class="legend-success me-2 ms-2"><i class="fas fa-circle"></i></span>
+                <span class="me-4">Paid</span>
+                <span class="text-danger me-2"><i class="fas fa-circle"></i></span>
+                <span>Unpaid</span>
+            </div>
+
+            <div class="col-12 mb-4 d-flex justify-content-between">
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                            <th class="text-start">Customer</th>
+                            <th class="text-start">Ref Num</th>
+                            <th class="text-start">Date</th>
+                            <th class="text-start">Amount</th>
+                            <th class="text-start">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let inv of purchases">
+                            <td class="text-start">{{inv.partyName ? inv.partyName : inv.customerName}}</td>
+                            <td class="text-start">{{inv.orderPrefix}}{{inv.orderNumber}}{{inv.orderSuffix}}</td>
+                            <td class="text-start">{{inv.orderDate | date:'dd-MM-yyyy'}}</td>
+                            <td class="text-start">{{inv.amount | currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-start">
+                                <span class="badge rounded-pill"
+                                    [ngClass]="{'text-bg-success': inv.paymentStatus=='Paid', 
+                                        'text-bg-primary':inv.paymentStatus=='Partial','text-bg-danger':inv.paymentStatus=='Unpaid' } ">
+                                    {{inv.paymentStatus}}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr *ngIf="purchases.length===0">
+                            <td class="text-start" colspan="5" style="color: rgba(0, 0, 0, 0.6)">
+                                <strong>No Recent Purchases</strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div> -->

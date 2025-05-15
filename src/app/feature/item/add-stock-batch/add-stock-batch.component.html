@@ -1,0 +1,111 @@
+<div class="p-3">
+    <div class="row">
+        <div class="col-11 title">
+            <span>Opening Stock - Batches</span>
+        </div>
+        <div class="col-1 d-flex justify-content-end">
+            <i class="fa-solid fa-xmark pointer me-2" style="font-size: 20px; color: black;" (click)="close()"></i>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end mt-2">
+        <button class="btn btn-outline-primary mx-2" (click)="assignCode()">Assign Code</button>
+        <button class="btn btn-primary" (click)="addBatch()">{{batchBtnTxt}}</button>
+    </div>
+
+    <div #tableContainer class="mt-3 row table-responsive">
+        <div class="col-12 table-list">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th *ngIf="isBatchEnabled" scope="col">BATCH NO.</th>
+                        <th *ngIf="isBatchEnabled" scope="col">MFG. DATE</th>
+                        <th *ngIf="isBatchEnabled" scope="col">EXP. DATE</th>
+                        <th scope="col">PURCHASE PRICE</th>
+                        <th scope="col">SELLING PRICE</th>
+                        <th *ngIf="isWarehouseEnabled" scope="col">WAREHOUSE</th>
+                        <th scope="col">BARCODE</th>
+                        <th scope="col">OPENING QTY</th>
+                        <th scope="col" *ngIf="batches.length>1"></th>
+                    </tr>
+
+                </thead>
+                <tbody>
+                    <tr *ngFor="let batch of batches; let idx=index">
+                        <td *ngIf="isBatchEnabled" style="width: 140px;" class="cell-right-border pointer">
+                            <div class="form-group">
+                                <input type="text" class="form-control form-control-sm" [(ngModel)]="batch.batchName">
+                            </div>
+                        </td>
+                        <td *ngIf="isBatchEnabled" style="width: 140px;" class="cell-right-border">
+                            <div class="form-group position-relative">
+                                <span class="date-preview"
+                                    onclick="document.getElementById('batch-mfgdate').showPicker()">
+                                    {{batch.mfgDate| date:'dd-MM-yyyy'}}
+                                </span>
+                                <input id="batch-mfgdate" type="date" class="form-control form-control-sm"
+                                    [min]="minDate" [(ngModel)]="batch.mfgDate">
+                            </div>
+                        </td>
+                        <td *ngIf="isBatchEnabled" style="width: 140px;" class="cell-right-border">
+                            <div class="form-group position-relative">
+                                <span class="date-preview"
+                                    onclick="document.getElementById('batch-expdate').showPicker()">
+                                    {{batch.expDate| date:'dd-MM-yyyy'}}
+                                </span>
+                                <input id="batch-expdate" type="date" class="form-control form-control-sm"
+                                    [min]="minDate" [(ngModel)]="batch.expDate">
+                            </div>
+                        </td>
+                        <td style="width: 140px;" class="cell-right-border">
+                            <div class="form-group">
+                                <input type="number" class="form-control form-control-sm"
+                                    [(ngModel)]="batch.purchasePrice">
+                            </div>
+                        </td>
+                        <td style="width: 140px;" class="cell-right-border">
+                            <div class="form-group">
+                                <input type="number" class="form-control form-control-sm"
+                                    [(ngModel)]="batch.sellingPrice">
+                            </div>
+                        </td>
+                        <td *ngIf="isWarehouseEnabled" style="width: 140px;" class="cell-right-border">
+                            <div class="form-group">
+                                <select type="text" class="form-select form-select-sm w-100"
+                                    [(ngModel)]="batch.warehouseName">
+                                    <option *ngFor="let warehouse of warehouses" value="{{warehouse.name}}">
+                                        {{warehouse.name}}</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td style="width: 148px;" class="cell-right-border">
+                            <div style="position: relative;">
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-sm" [(ngModel)]="batch.barcode"
+                                        (blur)="checkBarcode(idx,batch.barcode)">
+                                </div>
+                                <!-- <i class="fa-solid fa-barcode assign pointer" (click)="openBarCodeModal(idx)"></i> -->
+                            </div>
+                        </td>
+                        <td style="width: 140px;" class="cell-right-border">
+                            <div class="form-group">
+                                <input type="number" class="form-control form-control-sm" [(ngModel)]="batch.quantity">
+                            </div>
+                        </td>
+                        <td *ngIf="batches.length>1">
+                            <i *ngIf="idx!=0" class="fa-solid fa-trash text-danger"
+                                style="font-size: 20px; cursor: pointer;" (click)="removeItem(idx)"></i>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end align-items-center my-3">
+        <span style="font-size: 16px; font-weight: 600;" class="mx-3">
+            Total : {{getTotalQty()}}
+        </span>
+        <button class="btn btn-primary mx-3" (click)="save()">Save</button>
+    </div>
+</div>

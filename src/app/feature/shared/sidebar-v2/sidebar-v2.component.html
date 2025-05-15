@@ -1,0 +1,159 @@
+<!-- Sidebar -->
+<div class="sidebar sidebar-six" id="sidebar">
+    <!-- <div class="sidebar-header" [ngClass]="{'d-flex justify-content-center':showLetter()}">
+        <div class="sidebar-logo d-flex align-items-center">
+            <a *ngIf="currentUser?.companyLogoUrl?.length > 0">
+                <img id="company-logo" [src]="currentUser?.companyLogoUrl" class="img-fluid logo profilesidebar"
+                    style="height: 40px;" alt="Logo">
+            </a>
+            <span *ngIf="showLetter()" class="company-no-logo">{{getFirstCompanyLetter()}}</span>
+            <span *ngIf="!isMiniSidebar" class="ms-2"
+                style="font-size: 15px; font-weight: 700;">{{currentUser?.companyName}}</span>
+        </div>
+    </div> -->
+    <div class="sidebar-header">
+        <p class="ms-2" style="font-size: 15px; font-weight: 700;">{{currentUser?.companyName}}</p>
+        <i *ngIf="!expandAll" (click)="toggleSubmenus()" class="fa-solid fa-angles-down"></i>
+        <i *ngIf="expandAll" (click)="toggleSubmenus()" class="fa-solid fa-angles-up"></i>
+    </div>
+    <div class="sidebar-inner slimScroll">
+        <div id="sidebar-menu sidebar-menu-six" class="sidebar-menu">
+            <ul>
+                <ng-container *ngFor="let drawerItem of side_bar_data">
+                    <ng-container *ngIf="drawerItem.hasPermission()">
+                        <li [class.active]="base === drawerItem.base" [routerLink]="drawerItem.route"
+                            *ngIf="drawerItem.title!='Logout'
+                        &&drawerItem.title!='Split & Merge'&&drawerItem.title!='Barcode Generate'&&drawerItem.title!='Import & Export'&&drawerItem.title!='Import & Export (From Excel)'"
+                            (click)="handleDrawerItemClick(drawerItem, 'mainMenuItem')" class="menu-title pointer">
+                            <div style="width: 100%;" class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i *ngIf="drawerItem.faIcon" [class]="drawerItem.faIcon"
+                                        [ngStyle]="{color:drawerItem.color}"></i>
+                                    <mat-icon style="margin-left: -5px;"
+                                        *ngIf="drawerItem.matIcon">{{drawerItem.matIcon}}</mat-icon>
+                                    <p>{{ drawerItem.title }}</p>
+                                </div>
+                                <div *ngIf="drawerItem.menu">
+                                    <i *ngIf="!drawerItem.showSubRoute"
+                                        class="fa-solid fa-chevron-right mt-1 fa-xs"></i>
+                                    <i *ngIf="drawerItem.showSubRoute" class="fa-solid fa-chevron-down mt-1 fa-xs"></i>
+                                </div>
+                            </div>
+                        </li>
+                        <li [class.active]="base === drawerItem.base" [routerLink]="drawerItem.route"
+                            *ngIf="drawerItem.title=='Logout'" (click)="logOut()" class="menu-title pointer">
+                            <div style="width: 100%;" class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i *ngIf="drawerItem.faIcon" [class]="drawerItem.faIcon"
+                                        [ngStyle]="{color:drawerItem.color}"></i>
+                                    <mat-icon style="margin-left: -5px;"
+                                        *ngIf="drawerItem.matIcon">{{drawerItem.matIcon}}</mat-icon>
+                                    <p>{{ drawerItem.title }}</p>
+                                </div>
+                                <div *ngIf="drawerItem.menu">
+                                    <i *ngIf="!drawerItem.showSubRoute"
+                                        class="fa-solid fa-chevron-right mt-1 fa-xs"></i>
+                                    <i *ngIf="drawerItem.showSubRoute" class="fa-solid fa-chevron-down mt-1 fa-xs"></i>
+                                </div>
+                            </div>
+                        </li>
+                        <li [class.active]="base === drawerItem.base" [routerLink]="drawerItem.route"
+                            *ngIf="drawerItem.title=='Split & Merge'" (click)="openModal()" class="menu-title pointer">
+                            <div style="width: 100%;" class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i *ngIf="drawerItem.faIcon" [class]="drawerItem.faIcon"
+                                        [ngStyle]="{color:drawerItem.color}"></i>
+                                    <mat-icon style="margin-left: -5px;"
+                                        *ngIf="drawerItem.matIcon">{{drawerItem.matIcon}}</mat-icon>
+                                    <p>{{ drawerItem.title }}</p>
+                                </div>
+                                <div *ngIf="drawerItem.menu">
+                                    <i *ngIf="!drawerItem.showSubRoute"
+                                        class="fa-solid fa-chevron-right mt-1 fa-xs"></i>
+                                    <i *ngIf="drawerItem.showSubRoute" class="fa-solid fa-chevron-down mt-1 fa-xs"></i>
+                                </div>
+                            </div>
+                        </li>
+                        <li [class.active]="base === drawerItem.base" [routerLink]="drawerItem.route"
+                            *ngIf="drawerItem.title=='Import & Export'" (click)="openImportAndExport('app')"
+                            class="menu-title pointer">
+                            <div style="width: 100%;" class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i *ngIf="drawerItem.faIcon" [class]="drawerItem.faIcon"
+                                        [ngStyle]="{color:drawerItem.color}"></i>
+                                    <mat-icon style="margin-left: -5px;"
+                                        *ngIf="drawerItem.matIcon">{{drawerItem.matIcon}}</mat-icon>
+                                    <p>{{ drawerItem.title }}</p>
+                                </div>
+                                <div *ngIf="drawerItem.menu">
+                                    <i *ngIf="!drawerItem.showSubRoute"
+                                        class="fa-solid fa-chevron-right mt-1 fa-xs"></i>
+                                    <i *ngIf="drawerItem.showSubRoute" class="fa-solid fa-chevron-down mt-1 fa-xs"></i>
+                                </div>
+                            </div>
+                        </li>
+                        <li [class.active]="base === drawerItem.base" [routerLink]="drawerItem.route"
+                            *ngIf="drawerItem.title=='Import & Export (From Excel)'"
+                            (click)="openImportAndExport('excel')" class="menu-title pointer">
+                            <div style="width: 100%;" class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i *ngIf="drawerItem.faIcon" [class]="drawerItem.faIcon"
+                                        [ngStyle]="{color:drawerItem.color}"></i>
+                                    <mat-icon style="margin-left: -5px;"
+                                        *ngIf="drawerItem.matIcon">{{drawerItem.matIcon}}</mat-icon>
+                                    <p>{{ drawerItem.title }}</p>
+                                </div>
+                                <div *ngIf="drawerItem.menu">
+                                    <i *ngIf="!drawerItem.showSubRoute"
+                                        class="fa-solid fa-chevron-right mt-1 fa-xs"></i>
+                                    <i *ngIf="drawerItem.showSubRoute" class="fa-solid fa-chevron-down mt-1 fa-xs"></i>
+                                </div>
+                            </div>
+                        </li>
+                        <div class="submenu" *ngIf="drawerItem.showSubRoute === true">
+                            <ng-container *ngFor="let menu of drawerItem.menu">
+                                <div (click)="handleDrawerItemClick(menu, 'subMenuItem')" [routerLink]="menu.route">
+                                    <li style="width: 85%;" class="pointer" [class.active]="currentRoute == menu.route"
+                                        *ngIf="menu.title!='Barcode Generate'">
+                                        <div class="d-flex align-items-center justify-content-between py-1">
+                                            <!-- <i *ngIf="menu.faIcon" [class]="menu.faIcon"></i>
+                                            <div style="margin-left: -5px;"
+                                                class="d-flex align-items-center justify-content-center">
+                                                <mat-icon *ngIf="menu.svg" svgIcon='{{menu.svg}}'></mat-icon>
+                                            </div> -->
+                                            <p [ngClass]="{'active-underline': activeSubSubmenu == menu.base}">
+                                                {{menu.title}}</p>
+                                            <div *ngIf="menu.menu">
+                                                <i class="fa-solid fa-chevron-right mt-1 fa-xs"></i>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li style="width: 85%;" class="pointer" [class.active]="currentRoute == menu.route"
+                                        *ngIf="menu.title=='Barcode Generate'">
+                                        <div class="d-flex align-items-center justify-content-between py-1"
+                                            (click)="openBarcodeModal('generate')">
+                                            <p [ngClass]="{'active-underline': activeSubSubmenu == menu.base}">
+                                                {{menu.title}}</p>
+                                            <div *ngIf="menu.menu"><i class="fa-solid fa-chevron-right mt-1 fa-xs"></i>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </div>
+                                <div class="sub-submenu" *ngIf="menu.showSubRoute === true">
+                                    <ng-container *ngFor="let submenu of menu.menu">
+                                        <li [class.active]="currentRoute == submenu.route" class="pointer"
+                                            (click)="handleDrawerItemClick(submenu, 'sub-submenuItem')"
+                                            [routerLink]="submenu.route">
+                                            <p>{{submenu.title}}</p>
+                                        </li>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- /Sidebar -->

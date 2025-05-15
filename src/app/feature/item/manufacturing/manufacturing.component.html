@@ -1,0 +1,97 @@
+<div class="row" *ngIf="data?.length!=0">
+    <div class="card mb-0">
+        <div class="title p-3 d-flex justify-content-between align-items-center">
+            <div>
+                <span class="ms-1">Manufacturing</span>
+            </div>
+            <div *ngIf="hasPermission(constants.Add)">
+                <button class="btn btn-primary" (click)="navigateTo('app/item/add-item')">Add Manufacturing</button>
+            </div>
+        </div>
+        <hr class="m-0">
+        <div class="p-3">
+            <div style="max-width: 380px;">
+                <i class="fa-solid fa-magnifying-glass"
+                    style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+                <input type="text" class="form-control" [(ngModel)]="filterItemText" placeholder="Search Manufacturing"
+                    style="text-align: left ; padding-left: 40px;" (keyup)="filterItems()">
+            </div>
+        </div>
+        <div class="p-3">
+            <div style="max-height: 62vh;min-height: 62vh; overflow-y: auto;">
+                <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                    <thead class="border-bottom">
+                        <tr class="border-bottom purchase-header">
+                            <th class="text-start ps-3" scope="col" style="border-right: 0px;">Name</th>
+                            <th class="text-end" scope="col">Quantity</th>
+                            <th class="text-end" scope="col">Selling Price</th>
+                            <th class="text-end" scope="col">Purchase Price</th>
+                            <th class="text-end" scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of filteredData; let idx = index" class="border-bottom"
+                            style="cursor: pointer;" (click)="openTransactionModal(item)">
+                            <td class="text-start ps-3" style="width: 300px;">
+                                <div>
+                                    <span style="font-weight: 500;">{{item.name}}</span> <br>
+                                    <span style="font-size: 9px; color: rgb(105, 105, 105);">{{item.type=='Product'?
+                                        'Product':'Service'}} {{item.hsnCode?item.hsnCode:item.productGroup}}</span>
+                                </div>
+                            </td>
+                            <td class="text-end" [ngClass]="{'text-success' : item.quantity > 0,
+                                    'text-danger' : item.quantity! <= 0}">{{item.type=='Product'?item.quantity:'0'}}
+                            </td>
+                            <td class="text-end">
+                                {{item.sellingPrice |currency:'INR':'symbol':'1.2-2'}}
+                                <!-- <span *ngIf="item.discountInPercentage && item.discount>0"
+                                    class="text-success">({{item.discount}}%)</span>
+                                <span *ngIf="!item.discountInPercentage && item.discount>0"
+                                    class="text-success">({{item.discount}})</span> -->
+                            </td>
+                            <td class="text-end">{{item.purchasePrice | currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-end" style="width: 160px;">
+                                <div class="d-flex justify-content-end">
+                                    <div [routerLink]="'/app/item/edit-item/'+item.id"
+                                        *ngIf="hasPermission(constants.Edit)">
+                                        <span class="text-primary me-3" style="font-size: 17px;"><i
+                                                class="fa-regular fa-pen-to-square"></i></span>
+                                    </div>
+                                    <div *ngIf="hasPermission(constants.Delete)" (click)="openDeleteDialog(idx)">
+                                        <span class="text-danger ms-3" style="font-size: 17px;"><i
+                                                class="fa fa-trash"></i></span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="filteredData.length==0">
+                            <td colspan="5">No Items</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-0" *ngIf="data==null ||data.length==0">
+    <div>
+        <div class="row d-flex  align-items-center" style="height: 86vh;">
+            <div class="d-flex justify-content-center">
+                <div>
+                    <div class="d-flex justify-content-center">
+                        <img src="assets/images/empty-dashboard.png" width="300px">
+                    </div>
+                    <div class="d-flex justify-content-center mt-4">
+                        <span style=" font-size: 20px;"> Add your first item so you can conduct business with
+                            ease</span><br>
+                    </div>
+                    <div class="d-flex justify-content-center mt-3">
+                        <button class="btn btn-outline-primary" (click)="navigateTo('app/item/add-item')">Add Your First
+                            Item</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

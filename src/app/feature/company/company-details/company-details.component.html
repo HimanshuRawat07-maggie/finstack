@@ -1,0 +1,304 @@
+<div class="card">
+    <div class="d-flex justify-content-between p-3 pb-0">
+        <div class=" title d-flex align-items-center">
+            <span>Company Details</span>
+        </div>
+        <div class="d-flex justify-content-end align-items-center pe-4">
+            <i *ngIf="hasPermissionForCompanySetting(constants.View)" class="icon-primary fa-solid fa-gear me-3"
+                style="font-size: 18px; cursor: pointer;" [routerLink]="'/app/company/setting'"></i>
+
+            <!-- <button class="btn btn-primary" (click)="openImportDataModal()">Import Data</button> -->
+        </div>
+    </div>
+    <hr>
+    <div class="px-3">
+        <form #companyForm="ngForm">
+            <div class="row">
+                <div class="col-4">
+                    <div class="row p-0 m-0">
+                        <div class="col-12 p-0">
+                            <div class="form-group mt-4">
+                                <label for="input1" class="ms-2 position-absolute"
+                                    style="margin-top: -0.60rem !important">
+                                    <span class="h6 small bg-white text-muted px-1">Business Name*</span>
+                                </label>
+                                <input type="text" class="form-control" name="companyName" [(ngModel)]="data.name"
+                                    #companyName="ngModel" required
+                                    [ngClass]="{'is-invalid':companyName.touched && companyName.errors && companyName.errors['required']}">
+                                <p *ngIf="companyName.touched && companyName.errors && companyName.errors['required']"
+                                    class="validation-error ">
+                                    Name is required
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="col-12 p-0">
+                            <div class="form-group mt-4">
+                                <label for="input1" class="ms-2 position-absolute"
+                                    style="margin-top: -0.60rem !important">
+                                    <span class="h6 small bg-white text-muted px-1">Phone </span>
+                                </label>
+                                <input type="text" class="form-control" name="phone" [(ngModel)]="data.businessPhone"
+                                    #phone="ngModel">
+                            </div>
+                        </div>
+                        <div class="col-12 p-0">
+                            <div class="form-group mt-4">
+                                <label for="input1" class="ms-2 position-absolute"
+                                    style="margin-top: -0.60rem !important">
+                                    <span class="h6 small bg-white text-muted px-1">Alternate Phone</span>
+                                </label>
+                                <input type="text" class="form-control" name="alternatePhone"
+                                    [(ngModel)]="data.alternatePhone" #alternatePhone="ngModel">
+                            </div>
+                        </div>
+
+                        <div class="col-12 p-0">
+                            <div class="form-group mt-4">
+                                <label for="input1" class="ms-2 position-absolute"
+                                    style="margin-top: -0.60rem !important">
+                                    <span class="h6 small bg-white text-muted px-1">Company Email ID</span>
+                                </label>
+                                <input type="text" class="form-control" name="email" [(ngModel)]="data.businessEmail"
+                                    #email="ngModel">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-3 mt-4">
+                    <input type="file" id="logo-input" hidden #uploadLogo name="logo" accept="image/*"
+                        (change)="onLogoChange($event)">
+                    <img *ngIf="hasLogo" [src]="getData.logo" class="org-logo w-100" style="max-height: 240px;" />
+                    <button type="button" *ngIf="!hasLogo && hasPermission(constants.Edit)"
+                        class="btn btn-outline-primary logo-action" (click)="openImagePicker('logo-input')">
+                        Add Logo
+                    </button>
+                </div>
+                <div class="col-3 mt-4 d-flex flex-column">
+                    <div class="row p-0 m-0">
+                        <div class="col-12" *ngIf="hasLogo">
+                            <button type="button" class="btn btn-outline-primary logo-action"
+                                (click)="openImagePicker('logo-input')">
+                                Edit Logo
+                            </button>
+                        </div>
+                        <div class="col-12 mt-4" *ngIf="hasLogo">
+                            <button type="button" class="btn btn-outline-danger logo-action" (click)="removeLogo()">
+                                Remove Logo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-4">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">GSTIN</span>
+                        </label>
+                        <input type="text" class="form-control" name="gst" [(ngModel)]="data.gst" #gst="ngModel"
+                            (blur)="getGstInDetails()">
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">TAN</span>
+                        </label>
+                        <input type="text" class="form-control" name="tan" [(ngModel)]="data.tan" #tan="ngModel">
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">PAN</span>
+                        </label>
+                        <input type="text" class="form-control" name="pan" [(ngModel)]="data.pan" #pan="ngModel">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-4">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">CIN No.</span>
+                        </label>
+                        <input type="text" class="form-control" [(ngModel)]="data.cin" name="cin" #cin="ngModel">
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Business Type</span>
+                        </label>
+                        <select class="form-select w-100" id="inputGroupSelect01" name="type"
+                            [(ngModel)]="data.businessTypeId" #type="ngModel">
+                            <option *ngFor="let data of businessType" [value]="data.id">{{data.name}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Business Category</span>
+                        </label>
+                        <select type="text" class="form-select w-100" name="category"
+                            [(ngModel)]="data.businessCategoryId" #category="ngModel">
+                            <option *ngFor="let data of businessCategory" [value]="data.id">{{data.name}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <div class="form-group mt-4 position-relative">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Financial Year Starting From</span>
+                        </label>
+                        <span class="date-preview" onclick="document.getElementById('fin-date').showPicker()">
+                            {{settings['finyear.startingfrom'] | date:'dd-MM-yyyy'}}
+                        </span>
+                        <input id="fin-date" type="date" class="form-control" name="Financial" #Financial="ngModel"
+                            [(ngModel)]="settings['finyear.startingfrom']" required
+                            [ngClass]="{'is-invalid':Financial.touched && Financial.errors && Financial.errors['required']}">
+                        <p *ngIf="Financial.touched && Financial.errors && Financial.errors['required']"
+                            class="validation-error ">
+                            Financial Year is required
+                        </p>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group mt-4 position-relative">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Books starting from</span>
+                        </label>
+                        <span class="date-preview" onclick="document.getElementById('book-starting-date').showPicker()">
+                            {{settings['book.startingfrom'] | date:'dd-MM-yyyy'}}
+                        </span>
+                        <input id="book-startingfrom-date" type="date" class="form-control"
+                            [(ngModel)]="settings['book.startingfrom']" name="booksDate" #booksDate="ngModel">
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Company Type</span>
+                        </label>
+                        <select class="form-select w-100" name="companyType" [(ngModel)]="data.companyTypeId">
+                            <option *ngFor="let type of companyTypes" [value]="type.id">{{type.name}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">MSME Type</span>
+                        </label>
+                        <select name="msmetype" class="form-select w-100" [(ngModel)]="data.msmeType" name="msmetype"
+                            #msmeType="ngModel">
+                            <option value="MICRO">Micro</option>
+                            <option value="SMALL">Small</option>
+                            <option value="MEDIUM">Medium</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">MSME Registration Number</span>
+                        </label>
+                        <input type="text" class="form-control" name="msmeregistration"
+                            [(ngModel)]="data.msmeRegistrationNumber" #msmeregistration="ngModel">
+                    </div>
+                </div>
+            </div>
+            <hr>
+
+            <div class="row">
+                <div class="col-4">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Business Address</span>
+                        </label>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="4" name="address"
+                            [(ngModel)]="data.billingAddress" #address="ngModel"></textarea>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Business Description</span>
+                        </label>
+                        <textarea type="text" class="form-control" rows="4" name="description"
+                            [(ngModel)]="data.businessDescription" #description="ngModel"></textarea>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Declaration</span>
+                        </label>
+                        <textarea type="text" class="form-control" rows="4" name="declaration"
+                            [(ngModel)]="data.declaration" #declaration="ngModel"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-4">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Pincode</span>
+                        </label>
+                        <input type="text" class="form-control" name="pincode" [(ngModel)]="data.billingPincode"
+                            #pincode="ngModel">
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">State</span>
+                        </label>
+                        <select class="form-select w-100" id="inputGroupSelect01" name="states"
+                            [(ngModel)]="data.billingState" #states="ngModel" required
+                            [ngClass]="{'is-invalid':states.touched && states.errors && states.errors['required']}">
+                            <option *ngFor="let data of state" [value]="data.id">{{data.name}}</option>
+                        </select>
+                        <p *ngIf="states.touched && states.errors && states.errors['required']"
+                            class="validation-error ">
+                            State is required
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="row mb-2">
+            <input type="file" id="signature-input" hidden #uploadLogo name="logo" accept="image/*"
+                (change)="onSignatureChange($event)">
+            <div class="col-4 mt-4">
+                <button class="btn btn-outline-primary logo-action" (click)="openImagePicker('signature-input')"
+                    *ngIf="hasPermission(constants.Edit)">
+                    Add Signature
+                </button>
+            </div>
+
+            <ng-container *ngIf="hasSignature">
+
+                <div class="col-2 mt-4 img-download d-flex" *ngFor="let signature of getData.signature; let idx=index">
+                    <img [src]="signature.signature" class="org-logo w-100" style="height: 105px;">
+                    <a (click)="removeSignature(signature.id!)">
+                        <i style="font-size: 20px;" class="fa-solid fa-trash text-danger"></i>
+                    </a>
+                </div>
+            </ng-container>
+        </div>
+        <div class="d-flex justify-content-end pe-4 pb-4" *ngIf="hasPermission(constants.Edit)">
+            <button class="btn btn-primary" (click)="onSubmit()">Save</button>
+        </div>
+    </div>
+</div>

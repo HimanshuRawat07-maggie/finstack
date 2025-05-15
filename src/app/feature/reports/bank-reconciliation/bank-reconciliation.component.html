@@ -1,0 +1,118 @@
+<div class="card">
+    <div class="py-3">
+        <div class="title">
+            <span class="ms-3">Bank Reconciliation</span>
+        </div>
+        <hr>
+        <app-date-filter (dateChange)="onDateChange($event)"></app-date-filter>
+        <div class="row mt-3 ps-4">
+            <div class="col-3">
+                <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Bank</span>
+                </label>
+                <select class="form-select w-100" style="max-height: 37px;" [(ngModel)]="bankid"
+                    (change)="loadTableData()">
+                    <option *ngFor="let data of banks" [value]="data.id">{{data.accountDisplayName}}</option>
+                </select>
+            </div>
+        </div>
+        <div class=" ms-2 mt-3 d-flex" *ngIf="data.length>0">
+            <div class=" mx-3 p-2" style="border-radius: 10px; background-color: #CFE6FE; min-width: 240px;">
+                <span class="ms-1" style="font-size: 14px;font-weight: 500;">Balance <span
+                        style="font-size: 13px;">(Company Books)</span></span>
+                <p class="mt-1" style="font-size: 18px; font-weight: 500;">{{companyBalance|
+                    currency:'INR':'symbol':'1.2-2'}}
+                </p>
+            </div>
+            <div class=" d-flex align-items-center">
+                <span style="font-size: 40px; font-weight: 400;"></span>
+            </div>
+            <div class="mx-3 p-2" style="border-radius: 10px; background-color: #B9F3E7; min-width: 240px;">
+                <span class="ms-1" style="font-size: 14px;font-weight: 500;">Balance <span
+                        style="font-size: 13px;">(Bank)</span></span>
+                <p class="mt-1" style="font-size: 18px; font-weight: 500;">{{balanceAsPerBank|
+                    currency:'INR':'symbol':'1.2-2'}}
+                </p>
+            </div>
+            <div class=" d-flex align-items-center">
+                <span style="font-size: 40px; font-weight: 400;"></span>
+            </div>
+            <div class=" mx-3 p-2" style="border-radius: 10px; background-color: #ffded7; min-width: 240px;">
+                <span class="ms-1" style="font-size: 14px;font-weight: 500;">Mismatch Amount</span>
+                <p class="mt-1" style="font-size: 18px; font-weight: 500;">{{mismatchAmount|
+                    currency:'INR':'symbol':'1.2-2'}}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-0">
+    <div class="p-3">
+        <div class="row ">
+            <div class="col-3">
+                <div class="title">
+                    <span>TRANSACTIONS</span>
+                </div>
+            </div>
+            <div class="col-9 d-flex justify-content-end ps-4">
+                <button class="btn btn-primary" (click)="reconcile()" *ngIf="data.length>0">RECONCILE</button>
+            </div>
+        </div>
+        <div class="mt-4">
+            <div style="max-height: 45vh;min-height: 45vh; overflow-y: auto;">
+                <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                    <thead class="border-bottom">
+                        <tr class="border-bottom purchase-header">
+                            <th class="text-start ps-2" scope="col">#</th>
+                            <th class="text-start" scope="col">Date</th>
+                            <th class="text-start" scope="col">Particular</th>
+                            <th class="text-start" scope="col">Vch No.</th>
+                            <th class="text-start" scope="col">Voucher Type</th>
+                            <th class="text-end" scope="col">Deposit</th>
+                            <th class="text-end" scope="col">WithDraw</th>
+                            <th class="text-end" scope="col">Book Balance</th>
+                            <th class="text-start" scope="col">Mode</th>
+                            <th class="text-end" scope="col">Ref. No.</th>
+                            <th class="text-start" style="min-width: 200px;" scope="col">Clearing Date</th>
+                            <th scope="col" class="text-end">Bank Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of data; let idx = index" class="border-bottom">
+                            <td class="text-start" style="width:70px;">{{idx+1}}</td>
+                            <td class="text-start">{{item.date|date:'dd-MM-yyyy'}}</td>
+                            <td class="text-start">
+                                <span *ngIf="item.partyName">{{item.partyName}}</span>
+                                <span *ngIf="item.ledgerName">{{item.ledgerName}}</span>
+                                <span *ngIf="item.customerName">{{item.customerName}}</span>
+                            </td>
+                            <td class="text-start transaction" (click)="openTransaction(item.type,item.id)">{{item.invoiceNo}}</td>
+                            <td class="text-start">{{item.type}}</td>
+                            <td class="text-end">{{item.cashIn|currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-end">{{item.cashOut|currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-end">{{item.runningAmount}}</td>
+                            <td class="text-start">{{item.paymentMode}}</td>
+                            <td class="text-end">{{item.paymentReference}}</td>
+                            <td class="text-start"  >
+                                <div class="position-relative" style="max-width: 180px;">
+                                    <span class="date-preview"
+                                        onclick="document.getElementById('report-clearing-date').showPicker()">
+                                        {{item.clearingDate| date:'dd-MM-yyyy'}}
+                                    </span>
+                                    <input id="report-clearing-date" type="date" class="form-control" [min]="minDate"
+                                        [(ngModel)]="item.clearingDate"
+                                        (blur)="inputDate(item.companyPartyTransactionId,item.clearingDate)">
+                                </div>
+                            </td>
+                            <td class="text-end">{{item.bankBalance| currency:'INR':'symbol':'1.2-2'}}</td>
+                        </tr>
+                        <tr *ngIf="data.length==0">
+                            <td colspan="12">No Transactions Are Available</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

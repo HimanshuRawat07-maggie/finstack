@@ -1,0 +1,68 @@
+<div class="card mb-0">
+    <div class="py-3">
+        <div class="title">
+            <span class="ms-3">Groups</span>
+        </div>
+    </div>
+    <hr class="m-0">
+    <div class="px-3 mt-3">
+        <div class="d-flex justify-content-between">
+            <div>
+                <i class="fa-solid fa-magnifying-glass"
+                    style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+                <input type="text" class="form-control" [(ngModel)]="filterText" (keyup)="filterTransactions()"
+                    style="text-align: 10px; min-width: 300px ; padding-left: 40px;">
+            </div>
+            <div>
+                <button class="btn btn-primary" (click)="openModal()">Add Group</button>
+            </div>
+        </div>
+
+        <div class="my-4" style="max-height:63vh; overflow: auto;">
+            <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                <thead class="border-bottom">
+                    <tr class="border-bottom purchase-header">
+                        <th scope="col" class="text-start">#</th>
+                        <th scope="col" class="text-start">Group </th>
+                        <th scope="col" class="text-start">Under Group</th>
+                        <!-- <th scope="col" class="text-start">Sub Group</th> -->
+                        <th scope="col" class="text-start">Type</th>
+                        <th scope="col" class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of filteredData; let i = index" class="border-bottom">
+                        <td>{{i+1}}</td>
+                        <td class="text-start">{{data.name}}</td>
+                        <td class="text-start">{{data.parentGroupName}}</td>
+                        <td class="text-start">
+                            <span *ngIf="data.type==null"></span>
+                            <span *ngIf="data.type=='LIABILITIES'">Liabilities</span>
+                            <span *ngIf="data.type=='EXPENSE'">Expense</span>
+                            <span *ngIf="data.type=='INCOME'">Income</span>
+                            <span *ngIf="data.type=='ASSETS'">Assets</span>
+                        </td>
+                        <td class="text-end"><i class="fa-solid fa-ellipsis-vertical w-100 pointer"
+                                [matMenuTriggerFor]="menu" *ngIf="!data.default"></i></td>
+
+
+                        <mat-menu #menu="matMenu" xPosition="before">
+                            <div mat-menu-item class="menu-item" (click)="openEditModal(data)">
+                                <span class="text-primary me-2"><i class="fa fa-pencil"></i></span> Edit
+                            </div>
+                            <hr class="m-0" />
+                            <div mat-menu-item class="menu-item" (click)="openDeleteDialog(data.id)">
+                                <span class="text-danger me-2"><i class="fa fa-trash"></i></span> Delete
+                            </div>
+                        </mat-menu>
+                    </tr>
+                    <tr *ngIf="filteredData.length==0">
+                        <td class="text-center" colspan="8">
+                            No Groups To Show
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

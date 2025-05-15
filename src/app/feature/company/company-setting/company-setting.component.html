@@ -1,0 +1,1133 @@
+<div class="card">
+    <div class="p-3 pb-0 title d-flex justify-content-between align-items-center">
+        <span>Company Settings</span>
+        <span style="font-size: 14px;font-weight: 500;color: rgba(0, 0, 0, 0.7);">{{getSubscriptionMessage()}} :
+            <strong>{{getSubscriptionEndingDate() | date:'dd-MM-yyyy'}}</strong>
+        </span>
+    </div>
+    <hr>
+    <div class="px-2">
+        <div class="row m-0">
+            <div class="col-3">
+                <mat-checkbox [ngModel]="settings['batch.enabled']=='true'"
+                    (ngModelChange)="settings['batch.enabled']=$event?'true':'false'"> Product Batch </mat-checkbox>
+            </div>
+            <div class="col-3">
+                <mat-checkbox [ngModel]="settings['warehouse.enabled']=='true'"
+                    (ngModelChange)="settings['warehouse.enabled']=$event?'true':'false'"> Warehouses </mat-checkbox>
+            </div>
+            <div class="col-3">
+                <mat-checkbox [ngModel]="settings['manufacturing.enabled']=='true'"
+                    (ngModelChange)="settings['manufacturing.enabled']=$event?'true':'false'"> Product Manufacturing
+                </mat-checkbox>
+            </div>
+            <div class="col-3">
+                <mat-checkbox [ngModel]="settings['logs.enabled']=='true'"
+                    (ngModelChange)="settings['logs.enabled']=$event?'true':'false'"> Logs
+                </mat-checkbox>
+            </div>
+        </div>
+        <div class="row m-0 mt-2">
+            <div class="col-3 d-flex flex-column">
+                <mat-checkbox [ngModel]="settings['einvoicing.enabled']=='true'"
+                    (change)="checkGstDetail(settings['einvoicing.enabled'],'invoice')"
+                    (ngModelChange)="settings['einvoicing.enabled']=$event?'true':'false'"> E-Invoicing </mat-checkbox>
+                <!-- <span class="api-count">
+                            Remaining API Requests : <span>{{companyLimit?.einvoiceBillBalance}}</span>
+                        </span> -->
+                <!-- <span class="buy-more" (click)="initiateEInvoicingPayment()">
+                            <a href="javascript:void(0);">Buy More</a>
+                        </span> -->
+                <span *ngIf="settings['einvoicing.enabled']=='true'" class="api-count pointer"
+                    (click)="checkGstDetail(settings['einvoicing.enabled'],'invoice')">
+                    Update Credentials
+                </span>
+            </div>
+            <div class="col-3 d-flex flex-column">
+                <mat-checkbox [ngModel]="settings['ewaybilling.enabled']=='true'"
+                    (change)="checkGstDetail(settings['ewaybilling.enabled'],'e-way')"
+                    (ngModelChange)="settings['ewaybilling.enabled']=$event?'true':'false'"> E-Way Billing
+                </mat-checkbox>
+                <!-- <span class="api-count">
+                            Remaining API Requests : <span>{{companyLimit?.ewayBillBalance}}</span>
+                        </span> -->
+                <!-- <span class="buy-more" (click)="initiateEWayBillPayment()">
+                            <a href="javascript:void(0);">Buy More</a>
+                        </span> -->
+                <span *ngIf="settings['ewaybilling.enabled']=='true'" class="api-count pointer"
+                    (click)="checkGstDetail(settings['ewaybilling.enabled'],'e-way')">
+                    Update Credentials
+                </span>
+            </div>
+            <div class="col-3">
+                <mat-checkbox [ngModel]="settings['discount.enabled']=='true'"
+                    (ngModelChange)="settings['discount.enabled']=$event?'true':'false'"> Discount on Bills
+                </mat-checkbox>
+            </div>
+            <div class="col-3">
+                <mat-checkbox [ngModel]="settings['showdeleted.enabled']=='true'"
+                    (ngModelChange)="settings['showdeleted.enabled']=$event?'true':'false'"> Show Deleted Transactions
+                </mat-checkbox>
+            </div>
+            <div class="form-group col-3 mt-4">
+                <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Default Bank</span>
+                </label>
+                <select name="bank" [(ngModel)]="defaultBankId" class="form-select w-100">
+                    <option *ngFor="let bank of banks" [value]="bank.id">{{bank.accountDisplayName}}</option>
+                </select>
+            </div>
+        </div>
+        <hr>
+        <div>
+            <div class="px-2 title">
+                Invoice Template
+            </div>
+            <div class="d-flex px-2" style="overflow: auto;scrollbar-width: none;">
+                <div *ngFor="let img of templates;let idx=index" class="mt-3 mx-3">
+                    <div class="w-100 d-flex justify-content-center mb-2">
+                        <input type="checkbox" [id]="img.id" [(ngModel)]="img.isDefault"
+                            (change)="changeDefaultTemplate(img.id,idx)">
+                    </div>
+                    <label for="{{img.id}}">
+                        <div class="mt-2 d-flex justify-content-center">
+                            {{img.name}}
+                        </div>
+                        <img [src]="img.path" class="border" style="width: 150px;"
+                            [ngClass]="img.isDefault==true?'selected':''">
+                    </label>
+                </div>
+            </div>
+            <div class="sub-title my-3 px-3">
+                Item details on PDF
+            </div>
+            <div class="row">
+                <div class="form-group ms-4 col-3">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Default Invoice Color</span>
+                    </label>
+                    <input type="color" style="height: 35px;" class="form-control" [(ngModel)]="theme.colorCode">
+                </div>
+            </div>
+            <div class="row ps-4 mt-2" *ngIf="settings['batch.enabled']=='true'">
+                <div class="col-3">
+                    <mat-checkbox [ngModel]="settings['pdf.mfg.enabled']=='true'"
+                        (ngModelChange)="settings['pdf.mfg.enabled']=$event?'true':'false'"> Mfg. Date
+                    </mat-checkbox>
+                </div>
+                <div class="col-3">
+                    <mat-checkbox [ngModel]="settings['pdf.exp.enabled']=='true'"
+                        (ngModelChange)="settings['pdf.exp.enabled']=$event?'true':'false'"> Exp. Date
+                    </mat-checkbox>
+                </div>
+                <div class="col-3">
+                    <mat-checkbox [ngModel]="settings['pdf.barcode.enabled']=='true'"
+                        (ngModelChange)="settings['pdf.barcode.enabled']=$event?'true':'false'"> Barcode
+                    </mat-checkbox>
+                </div>
+                <div class="col-3" style="padding-left: 2vw;">
+                    <mat-checkbox [ngModel]="settings['pdf.batchname.enabled']=='true'"
+                        (ngModelChange)="settings['pdf.batchname.enabled']=$event?'true':'false'"> Batch Name
+                    </mat-checkbox>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div>
+            <div class="px-2 title mb-3">
+                <span>Prefix and Suffix</span>
+            </div>
+
+            <div class="row px-4">
+                <div class="col-4 px-3 mt-3" >
+                   <div class="border shadow-sm" style="border-radius: 7px;">
+                     <div class="py-2">
+                        <span class="ms-3 title" style="color: gray;">Sale</span>
+                    </div>
+                    <hr class="m-0">
+                    <div class="p-2">
+                        <div class="mt-3">
+                              <div class="form-group">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['sale.prefix']">
+                              </div>
+                        </div>
+                        <div class="mt-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['sale.suffix']">
+                              </div>
+                        </div>
+                        <div class="my-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['sale.startingfrom']">
+                              </div>
+                        </div>
+                    </div>
+                   </div>
+                </div>
+               
+                <div class="col-4 px-3 mt-3" >
+                   <div class="border shadow-sm" style="border-radius: 7px;">
+                     <div class="py-2">
+                        <span class="ms-3 title" style="color: gray;">Sale Order</span>
+                    </div>
+                    <hr class="m-0">
+                    <div class="p-2">
+                        <div class="mt-3">
+                              <div class="form-group">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['saleorder.prefix']">
+                              </div>
+                        </div>
+                        <div class="mt-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['saleorder.suffix']">
+                              </div>
+                        </div>
+                        <div class="my-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['saleorder.startingfrom']">
+                              </div>
+                        </div>
+                    </div>
+                   </div>
+                </div>
+               
+                <div class="col-4 px-3 mt-3" >
+                   <div class="border shadow-sm" style="border-radius: 7px;">
+                     <div class="py-2">
+                        <span class="ms-3 title" style="color: gray;">Challan-Out</span>
+                    </div>
+                    <hr class="m-0">
+                    <div class="p-2">
+                        <div class="mt-3">
+                              <div class="form-group">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['challanout.prefix']">
+                              </div>
+                        </div>
+                        <div class="mt-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['challanout.suffix']">
+                              </div>
+                        </div>
+                        <div class="my-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['challanout.startingfrom']">
+                              </div>
+                        </div>
+                    </div>
+                   </div>
+                </div>
+               
+                <!-- <div class="col-4 px-3 mt-3" >
+                   <div class="border shadow-sm" style="border-radius: 7px;">
+                     <div class="py-2">
+                        <span class="ms-3 title" style="color: gray;">Sale Assets</span>
+                    </div>
+                    <hr class="m-0">
+                    <div class="p-2">
+                        <div class="mt-3">
+                              <div class="form-group">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['saleassets.prefix']">
+                              </div>
+                        </div>
+                        <div class="mt-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['saleassets.suffix']">
+                              </div>
+                        </div>
+                        <div class="my-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['saleassets.startingfrom']">
+                              </div>
+                        </div>
+                    </div>
+                   </div>
+                </div> -->
+
+                
+                <div class="col-4 px-3 mt-3" >
+                   <div class="border shadow-sm" style="border-radius: 7px;">
+                     <div class="py-2">
+                        <span class="ms-3 title" style="color: gray;">Credit Note</span>
+                    </div>
+                    <hr class="m-0">
+                    <div class="p-2">
+                        <div class="mt-3">
+                              <div class="form-group">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['creditnote.prefix']">
+                              </div>
+                        </div>
+                        <div class="mt-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['creditnote.suffix']">
+                              </div>
+                        </div>
+                        <div class="my-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['creditnote.startingfrom']">
+                              </div>
+                        </div>
+                    </div>
+                   </div>
+                </div>
+
+                
+                <div class="col-4 px-3 mt-3" >
+                   <div class="border shadow-sm" style="border-radius: 7px;">
+                     <div class="py-2">
+                        <span class="ms-3 title" style="color: gray;">Purchase</span>
+                    </div>
+                    <hr class="m-0">
+                    <div class="p-2">
+                        <div class="mt-3">
+                              <div class="form-group">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['purchase.prefix']">
+                              </div>
+                        </div>
+                        <div class="mt-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['purchase.suffix']">
+                              </div>
+                        </div>
+                        <div class="my-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['purchase.startingfrom']">
+                              </div>
+                        </div>
+                    </div>
+                   </div>
+                </div>
+
+                
+                <div class="col-4 px-3 mt-3" >
+                   <div class="border shadow-sm" style="border-radius: 7px;">
+                     <div class="py-2">
+                        <span class="ms-3 title" style="color: gray;">Purchase Order</span>
+                    </div>
+                    <hr class="m-0">
+                    <div class="p-2">
+                        <div class="mt-3">
+                              <div class="form-group">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['purchaseorder.prefix']">
+                              </div>
+                        </div>
+                        <div class="mt-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['purchaseorder.suffix']">
+                              </div>
+                        </div>
+                        <div class="my-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['purchaseorder.startingfrom']">
+                              </div>
+                        </div>
+                    </div>
+                   </div>
+                </div>
+
+                
+                <div class="col-4 px-3 mt-3" >
+                   <div class="border shadow-sm" style="border-radius: 7px;">
+                     <div class="py-2">
+                        <span class="ms-3 title" style="color: gray;">Challan-In</span>
+                    </div>
+                    <hr class="m-0">
+                    <div class="p-2">
+                        <div class="mt-3">
+                              <div class="form-group">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['challanin.prefix']">
+                              </div>
+                        </div>
+                        <div class="mt-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['challanin.suffix']">
+                              </div>
+                        </div>
+                        <div class="my-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['challanin.startingfrom']">
+                              </div>
+                        </div>
+                    </div>
+                   </div>
+                </div>
+
+                
+                <!-- <div class="col-4 px-3 mt-3" >
+                   <div class="border shadow-sm" style="border-radius: 7px;">
+                     <div class="py-2">
+                        <span class="ms-3 title" style="color: gray;">Purchase Assets</span>
+                    </div>
+                    <hr class="m-0">
+                    <div class="p-2">
+                        <div class="mt-3">
+                              <div class="form-group">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['purchaseassets.prefix']">
+                              </div>
+                        </div>
+                        <div class="mt-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['purchaseassets.suffix']">
+                              </div>
+                        </div>
+                        <div class="my-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['purchaseassets.startingfrom']">
+                              </div>
+                        </div>
+                    </div>
+                   </div>
+                </div> -->
+
+                
+                <div class="col-4 px-3 mt-3" >
+                   <div class="border shadow-sm" style="border-radius: 7px;">
+                     <div class="py-2">
+                        <span class="ms-3 title" style="color: gray;">Debit Note</span>
+                    </div>
+                    <hr class="m-0">
+                    <div class="p-2">
+                        <div class="mt-3">
+                              <div class="form-group">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['debitnote.prefix']">
+                              </div>
+                        </div>
+                        <div class="mt-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['debitnote.suffix']">
+                              </div>
+                        </div>
+                        <div class="my-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['debitnote.startingfrom']">
+                              </div>
+                        </div>
+                    </div>
+                   </div>
+                </div>
+                
+                <div class="col-4 px-3 mt-3" >
+                   <div class="border shadow-sm" style="border-radius: 7px;">
+                     <div class="py-2">
+                        <span class="ms-3 title" style="color: gray;">Tax invoice</span>
+                    </div>
+                    <hr class="m-0">
+                    <div class="p-2">
+                        <div class="mt-3">
+                              <div class="form-group">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['taxinvoice.prefix']">
+                              </div>
+                        </div>
+                        <div class="mt-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['taxinvoice.suffix']">
+                              </div>
+                        </div>
+                        <div class="my-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['taxinvoice.startingfrom']">
+                              </div>
+                        </div>
+                    </div>
+                   </div>
+                </div>
+
+                
+                <div class="col-4 px-3 mt-3" >
+                   <div class="border shadow-sm" style="border-radius: 7px;">
+                     <div class="py-2">
+                        <span class="ms-3 title" style="color: gray;">POS invoice</span>
+                    </div>
+                    <hr class="m-0">
+                    <div class="p-2">
+                        <div class="mt-3">
+                              <div class="form-group">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['posinvoice.prefix']">
+                              </div>
+                        </div>
+                        <div class="mt-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['posinvoice.suffix']">
+                              </div>
+                        </div>
+                        <div class="my-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['posinvoice.startingfrom']">
+                              </div>
+                        </div>
+                    </div>
+                   </div>
+                </div>
+
+                
+                <div class="col-4 px-3 mt-3" >
+                   <div class="border shadow-sm" style="border-radius: 7px;">
+                     <div class="py-2">
+                        <span class="ms-3 title" style="color: gray;">Service Invoice</span>
+                    </div>
+                    <hr class="m-0">
+                    <div class="p-2">
+                        <div class="mt-3">
+                              <div class="form-group">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['serviceinvoice.prefix']">
+                              </div>
+                        </div>
+                        <div class="mt-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['serviceinvoice.suffix']">
+                              </div>
+                        </div>
+                        <div class="my-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['serviceinvoice.startingfrom']">
+                              </div>
+                        </div>
+                    </div>
+                   </div>
+                </div>
+
+                
+                <!-- <div class="col-4 px-3 mt-3" >
+                   <div class="border shadow-sm" style="border-radius: 7px;">
+                     <div class="py-2">
+                        <span class="ms-3 title" style="color: gray;">Export Invoice</span>
+                    </div>
+                    <hr class="m-0">
+                    <div class="p-2">
+                        <div class="mt-3">
+                              <div class="form-group">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['exportinvoice.prefix']">
+                              </div>
+                        </div>
+                        <div class="mt-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['exportinvoice.suffix']">
+                              </div>
+                        </div>
+                        <div class="my-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['exportinvoice.startingfrom']">
+                              </div>
+                        </div>
+                    </div>
+                   </div>
+                </div> -->
+
+                
+                <div class="col-4 px-3 mt-3" >
+                   <div class="border shadow-sm" style="border-radius: 7px;">
+                     <div class="py-2">
+                        <span class="ms-3 title" style="color: gray;">Payment-In</span>
+                    </div>
+                    <hr class="m-0">
+                    <div class="p-2">
+                        <div class="mt-3">
+                              <div class="form-group">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['paymentin.prefix']">
+                              </div>
+                        </div>
+                        <div class="mt-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['paymentin.suffix']">
+                              </div>
+                        </div>
+                        <div class="my-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['paymentin.startingfrom']">
+                              </div>
+                        </div>
+                    </div>
+                   </div>
+                </div>
+
+                
+                <div class="col-4 px-3 mt-3" >
+                   <div class="border shadow-sm" style="border-radius: 7px;">
+                     <div class="py-2">
+                        <span class="ms-3 title" style="color: gray;">Payment-Out</span>
+                    </div>
+                    <hr class="m-0">
+                    <div class="p-2">
+                        <div class="mt-3">
+                              <div class="form-group">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['paymentout.prefix']">
+                              </div>
+                        </div>
+                        <div class="mt-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['paymentout.suffix']">
+                              </div>
+                        </div>
+                        <div class="my-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['paymentout.startingfrom']">
+                              </div>
+                        </div>
+                    </div>
+                   </div>
+                </div>
+
+                
+                <div class="col-4 px-3 mt-3" >
+                   <div class="border shadow-sm" style="border-radius: 7px;">
+                     <div class="py-2">
+                        <span class="ms-3 title" style="color: gray;">Journal</span>
+                    </div>
+                    <hr class="m-0">
+                    <div class="p-2">
+                        <div class="mt-3">
+                              <div class="form-group">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['journal.prefix']">
+                              </div>
+                        </div>
+                        <div class="mt-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['journal.suffix']">
+                              </div>
+                        </div>
+                        <div class="my-3">
+                              <div class="form-group ">
+                               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                  <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                               </label>
+                                 <input type="text" class="form-control" [(ngModel)]="settings['journal.startingfrom']">
+                              </div>
+                        </div>
+                    </div>
+                   </div>
+                </div>
+
+               <!-- end here -->
+            </div>
+
+
+
+
+            
+
+            <!-- <div class="row m-0 mt-3">
+                <div class="col-3 mt-2">
+                    <span class="ms-3 h6 small bg-white text-muted">Sale</span>
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['sale.prefix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['sale.suffix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['sale.startingfrom']">
+                </div>
+            </div>
+            <div class="row m-0 mt-2">
+                <div class="col-3 mt-2">
+                    <span class="ms-3 h6 small bg-white text-muted">Sale Order</span>
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['saleorder.prefix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['saleorder.suffix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['saleorder.startingfrom']">
+                </div>
+            </div>
+            <div class="row m-0 mt-2">
+                <div class="col-3 mt-2">
+                    <span class="ms-3 h6 small bg-white text-muted">Challan-Out</span>
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['challanout.prefix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['challanout.suffix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['challanout.startingfrom']">
+                </div>
+            </div>
+            <div class="row m-0 mt-2">
+                <div class="col-3 mt-2">
+                    <span class="ms-3 h6 small bg-white text-muted">Sale Assets</span>
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['saleassets.prefix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['saleassets.suffix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['saleassets.startingfrom']">
+                </div>
+            </div>
+            <div class="row m-0 mt-3">
+                <div class="col-3 mt-2">
+                    <span class="ms-3 h6 small bg-white text-muted">Credit Note</span>
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['creditnote.prefix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['creditnote.suffix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['creditnote.startingfrom']">
+                </div>
+            </div>
+            <div class="row m-0 mt-3">
+                <div class="col-3 mt-2">
+                    <span class="ms-3 h6 small bg-white text-muted">Purchase</span>
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['purchase.prefix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['purchase.suffix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['purchase.startingfrom']">
+                </div>
+            </div>
+            <div class="row m-0 mt-3">
+                <div class="col-3 mt-2">
+                    <span class="ms-3 h6 small bg-white text-muted">Purchase Order</span>
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['purchaseorder.prefix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['purchaseorder.suffix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['purchaseorder.startingfrom']">
+                </div>
+            </div>
+            <div class="row m-0 mt-3">
+                <div class="col-3 mt-2">
+                    <span class="ms-3 h6 small bg-white text-muted">Challan-In</span>
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['challanin.prefix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['challanin.suffix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['challanin.startingfrom']">
+                </div>
+            </div>
+            <div class="row m-0 mt-3">
+                <div class="col-3 mt-2">
+                    <span class="ms-3 h6 small bg-white text-muted">Purchase Assets</span>
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['purchaseassets.prefix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['purchaseassets.suffix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['purchaseassets.startingfrom']">
+                </div>
+            </div>
+            <div class="row m-0 mt-3">
+                <div class="col-3 mt-2">
+                    <span class="ms-3 h6 small bg-white text-muted">Debit Note</span>
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['debitnote.prefix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['debitnote.suffix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['debitnote.startingfrom']">
+                </div>
+            </div>
+            <div class="row m-0 mt-3">
+                <div class="col-3 mt-2">
+                    <span class="ms-3 h6 small bg-white text-muted">Tax invoice</span>
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['taxinvoice.prefix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['taxinvoice.suffix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['taxinvoice.startingfrom']">
+                </div>
+            </div>
+            <div class="row m-0 mt-3">
+                <div class="col-3 mt-2">
+                    <span class="ms-3 h6 small bg-white text-muted">POS invoice</span>
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['posinvoice.prefix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['posinvoice.suffix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['posinvoice.startingfrom']">
+                </div>
+            </div>
+            <div class="row m-0 mt-3">
+                <div class="col-3 mt-2">
+                    <span class="ms-3 h6 small bg-white text-muted">Service invoice</span>
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['serviceinvoice.prefix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['serviceinvoice.suffix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['serviceinvoice.startingfrom']">
+                </div>
+            </div>
+            <div class="row m-0 mt-3">
+                <div class="col-3 mt-2">
+                    <span class="ms-3 h6 small bg-white text-muted">Payment-In</span>
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['paymentin.prefix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['paymentin.suffix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['paymentin.startingfrom']">
+                </div>
+            </div>
+            <div class="row m-0 mt-3">
+                <div class="col-3 mt-2">
+                    <span class="ms-3 h6 small bg-white text-muted">Payment-Out</span>
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['paymentout.prefix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['paymentout.suffix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['paymentout.startingfrom']">
+                </div>
+            </div>
+            <div class="row m-0 mt-3">
+                <div class="col-3 mt-2">
+                    <span class="ms-3 h6 small bg-white text-muted">Journal</span>
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Prefix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['journal.prefix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Suffix</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['journal.suffix']">
+                </div>
+                <div class="form-group ms-4 col-2">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Starting From</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="settings['journal.startingfrom']">
+                </div>
+            </div> -->
+        </div>
+        <hr class="mb-0">
+        <div class="d-flex justify-content-end my-3">
+            <button class="btn btn-outline-primary mx-3" (click)="goBack()">Cancel</button>
+            <button *ngIf="hasPermission(constants.Edit)" class="btn btn-primary mx-3"
+                (click)="updateSettings()">Update</button>
+        </div>
+    </div>
+</div>

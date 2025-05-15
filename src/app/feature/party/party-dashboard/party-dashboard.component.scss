@@ -1,0 +1,14 @@
+.profile-circle {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  color: white;
+}
+
+.initials {
+  text-transform: uppercase;
+}

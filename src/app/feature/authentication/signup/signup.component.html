@@ -1,0 +1,274 @@
+<!-- <div class="container-fluid bg">
+    <div class="row d-flex justify-content-center align-items-center" style="height: 100vh;">
+        <div class="col-lg-6 col-md-8 col-sm-10 row p-0">
+            <div class="row p-0 m-0 d-flex justify-content-center">
+                <div class="col-lg-7 col-sm-12 login-box mt-4 p-0">
+                    <div class="form">
+                        <div class="d-flex justify-content-center mb-2">
+                            <img class="img-fluid" src="../../../../assets/images/fav.jpg" width="150px" alt="logo"
+                                loading="lazy">
+                        </div>
+                        <div>
+                            <h2 class="heading">Register</h2>
+                        </div>
+                        <form #signUpForm="ngForm" (ngSubmit)="onSubmit()">
+                            <div class="form-group mt-5">
+                                <label for="exampleInputEmail1">Company Name</label>
+                                <input type="text" class="form-control" [(ngModel)]="data.companyName"
+                                    #companyName="ngModel" name="companyName"
+                                    pattern="^(?! )[A-Za-z0-9!@#$%^&*()_- ]*(?<! )$" required
+                                    [ngClass]="{'is-invalid':companyName.touched && companyName.errors && companyName.errors['required']}">
+                                <p *ngIf="companyName.touched && companyName.errors && companyName.errors['required']"
+                                    class="validation-error ">
+                                    Company name is required
+                                </p>
+                            </div>
+                            <div class="form-group mt-4">
+                                <label for="exampleInputEmail1">Name</label>
+                                <input type="text" class="form-control" [(ngModel)]="data.name" #name="ngModel"
+                                    name="name" required pattern="^(?! )[A-Za-z ]*(?<! )$"
+                                    [ngClass]="{'is-invalid':name.touched && name.errors && name.errors['required']}">
+                                <p *ngIf="name.touched && name.errors && name.errors['required']"
+                                    class="validation-error ">
+                                    Name is required
+                                </p>
+                                <span *ngIf="name.invalid && name.dirty && data.name!.length>0 "
+                                    class="validation-error ms-2">
+                                    Only contain characters
+                                </span>
+                            </div>
+                            <div class="form-group mt-4">
+                                <label for="exampleInputEmail1">Phone Number</label>
+                                <input type="text" class="form-control" [(ngModel)]="data.phoneNumber" #phone="ngModel"
+                                    name="phone" pattern="^[0-9]*$"
+                                    [ngClass]="{'is-invalid':phone.touched && phone.errors && phone.errors['required']}">
+                                <span
+                                    *ngIf="phone.invalid && (phone.dirty || phone.touched) && data.phoneNumber&& data.phoneNumber!.length>0 "
+                                    class="validation-error ms-2">
+                                    Only contain number
+                                </span>
+                            </div>
+                            <div class="form-group mt-4">
+                                <label for="exampleInputEmail1">Email address</label>
+                                <input type="email" class="form-control" [(ngModel)]="data.email" #email="ngModel"
+                                    name="email" required pattern="[a-zA-Z0-9.+]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,4}"
+                                    [ngClass]="{'is-invalid':email.touched && email.errors && email.errors['required']}">
+                                <p *ngIf="email.touched && email.errors && email.errors['required']"
+                                    class="validation-error ">
+                                    Email is required
+                                </p>
+                                <p *ngIf="email.invalid && (email.dirty || email.touched) && data.email!.length>0 "
+                                    class="validation-error ms-2">
+                                    Enter a valid email
+                                </p>
+                            </div>
+                            <div class="form-group mt-4">
+                                <label for="exampleInputPassword1">Password</label>
+                                <input type="password" class="form-control" [(ngModel)]="data.password"
+                                    #password="ngModel" name="password" required
+                                    [ngClass]="{'is-invalid':password.touched && password.errors && password.errors['required']}">
+                                <p *ngIf="password.touched && password.errors && password.errors['required']"
+                                    class="validation-error ">
+                                    Password is required
+                                </p>
+                                <p *ngIf="!isMaxErrorPasswordVisible()" class="validation-error ms-2">
+                                    Password must have 8 characters
+                                </p>
+                            </div>
+                            <div class="form-group mt-4">
+                                <label for="exampleInputPassword1">Confirm Password</label>
+                                <input type="password" class="form-control" [(ngModel)]="confirmPassword"
+                                    #confirmpassword="ngModel" name="confirmpassword" required
+                                    [ngClass]="{'is-invalid':confirmpassword.touched && confirmpassword.errors && confirmpassword.errors['required']}">
+                                <p *ngIf="confirmpassword.touched && confirmpassword.errors && confirmpassword.errors['required']"
+                                    class="validation-error ">
+                                    Password is required
+                                </p>
+                                <p *ngIf="confirmPassword!=data.password && confirmPassword!.length>0 "
+                                    class="validation-error ms-2">
+                                    <i class="fa-solid fa-circle-exclamation me-2"></i>
+                                    <span style="font-size: small;">Password does not match</span>
+                                </p>
+                                <span
+                                    *ngIf="confirmPassword==data.password && data.password!.length>0 && confirmPassword.length>=8">
+                                    <span style="color: rgb(62, 179, 62);" class="ms-2">
+                                        <i class="fa-solid fa-check me-2"></i>
+                                        <span style="font-size: small;">Password Match</span>
+                                    </span>
+                                </span>
+                            </div>
+                             <div class="form-group mt-4">
+                                <label for="exampleInputEmail1">Referral Code</label>
+                                <input type="text" class="form-control" [(ngModel)]="data.licenseKey"
+                                    #licenseKey="ngModel" name="licenseKey">
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-4 w-100">Register</button>
+                            <div class="mt-5 d-flex justify-content-center">
+                                <span>Already have an account? &nbsp;</span><span class="link-secondary"
+                                    (click)="navigateTo('login')">Login</span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+
+<div class="container-fluid login-bg">
+    <div class="d-flex justify-content-center my-2">
+        <img class="img-fluid" src="../../../../assets/images/Logo_Spont_Software-witoutbackground.png" width="200px"
+            height="20px" alt="logo" loading="lazy">
+    </div>
+    <div class="row d-flex justify-content-center align-items-center" style="height: 50vh;">
+        <div class="col-lg-      col-md-8 col-sm-10" style="border-radius: 8px;">
+            <div class="row">
+                <div class="col-lg-6  p-0">
+                    <div class="background"></div>
+                </div>
+                <div class="col-lg-6 col-md-12 col-sm-12 p-0">
+                    <div class="card p-3 px-2" style="height: 100%;">
+                        <div class="d-flex justify-content-center">
+                            <span class="heading">Signup</span>
+                        </div>
+                        <div>
+                            <form #signUpForm="ngForm" (ngSubmit)="onSubmit()">
+                                <div class="row">
+                                    <div class="col-6 pe-1">
+                                        <div class="text-field w100p mt-4">
+                                            <input class="text-base w100p" type="text" required placeholder=" "
+                                                [(ngModel)]="data.companyName" #companyName="ngModel" name="companyName"
+                                                required
+                                                [ngClass]="{'is-invalid':companyName.touched && companyName.errors && companyName.errors['required']}">
+                                            <span>Company Name*</span>
+                                            <p *ngIf="companyName.touched && companyName.errors && companyName.errors['required']"
+                                                class="validation-error ">
+                                                Company name is required
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 ps-1">
+                                        <div class="text-field w100p mt-4">
+                                            <input class="text-base w100p" type="text" required placeholder=" "
+                                                [(ngModel)]="data.name" #name="ngModel" name="name" required
+                                                pattern="^(?! )[A-Za-z ]*(?<! )$"
+                                                [ngClass]="{'is-invalid':name.touched && name.errors && name.errors['required']}">
+                                            <span>Name*</span>
+                                            <p *ngIf="name.touched && name.errors && name.errors['required']"
+                                                class="validation-error ">
+                                                Name is required
+                                            </p>
+                                            <p *ngIf="name.invalid && name.dirty && data.name!.length>0 "
+                                                class="validation-error ms-2">
+                                                Only contain characters
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 pe-1">
+                                        <div class="text-field w100p mt-3">
+                                            <input class="text-base w100p" type="text" required placeholder=" "
+                                                [(ngModel)]="data.phoneNumber" #phone="ngModel" name="phone"
+                                                pattern="^[0-9]*$"
+                                                [ngClass]="{'is-invalid':phone.touched && phone.errors && phone.errors['required']}">
+                                            <span>Phone Number</span>
+                                            <p class="p-0"
+                                                *ngIf="phone.invalid && (phone.dirty || phone.touched) && data.phoneNumber&& data.phoneNumber!.length>0 "
+                                                class="validation-error ms-2">
+                                                Only contain number
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 ps-1">
+                                        <div class="text-field w100p mt-3">
+                                            <input class="text-base w100p" type="text" required placeholder=" "
+                                                [(ngModel)]="data.email" #email="ngModel" name="email" required
+                                                pattern="[a-zA-Z0-9.+]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,4}"
+                                                [ngClass]="{'is-invalid':email.touched && email.errors && email.errors['required']}">
+                                            <span>Email Address*</span>
+                                            <p *ngIf="email.touched && email.errors && email.errors['required']"
+                                                class="validation-error ">
+                                                Email is required
+                                            </p>
+                                            <p *ngIf="email.invalid && (email.dirty || email.touched) && data.email!.length>0 "
+                                                class="validation-error ms-2">
+                                                Enter a valid email
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <!-- PASSWORD FIELD -->
+                                        <div class="text-field w100p mt-3 position-relative">
+                                            <input class="text-base w100p" [type]="showPassword ? 'text' : 'password'"
+                                                placeholder=" " name="password" [(ngModel)]="data.password"
+                                                #password="ngModel" required
+                                                [ngClass]="{ 'is-invalid': password.touched && password.errors?.['required'] }" />
+                                            <span>Password*</span>
+
+                                            <!-- 👁️ TOGGLE ICON -->
+                                            <button type="button" (click)="togglePasswordVisibility('password')"
+                                                style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: none; border: none;">
+                                                <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                            </button>
+                                        </div>
+
+                                        <!-- CONFIRM PASSWORD FIELD -->
+                                        <div class="text-field w100p mt-3 position-relative">
+                                            <input class="text-base w100p"
+                                                [type]="showConfirmPassword ? 'text' : 'password'" placeholder=" "
+                                                name="confirmPassword" [(ngModel)]="confirmPassword"
+                                                #confirmpassword="ngModel" required
+                                                [ngClass]="{ 'is-invalid': confirmpassword.touched && confirmpassword.errors?.['required'] }" />
+                                            <span>Confirm Password*</span>
+
+                                            <!-- 👁️ TOGGLE ICON -->
+                                            <button type="button" (click)="togglePasswordVisibility('confirm')"
+                                                style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: none; border: none;">
+                                                <i class="fa"
+                                                    [ngClass]="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                            </button>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 pe-1">
+                                        <div class="text-field w100p mt-3">
+                                            <input class="text-base w100p" type="text" required placeholder=" "
+                                                [(ngModel)]="data.licenseKey" #licenseKey="ngModel" name="licenseKey">
+                                            <span>License Key</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 ps-1">
+
+                                    </div>
+                                </div>
+
+                                <div class="mt-3 px-4 d-flex justify-content-center">
+                                    <input class="pointer" type="checkbox" id="check" [(ngModel)]="check"
+                                        name="privacy">
+                                    <span class="ms-3" for="check" style="color: gray;font-size: 13px;">Agree to our <a
+                                            href="http://eaccountsfintech.com/terms-and-conditions.html">Terms &
+                                            Conditions</a>.</span>
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <button type="submit" class="btn btn-primary w-100 mt-1"
+                                        style="height: 45px;max-width: 60%;">Register</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="mt-2 d-flex justify-content-center">
+                            <span>Already have an account? &nbsp;</span><span class="link-secondary"
+                                (click)="navigateTo('login')">Login</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

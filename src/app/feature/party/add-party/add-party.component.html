@@ -1,0 +1,300 @@
+<div class="card mb-0">
+    <div class="title py-2">
+        <span class="ms-3">{{status}} Party</span>
+    </div>
+    <hr class="m-0">
+    <div class="p-3">
+        <div class="row">
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Party Name</span>
+                    </label>
+                    <input type="text" class="form-control" name="name" [(ngModel)]="partyData.name" #name="ngModel"
+                        required [ngClass]="{'is-invalid':name.touched && name.errors && name.errors['required']}"
+                        (blur)="partyNameAvailablity()">
+                    <p *ngIf="name.touched && name.errors && name.errors['required']" class="validation-error ">
+                        Name is required
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Alias</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="partyData.alias" name="alias" #alias="ngModel"
+                        (blur)="partyAliasAvailablity()">
+                </div>
+            </div>
+            <div class=" col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Party Code</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="partyData.code" name="code" #code="ngModel"
+                        (blur)="partyCodeAvailablity()">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Party Group</span>
+                    </label>
+                    <select type="number" class=" form-select w-100" [(ngModel)]="partyData.partyGroupId" name="group"
+                        #group="ngModel">
+                        <option *ngFor="let group of partyGroups" [value]="group.id">{{group.name}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Phone Number</span>
+                    </label>
+                    <input type="text" pattern="^[0-9]*$" class="form-control" name="phone"
+                        [(ngModel)]="partyData.phone" #phone="ngModel">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Email</span>
+                    </label>
+                    <input type="text" class="form-control" name="email" [(ngModel)]="partyData.email" #email="ngModel">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Party Turnover <span
+                                style="font-size: 12px;">(last year)</span></span>
+                    </label>
+                    <select name="turnover" class="form-select w-100" name="turnover"
+                        [(ngModel)]="partyData.partyTurnover" #turnover="ngModel">
+                        <option value="LESS_THAN_10CR">Less Than 10Cr</option>
+                        <option value="MORE_THAN_10CR">More Than 10Cr</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="sub-title ">
+        <span class="ms-3">GST Details</span>
+    </div>
+    <div class="ps-3">
+        <div class="row">
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">GST Type</span>
+                    </label>
+                    <select type="number" class=" form-select w-100" name="gstType" [(ngModel)]="partyData.gstType"
+                        #gstType="ngModel">
+                        <option *ngFor="let item of gstTypes" [ngValue]="item.id">{{item.name}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">GSTIN</span>
+                    </label>
+                    <input type="text" class="form-control" name="gst" [(ngModel)]="partyData.gst" #gst="ngModel"
+                        (blur)="getGstInDetails()">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">GST State</span>
+                    </label>
+                    <select type="text" class="form-select w-100" name="gststate" [(ngModel)]="partyData.gstState"
+                        #gststate="ngModel">
+                        <option *ngFor="let partyData of states" [value]="partyData.name">{{partyData.name}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="sub-title mt-3">
+        <span class="ms-3">Billing Address</span>
+    </div>
+    <div class="ps-3">
+        <div class="row">
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Address</span>
+                    </label>
+                    <textarea type="text" class="form-control" name="billingAddress" [(ngModel)]="partyData.address"
+                        #billingAddress></textarea>
+                </div>
+            </div>
+            <!-- <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">State</span>
+                    </label>
+                    <select type="text" class="form-select w-100" name="state" [(ngModel)]="partyData.state"
+                        #state="ngModel">
+                        <option *ngFor="let partyData of states" [value]="partyData.id">{{partyData.name}}</option>
+                    </select>
+                </div>
+            </div> -->
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Pincode</span>
+                    </label>
+                    <input type="text" name="pincode" class="form-control" [(ngModel)]="partyData.pincode"
+                        #pincode="ngModel">
+                </div>
+            </div>
+            <!-- <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Shipping Address</span>
+                    </label>
+                    <textarea type="text" class="form-control"
+                        [(ngModel)]="partyData.shippingAddress && partyData.shippingAddress[0].address" #address="ngModel"
+                        name="address"></textarea>
+                </div>
+            </div> -->
+            <!-- <div class="col-6 row mt-4">
+                <div class="col-3 d-flex justify-content-center">
+                    <div>
+                        <button class="btn btn-primary" (click)="addShippingAddress();">Add</button>
+                    </div>
+                </div>
+                <div *ngFor="let partyData of shippingAddressArray let i=index" class="col-3 ">
+                    <div class=" ms-2 mb-2 border"
+                        style="background-color: white; min-height: 90px; max-height: 101px;">
+                        {{partyData}}
+                        <div class="container"><i class="fa-solid fa-ellipsis-vertical icon"
+                                style="cursor: pointer; font-size: 15px;"></i></div>
+                        <div class="card border d-flex flex-column "
+                            style="position: absolute; width: 90px; height:40px;">
+                            <div>Edit</div>
+                            <div>Delete</div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+    <hr>
+    <div class="sub-title">
+        <span class="ms-3">Credit & Balance</span>
+    </div>
+    <div class="ps-3">
+        <div class="row">
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Opening Balance</span>
+                    </label>
+                    <input type="number" class="form-control" name="balance" [(ngModel)]="partyData.openingBalance"
+                        #balance="ngModel">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group mt-4 position-relative">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">As of Date</span>
+                    </label>
+                    <span class="date-preview" onclick="document.getElementById('party-as-od-date').showPicker()">
+                        {{partyData.asOfDate| date:'dd-MM-yyyy'}}
+                    </span>
+                    <input id="party-as-od-date" type="date" class="form-control" name="date" [min]="minDate"
+                        [(ngModel)]="partyData.asOfDate" #date="ngModel">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group mt-4" *ngIf="partyData.openingBalance && partyData.openingBalance!=0">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">To Pay/Receive</span>
+                    </label>
+                    <select class="form-select w-100" [(ngModel)]="isToPayEnable">
+                        <option [ngValue]="false">To Receive</option>
+                        <option [ngValue]="true">To Pay</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="sub-title ">
+        <span class="ms-3">Bank Details</span>
+    </div>
+    <div class="ps-3">
+        <div class="row">
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Bank Name</span>
+                    </label>
+                    <input type="text" class="form-control" name="balance" [(ngModel)]="partyData.bankName"
+                        #balance="ngModel">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Account No.</span>
+                    </label>
+                    <input type="number" class="form-control" name="date" [(ngModel)]="partyData.accountNumber"
+                        #date="ngModel">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">IFSC Code</span>
+                    </label>
+                    <input type="text" class="form-control" name="balance" [(ngModel)]="partyData.ifscCode"
+                        #balance="ngModel">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Account Name</span>
+                    </label>
+                    <input type="text" class="form-control" name="balance" [(ngModel)]="partyData.accountName"
+                        #balance="ngModel">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Branch Name</span>
+                    </label>
+                    <input type="text" class="form-control" name="date" [(ngModel)]="partyData.branch" #date="ngModel">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">PAN</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="partyData.pan" name="pan" #pan="ngModel">
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class=" d-flex justify-content-end my-3">
+        <button class="btn btn-gray-outline mx-2" (click)="close()">Cancel</button>
+        <button class="btn btn-outline-primary mx-2" *ngIf="!isOpenedAsDialog && partyData.id==null"
+            (click)="onSubmit(0)">Save & New</button>
+        <button type="submit" class="btn btn-primary mx-2" (click)="onSubmit(1)">{{partyData.id==null?'Save':'Update'}}</button>
+    </div>
+</div>

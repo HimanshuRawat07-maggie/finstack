@@ -1,0 +1,366 @@
+<div class="card">
+    <div class="py-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="title">
+                <span class="ms-3">Income & Expenditure Report</span>
+            </div>
+            <div>
+                <!-- <i class=" text-success fa-solid fa-file-excel mx-3 download-pdf-excel" (click)="download()"></i> -->
+                <i class="text-danger fa-solid fa-file-pdf mx-3 download-pdf-excel" (click)="downloadPdf()"></i>
+                <!-- 
+        <mat-menu #menu="matMenu" xPosition="before">
+          <div mat-menu-item class="menu-item" (click)="downloadAsPdf('LANDSCAPE')">
+            <span class="text-primary me-2"><i class="fa-solid fa-image"></i></span> Landscape
+          </div>
+          <hr class="m-0" />
+          <div mat-menu-item class="menu-item" (click)="downloadAsPdf('PORTRAIT')">
+            <span class="text-danger me-2"><i class="fa-solid fa-image-portrait"></i></span> Portrait
+          </div>
+        </mat-menu> -->
+            </div>
+        </div>
+        <hr />
+        <app-date-filter (dateChange)="onDateChange($event)"></app-date-filter>
+        <div class="p-3">
+            <input type="checkbox" class="pointer" id="zero" [(ngModel)]="hideZeroBalance" /><label for="zero"
+                class="ms-2 pointer">Hide Zero Balance</label>
+        </div>
+    </div>
+</div>
+
+<div class="card p-3">
+    <div class="row" id="divToConvert">
+        <!-- Debits -->
+        <div class="col-6 pe-0">
+            <ul class="ms-1 w-100">
+                <li class="list-item p-1 list-heading">
+                    <div style="padding-left: 10px"><strong>ACCOUNTS</strong></div>
+                    <div class="d-flex justify-content-end">
+                        <!-- <span class="me-2 currency-col text-white"><strong>DEBIT</strong></span> -->
+                        <span class="me-2 currency-col text-white"><strong>AMOUNT</strong></span>
+                    </div>
+                </li>
+            </ul>
+
+            <!-- All Debit Entries -->
+            <ul class="ms-1 w-100" style="border-bottom: 1px solid #bdbdbd">
+                <ng-container *ngFor="let node of reportDebitSideData" [ngTemplateOutlet]="treeNode"
+                    [ngTemplateOutletContext]="{ $implicit: node }">
+                </ng-container>
+            </ul>
+        </div>
+
+        <!-- Credits -->
+        <div class="col-6 ps-0">
+            <ul class="ms-1 w-100">
+                <li class="list-item p-1 list-heading">
+                    <div style="padding-left: 10px"><strong>ACCOUNTS</strong></div>
+                    <div class="d-flex justify-content-end">
+                        <!-- <span class="me-2 currency-col text-white"><strong>DEBIT</strong></span> -->
+                        <span class="me-2 currency-col text-white"><strong>AMOUNT</strong></span>
+                    </div>
+                </li>
+            </ul>
+
+            <!-- All Credit Entries -->
+            <ul class="ms-1 w-100" style="border-bottom: 1px solid #bdbdbd">
+                <ng-container *ngFor="let node of reportCreditSideData" [ngTemplateOutlet]="treeNode"
+                    [ngTemplateOutletContext]="{ $implicit: node }">
+                </ng-container>
+            </ul>
+        </div>
+
+        <!-- Gross Profit -->
+        <div class="col-6 pe-0" *ngIf="grossProfitLoss[0].creditAmount > 0">
+            <ul *ngIf="grossProfitLoss?.length > 0" class="ms-1 w-100" style="border-bottom: 1px solid #bdbdbd">
+                <li class="list-item" style="padding-left: 10px">
+                    <div>
+                        <span class="me-2"></span>
+                        <span class="bold-text" [ngClass]="{
+                'text-success': grossProfitLoss[0].creditAmount > 0,
+                'text-danger': grossProfitLoss[0].debitAmount > 0
+              }">
+                            {{ grossProfitLoss[0].title }}
+                        </span>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <span *ngIf="grossProfitLoss[0].creditAmount > 0" class="me-2 currency-col text-success">
+                            {{
+                            grossProfitLoss[0].creditAmount > 0
+                            ? (grossProfitLoss[0].creditAmount
+                            | currency : "INR" : "symbol" : "1.2-2")
+                            : 0
+                            }}
+                        </span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="col-6 ps-0" *ngIf="grossProfitLoss[0].creditAmount > 0"></div>
+
+        <!-- Gross Loss -->
+        <div class="col-6 pe-0" *ngIf="grossProfitLoss[0].debitAmount > 0"></div>
+        <div class="col-6 ps-0" *ngIf="grossProfitLoss[0].debitAmount > 0">
+            <ul *ngIf="grossProfitLoss?.length > 0" class="ms-1 w-100" style="border-bottom: 1px solid #bdbdbd">
+                <li class="list-item" style="padding-left: 10px">
+                    <div>
+                        <span class="me-2"></span>
+                        <span class="bold-text" [ngClass]="{
+                'text-success': grossProfitLoss[0].creditAmount > 0,
+                'text-danger': grossProfitLoss[0].debitAmount > 0
+              }">
+                            {{ grossProfitLoss[0].title }}
+                        </span>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <span *ngIf="grossProfitLoss[0].debitAmount > 0" class="me-2 currency-col text-danger">
+                            {{
+                            grossProfitLoss[0].debitAmount > 0
+                            ? (grossProfitLoss[0].debitAmount
+                            | currency : "INR" : "symbol" : "1.2-2")
+                            : 0
+                            }}
+                        </span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Total Rows -->
+        <div class="col-6 pe-0">
+            <ul class="ms-1 w-100" style="border-bottom: 1px solid #bdbdbd">
+                <li class="list-item" style="padding-left: 10px">
+                    <div>
+                        <span class="me-2"></span>
+                        <span class="bold-text">Total</span>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <span class="me-2 currency-col">
+                            <strong>{{
+                                getTotalDebit(reportDebitSideData) +
+                                grossProfitLoss[0].creditAmount
+                                | currency : "INR" : "symbol" : "1.2-2"
+                                }}</strong>
+                        </span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-6 ps-0">
+            <ul class="ms-1 w-100" style="border-bottom: 1px solid #bdbdbd">
+                <li class="list-item" style="padding-left: 10px">
+                    <div>
+                        <span class="me-2"></span>
+                        <span class="bold-text">Total</span>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <span class="me-2 currency-col">
+                            <strong>
+                                {{
+                                getTotalCredit(reportCreditSideData) +
+                                grossProfitLoss[0].debitAmount
+                                | currency : "INR" : "symbol" : "1.2-2"
+                                }}</strong>
+                        </span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Indirect Exp and Incomes -->
+        <div class="col-6 pe-0 mt-4">
+            <ul *ngIf="reportDebitSideExpenseData?.length > 0" class="ms-1 w-100"
+                style="border-bottom: 1px solid #bdbdbd">
+                <ng-container *ngFor="let node of reportDebitSideExpenseData" [ngTemplateOutlet]="treeNode"
+                    [ngTemplateOutletContext]="{ $implicit: node }">
+                </ng-container>
+            </ul>
+        </div>
+
+        <div class="col-6 ps-0 mt-4">
+            <ul *ngIf="reportCreditSideIncomeData?.length > 0" class="ms-1 w-100"
+                style="border-bottom: 1px solid #bdbdbd">
+                <ng-container *ngFor="let node of reportCreditSideIncomeData" [ngTemplateOutlet]="treeNode"
+                    [ngTemplateOutletContext]="{ $implicit: node }">
+                </ng-container>
+            </ul>
+        </div>
+
+        <!-- Net Profit -->
+        <div class="col-6 pe-0" *ngIf="netProfitLoss[0].creditAmount > 0">
+            <ul *ngIf="netProfitLoss?.length > 0" class="ms-1 w-100" style="border-bottom: 1px solid #bdbdbd">
+                <li class="list-item" style="padding-left: 10px">
+                    <div>
+                        <span class="me-2"></span>
+                        <span class="bold-text" [ngClass]="{
+                'text-success': netProfitLoss[0].creditAmount > 0,
+                'text-danger': netProfitLoss[0].debitAmount > 0
+              }">
+                            {{ netProfitLoss[0].title }}
+                        </span>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <span *ngIf="netProfitLoss[0].creditAmount > 0" class="me-2 currency-col text-success">
+                            {{
+                            netProfitLoss[0].creditAmount > 0
+                            ? (netProfitLoss[0].creditAmount
+                            | currency : "INR" : "symbol" : "1.2-2")
+                            : 0
+                            }}
+                        </span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="col-6 ps-0" *ngIf="netProfitLoss[0].creditAmount > 0"></div>
+
+        <!-- Net Loss -->
+        <div class="col-6 pe-0" *ngIf="netProfitLoss[0].debitAmount > 0"></div>
+        <div class="col-6 ps-0" *ngIf="netProfitLoss[0].debitAmount > 0">
+            <ul *ngIf="netProfitLoss?.length > 0" class="ms-1 w-100" style="border-bottom: 1px solid #bdbdbd">
+                <li class="list-item" style="padding-left: 10px">
+                    <div>
+                        <span class="me-2"></span>
+                        <span class="bold-text" [ngClass]="{
+                'text-success': netProfitLoss[0].creditAmount > 0,
+                'text-danger': netProfitLoss[0].debitAmount > 0
+              }">
+                            {{ netProfitLoss[0].title }}
+                        </span>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <span *ngIf="netProfitLoss[0].debitAmount > 0" class="me-2 currency-col text-danger">
+                            {{
+                            netProfitLoss[0].debitAmount > 0
+                            ? (netProfitLoss[0].debitAmount
+                            | currency : "INR" : "symbol" : "1.2-2")
+                            : 0
+                            }}
+                        </span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Total Rows -->
+        <div class="col-6 pe-0">
+            <ul class="ms-1 w-100" style="border-bottom: 1px solid #bdbdbd">
+                <li class="list-item" style="padding-left: 10px">
+                    <div>
+                        <span class="me-2"></span>
+                        <span class="bold-text">Total</span>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <span class="me-2 currency-col">
+                            <strong>{{
+                                getTotalDebit(reportDebitSideExpenseData) +
+                                netProfitLoss[0].creditAmount
+                                | currency : "INR" : "symbol" : "1.2-2"
+                                }}</strong>
+                        </span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-6 ps-0">
+            <ul class="ms-1 w-100" style="border-bottom: 1px solid #bdbdbd">
+                <li class="list-item" style="padding-left: 10px">
+                    <div>
+                        <span class="me-2"></span>
+                        <span class="bold-text">Total</span>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <span class="me-2 currency-col">
+                            <strong>
+                                {{
+                                getTotalCredit(reportCreditSideIncomeData) +
+                                netProfitLoss[0].debitAmount
+                                | currency : "INR" : "symbol" : "1.2-2"
+                                }}</strong>
+                        </span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <ng-template #treeNode let-data>
+        <li style="font-size: 13px" class="list-item" [ngClass]="{ '': data.depth === 0 }" *ngIf="
+        !hideZeroBalance ||
+        (hideZeroBalance &&
+          (data.closingCreditBalance > 0 || data.closingDebitBalance > 0))
+      ">
+            <div [ngStyle]="{ 'padding-left.px': data.depth * 20 + 10 }">
+                <span class="me-2"></span>
+                <span [ngClass]="{ 'bold-text': data?.children?.length > 0 }">
+                    <span *ngIf="data.particularName == 'LEDGER'" class="transaction"
+                        [routerLink]="'/app/report/LEDGER/' + data.particularId">{{ data.title }}</span>
+                    <span *ngIf="data.particularName == 'PARTY'" class="transaction"
+                        [routerLink]="'/app/report/PARTY/' + data.particularId">{{ data.title }}</span>
+                    <span *ngIf="data.particularName == 'PAYMENT_TYPE'" class="transaction"
+                        [routerLink]="'/app/report/BANK/' + data.particularId">{{ data.title }}</span>
+                    <span *ngIf="data.particularName == 'SALE'" class="transaction" [routerLink]="'/app/report/sale'">{{
+                        data.title }}</span>
+                    <span *ngIf="data.particularName == 'PURCHASE'" class="transaction"
+                        [routerLink]="'/app/report/purchase'">{{
+                        data.title }}</span>
+                    <span *ngIf="data.particularName == 'DEBIT_NOTE'" class="transaction"
+                        [routerLink]="'/app/purchase/return'">{{
+                        data.title }}</span>
+                    <span *ngIf="data.particularName == 'CREDIT_NOTE'" class="transaction"
+                        [routerLink]="'/app/sale/return'">{{
+                        data.title }}</span>
+                    <span *ngIf="data.particularName == 'STOCK_SUMMARY'" class="transaction"
+                        [routerLink]="'/app/report/stock-summary'">{{ data.title }}</span>
+                    <span *ngIf="data.particularName == 'CASH'" class="transaction"
+                        [routerLink]="'/app/report/cash-book/'">{{
+                        data.title }}</span>
+
+                    <span *ngIf="
+              data.particularName != 'LEDGER' &&
+              data.particularName != 'PARTY' &&
+              data.particularName != 'PAYMENT_TYPE' &&
+              data.particularName != 'SALE' &&
+              data.particularName != 'PURCHASE' &&
+              data.particularName != 'CREDIT_NOTE' &&
+              data.particularName != 'CASH' &&
+              data.particularName != 'DEBIT_NOTE' &&
+              data.particularName != 'STOCK_SUMMARY'
+            ">{{ data.title }}</span>
+                </span>
+            </div>
+            <div class="d-flex justify-content-end" [ngStyle]="{ 'padding-right.px': data.depth * 20 }">
+                <span [ngClass]="{ 'fw-normal': data.depth > 0 }" *ngIf="
+            (data.debitAmount == null && data.creditAmount == null) ||
+            (data.debitAmount == 0 && data.creditAmount == 0)
+          " class="me-2 currency-col">
+                </span>
+                <span [ngClass]="{ 'fw-normal': data.depth > 0 }" *ngIf="data.debitAmount > 0"
+                    class="me-2 currency-col text-danger">
+                    {{
+                    data.debitAmount > 0
+                    ? (data.debitAmount | currency : "INR" : "symbol" : "1.2-2")
+                    : ""
+                    }}
+                </span>
+                <span [ngClass]="{ 'fw-normal': data.depth > 0 }" *ngIf="data.creditAmount > 0"
+                    class="me-2 currency-col text-success">
+                    {{
+                    data.creditAmount > 0
+                    ? (data.creditAmount | currency : "INR" : "symbol" : "1.2-2")
+                    : ""
+                    }}
+                </span>
+            </div>
+        </li>
+        <ng-container *ngIf="data?.children?.length > 0">
+            <ul class="d-flex flex-column">
+                <ng-container *ngFor="let child of data.children" [ngTemplateOutlet]="treeNode"
+                    [ngTemplateOutletContext]="{ $implicit: child }">
+                </ng-container>
+            </ul>
+        </ng-container>
+    </ng-template>
+</div>

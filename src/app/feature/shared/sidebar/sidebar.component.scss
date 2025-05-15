@@ -1,0 +1,48 @@
+.sidebar-inner {
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
+}
+
+.logo {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.company-no-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #7539FF;
+    font-size: 16px;
+    color: white;
+    font-weight: 500;
+
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+
+    i {
+        font-size: 16px;
+    }
+}

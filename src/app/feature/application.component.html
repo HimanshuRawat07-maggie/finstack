@@ -1,0 +1,12 @@
+<div class="main-wrapper" [ngClass]="{'mini-sidebar': isMiniSidebar === true && authenticated === true}">
+    <app-header></app-header>
+    <!-- <app-sidebar></app-sidebar> -->
+    <app-sidebar-v2></app-sidebar-v2>
+    <app-loader *ngIf="isProcessing"></app-loader>
+
+    <div class="page-wrapper">
+        <div class="content container-fluid">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,700 @@
+<div class="card">
+    <div class="row p-3 pb-0">
+        <div class="col-4 title d-flex align-items-center">
+            <span>{{pageTitle}}</span>
+        </div>
+        <div class="col-8 d-flex align-items-center justify-content-end">
+            <button *ngIf="uiPlaceholders.isDispatchExportDetailsVisible" type="button"
+                class="btn btn-outline-primary me-3" (click)="updateDispatchExportDetails(constants.Dispatch)">
+                Dispatch Details
+            </button>
+            <button *ngIf="uiPlaceholders.isDispatchExportDetailsVisible" type="button" class="btn btn-outline-primary"
+                (click)="updateDispatchExportDetails(constants.Export)">
+                Export Details
+            </button>
+        </div>
+    </div>
+    <hr>
+    <div class="px-3">
+        <div class="row">
+            <div class="col-4 mt-3">
+                <div id="customer-name" class="form-group" *ngIf="uiPlaceholders.isCustomerNameVisible">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Customer Name</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="order.customerName">
+                </div>
+
+                <div id="party-dropdown" class="form-group position-relative"
+                    *ngIf="uiPlaceholders.isPartyDropdownVisible" (clickOutside)="isPartyDropdownOpen=false">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">{{uiPlaceholders.party}}</span>
+                    </label>
+                    <input type="text" class="form-control pointer party-input" [(ngModel)]="order.partyName"
+                        (keyup)="filterParty()" (focus)="isPartyDropdownOpen=true">
+                    <span *ngIf="order?.partyName?.length>0" class="clear-party-dropdown-icon" (click)="clearParty()">
+                        <i class="fa fa-times"></i>
+                    </span>
+                    <span class="party-dropdown-icon" (click)="isPartyDropdownOpen=true">
+                        <i class="fa fa-chevron-down"></i>
+                    </span>
+                    <div class="party-dropdown" *ngIf="isPartyDropdownOpen">
+                        <ul>
+                            <li class="p-2 pointer d-flex justify-content-between align-items-center">
+                                <span><strong>Name</strong></span>
+                                <span><strong>Balance</strong></span>
+                            </li>
+                            <li class="p-2 pointer d-flex justify-content-between align-items-center"
+                                [ngClass]="{'selected':order.partyName===party.name}"
+                                *ngFor="let party of filteredParties" (click)="selectParty(party)">
+                                <span>{{party.name}}</span>
+                                <span [ngClass]="{'text-success':party.amount!>=0,'text-danger':party.amount!<0}">
+                                    {{getNetAmount(party.amount) | currency:'INR':'symbol':'1.2-2'}}
+                                    <i class="fa fa-arrow-trend-down"></i>
+                                </span>
+                            </li>
+                            <li *ngIf="filteredParties.length===0 && order.partyName.length>0"
+                                class="p-2 pointer d-flex justify-content-between align-items-center"
+                                (click)="addNewParty()">
+                                <span class="text-primary" style="font-weight: 600;">
+                                    Add New Party
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="form-group mt-3">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Billing Address Line 1</span>
+                    </label>
+                    <textarea class="form-control" maxlength="100" rows="1"
+                        [(ngModel)]="order.billingAddress"></textarea>
+                </div>
+
+                <div class="form-group mt-3">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Billing Address Line 2</span>
+                    </label>
+                    <textarea class="form-control" maxlength="50" rows="1"
+                        [(ngModel)]="order.billingAddress2"></textarea>
+                </div>
+
+
+                <div class="form-group mt-3">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Billing Pincode</span>
+                    </label>
+                    <input type="number" class="form-control" [(ngModel)]="order.billingPincode" #pincode="ngModel"
+                        name="pincode">
+                </div>
+
+                <div class="form-group mt-3">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">State of Supply</span>
+                    </label>
+                    <select class="form-select w-100" [(ngModel)]="order.billingStateId">
+                        <option *ngFor="let state of states" [value]="state.id">{{state.name}}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-4 mt-3">
+                <div class="form-group">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Phone Number</span>
+                    </label>
+                    <input type="email" class="form-control" [(ngModel)]="order.phone" #phone="ngModel" name="phone">
+                </div>
+
+                <div class="form-group mt-3">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Shipping Party Name & Address Line 1</span>
+                    </label>
+                    <textarea class="form-control" maxlength="100" rows="1"
+                        [(ngModel)]="order.shippingAddress"></textarea>
+                </div>
+
+                <div class="form-group mt-3">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Shipping Address Line 2</span>
+                    </label>
+                    <textarea class="form-control" maxlength="50" rows="1"
+                        [(ngModel)]="order.shippingAddress2"></textarea>
+                </div>
+
+                <div class="form-group mt-3">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Shipping Pincode</span>
+                    </label>
+                    <input type="number" class="form-control" [(ngModel)]="order.shippingPincode" #pincode="ngModel"
+                        name="pincode">
+                </div>
+            </div>
+
+            <div class="col-4 mt-3">
+                <div class="input-group">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important;z-index: 10;">
+                        <span class="h6 small bg-white text-muted px-1">{{uiPlaceholders.orderNumber}}</span>
+                    </label>
+                    <span *ngIf="prefix?.length>0" class="input-group-text"
+                        style="font-size: 13px;font-weight: bold;">{{prefix}}</span>
+                    <input type="text" class="form-control" [(ngModel)]="order.orderNumber">
+                    <span *ngIf="suffix?.length>0" class="input-group-text"
+                        style="font-size: 13px;font-weight: bold;">{{suffix}}</span>
+                </div>
+
+                <div class="form-group mt-3 pt-1 position-relative">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">{{uiPlaceholders.orderDate}}</span>
+                    </label>
+                    <span class="date-preview"
+                        onclick="document.getElementById('sale-sale-purchase-temp-orderdate').showPicker()">
+                        {{order.orderDate| date:'dd-MM-yyyy'}}
+                    </span>
+                    <input id="sale-purchase-temp-orderdate" type="date" class="form-control" [min]="minDate"
+                        [(ngModel)]="order.orderDate">
+                </div>
+
+                <div class="form-group mt-3 pt-1" *ngIf="pendingOrders?.length>0">
+                    <label class="ms-2 position-absolute mb-0" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">{{pendingLabel}}</span>
+                    </label>
+                    <select class="form-select w-100" [(ngModel)]="order.referenceId"
+                        (change)="updatePendingOrderInfo()">
+                        <option *ngFor="let pendingOrder of pendingOrders" [value]="pendingOrder.id">
+                            {{pendingOrder.orderPrefix}}{{pendingOrder.orderNumber}}{{pendingOrder.orderSuffix}}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group mt-3" *ngIf="uiPlaceholders.isSupplierInvoiceNumberVisible">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">{{uiPlaceholders.supplierInvoiceNumber}}</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="order.suppliersInvoiceNumber"
+                        [readonly]="order.referenceId && order.referenceId > 0">
+                </div>
+
+                <div class="form-group mt-3 position-relative" *ngIf="uiPlaceholders.isSupplierDateVisible">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">{{uiPlaceholders.supplierDate}}</span>
+                    </label>
+                    <span class="date-preview"
+                        onclick="document.getElementById('sale-purchase-suppliers-invoice-date').showPicker()">
+                        {{order.suppliersInvoiceDate| date:'dd-MM-yyyy'}}
+                    </span>
+                    <input id="sale-purchase-suppliers-invoice-date" type="date" class="form-control" [min]="minDate"
+                        [(ngModel)]="order.suppliersInvoiceDate"
+                        [readonly]="order.referenceId && order.referenceId > 0">
+                </div>
+
+                <div class="form-group mt-3 position-relative" *ngIf="uiPlaceholders.isDueDateVisible">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Due Date</span>
+                    </label>
+                    <span class="date-preview" onclick="document.getElementById('sale-purchase-due-date').showPicker()">
+                        {{order.dueDate | date:'dd-MM-yyyy'}}
+                    </span>
+                    <input id="sale-purchase-due-date" type="date" [min]="minDate" class="form-control"
+                        [(ngModel)]="order.dueDate">
+                </div>
+
+                <div class="form-group mt-3">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Shipping State</span>
+                    </label>
+                    <select class="form-select w-100" [(ngModel)]="order.shippingStateId">
+                        <option *ngFor="let state of states" [value]="state.id">{{state.name}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="mt-4">
+
+    <div class="px-3">
+        <div class="d-flex justify-content-between">
+            <div class="title">Items</div>
+            <button type="button" class="btn btn-outline-primary btn-sm" (click)="addRow()">ADD ROW</button>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <table id="items-tbl" class="table table-striped table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th rowspan="2" width="70">#</th>
+                            <th rowspan="2" class="text-start ps-3" width="{{itemColWidth}}">ITEM</th>
+                            <th rowspan="2" width="100">DESCRIPTION</th>
+                            <th rowspan="2" width="100">HSN CODE</th>
+                            <th *ngIf="isBatchEnabled && !uiPlaceholders.isServiceInvoice" rowspan="2" width="100">
+                                BATCH NAME
+                            </th>
+                            <th *ngIf="isBatchEnabled && !uiPlaceholders.isServiceInvoice" rowspan="2" width="100">
+                                MFG DATE
+                            </th>
+                            <th *ngIf="isBatchEnabled && !uiPlaceholders.isServiceInvoice" rowspan="2" width="100">
+                                EXP DATE
+                            </th>
+                            <th *ngIf="isWarehouseEnabled && !uiPlaceholders.isServiceInvoice" rowspan="2" width="100">
+                                WARE HOUSE
+                            </th>
+                            <th rowspan="2" width="60">QTY</th>
+                            <th rowspan="2" width="90">UNIT</th>
+                            <th width="120">PRICE/UNIT</th>
+                            <th *ngIf="isDiscountEnabled" colspan="2">DISCOUNT</th>
+                            <th colspan="2">TAX</th>
+                            <th rowspan="2">AMOUNT</th>
+                        </tr>
+                        <tr>
+                            <th width="120">
+                                <select class="table-select" [(ngModel)]="selectedItemPriceType"
+                                    (change)="updateItemPrices()">
+                                    <option value="WITHOUT_TAX">Without Tax</option>
+                                    <option value="WITH_TAX">With Tax</option>
+                                </select>
+                            </th>
+                            <th *ngIf="isDiscountEnabled" width="60">%</th>
+                            <th *ngIf="isDiscountEnabled">AMOUNT
+                            </th>
+                            <th width="110">%</th>
+                            <th>AMOUNT</th>
+                        </tr>
+                    </thead>
+                    <tbody (clickOutside)="editingIdx=-1;isItemDropdownOpen=false">
+                        <tr *ngFor="let orderItem of order.items;let idx=index" style="max-height: 150px;">
+                            <td class="cell-right-border">
+                                <div class="row">
+                                    <span class="col-4 offset-4 ps-0 pe-1">{{idx + 1}}</span>
+                                    <span class="col-4 text-danger p-0 text-start">
+                                        <i *ngIf="order.items.length>1" class="fa fa-trash pointer"
+                                            (click)="removeRow(idx)"></i>
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="cell-right-border text-start position-relative" (click)="editingIdx=idx">
+                                <span *ngIf="editingIdx!=idx"
+                                    (click)="editingIdx=idx;$event.stopPropagation();">{{orderItem.name}}</span>
+                                <div class="d-flex align-items-center me-2">
+                                    <input *ngIf="editingIdx===idx" type="text" autofocus id="{{'itemname-'+idx}}"
+                                        class="form-control form-control-sm pointer party-input"
+                                        [(ngModel)]="orderItem.name" (keyup)="filterItems(idx,$event)"
+                                        (focus)="isItemDropdownOpen=true;filterItems(idx)">
+                                </div>
+                                <span *ngIf="editingIdx===idx && orderItem?.name?.length>0"
+                                    class="clear-party-dropdown-icon" (click)="clearItem(idx)">
+                                    <i class="fa fa-times"></i>
+                                </span>
+                                <span *ngIf="editingIdx===idx" class="party-dropdown-icon"
+                                    (click)="isItemDropdownOpen=true">
+                                    <i class="fa fa-chevron-down"></i>
+                                </span>
+                                <div class="party-dropdown width-extra" *ngIf="isItemDropdownOpen && editingIdx===idx">
+                                    <ul>
+                                        <li class="py-2 pointer row m-0">
+                                            <span class="col-5"><strong>Item/Expense Name</strong></span>
+                                            <span class="col-2 text-end"><strong>Sale
+                                                    Price</strong></span>
+                                            <span *ngIf="!uiPlaceholders.isServiceInvoice"
+                                                class="col-3 text-end"><strong>Purchase Price</strong></span>
+                                            <span *ngIf="!uiPlaceholders.isServiceInvoice"
+                                                class="col-2 text-end"><strong>Stock</strong></span>
+                                        </li>
+                                        <li class="row m-0 no-hover mt-2">
+                                            <span class="col-12">ITEMS</span>
+                                        </li>
+                                        <li class="py-1 pointer row m-0" *ngFor="let item of filteredItems"
+                                            (click)="selectItem(item,idx)"
+                                            [ngClass]="{'selected':item.name.toLowerCase()===orderItem.name.toLowerCase()}">
+
+                                            <span class="col-5">{{item.name}}</span>
+                                            <span class="col-2 text-end">
+                                                {{item.sellingPrice}}
+                                            </span>
+                                            <span *ngIf="!uiPlaceholders.isServiceInvoice" class="col-3 text-end">
+                                                {{item.purchasePrice}}
+                                            </span>
+                                            <span *ngIf="!uiPlaceholders.isServiceInvoice" class="col-2 text-end"
+                                                [ngClass]="{'text-success':item.quantity!>0, 
+                                                'text-danger':item.quantity!<=0}">
+                                                {{item.quantity}}
+                                            </span>
+                                        </li>
+                                        <li *ngIf="filteredItems.length===0 && orderItem?.name?.length>0"
+                                            class="p-2 pointer d-flex justify-content-between align-items-center"
+                                            (click)="addNewItem(idx)">
+                                            <span class="text-primary" style="font-weight: 600;">
+                                                Add New Item
+                                            </span>
+                                        </li>
+
+                                        <li class="row m-0 no-hover mt-2">
+                                            <span class="col-12">EXPENSES</span>
+                                        </li>
+                                        <li class="py-1 pointer row m-0" *ngFor="let exp of filteredExpenseLedgers"
+                                            (click)="selectExpense(exp,idx)"
+                                            [ngClass]="{'selected':exp.name.toLowerCase()===orderItem.name.toLowerCase()}">
+
+                                            <span class="col-12">{{exp.name}}</span>
+                                        </li>
+                                        <li *ngIf="filteredExpenseLedgers.length===0 && orderItem?.name?.length>0"
+                                            class="p-2 pointer d-flex justify-content-between align-items-center no-hover">
+                                            <span class="text-primary" style="font-weight: 600;">
+                                                No Expense Item found
+                                            </span>
+                                        </li>
+                                        <li class="row m-0 no-hover mt-2">
+                                            <span class="col-12">OTHER</span>
+                                        </li>
+                                        <li class="py-1 pointer row m-0" *ngFor="let exp of filteredLedgers"
+                                            (click)="selectLedger(exp,idx)"
+                                            [ngClass]="{'selected':exp.name.toLowerCase()===orderItem.name.toLowerCase()}">
+
+                                            <span class="col-12">{{exp.name}}</span>
+                                        </li>
+                                        <li *ngIf="filteredExpenseLedgers.length===0 && orderItem?.name?.length>0"
+                                            class="p-2 pointer d-flex justify-content-between align-items-center no-hover">
+                                            <span class="text-primary" style="font-weight: 600;">
+                                                No Ledger found
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                            <td class="cell-right-border" (click)="editingIdx=idx" style="width: 230px;"
+                                [title]="orderItem.description">
+                                <span *ngIf="editingIdx!=idx" (click)="editingIdx=idx;$event.stopPropagation();">
+                                    {{truncateString(orderItem.description)}}
+                                </span>
+                                <input type="text" *ngIf="editingIdx===idx&& orderItem.type==constants.Item"
+                                    [(ngModel)]="orderItem.description" class="form-control form-control-sm" />
+                            </td>
+                            <td class="cell-right-border" (click)="editingIdx=idx">
+                                <span *ngIf="editingIdx!=idx" (click)="editingIdx=idx;$event.stopPropagation();">
+                                    {{orderItem.hsnCode}}
+                                </span>
+                                <input *ngIf="editingIdx===idx" type="number" [(ngModel)]="orderItem.hsnCode"
+                                    class="form-control form-control-sm" />
+                            </td>
+                            <td *ngIf="isBatchEnabled && !uiPlaceholders.isServiceInvoice" class="cell-right-border"
+                                (click)="editingIdx=idx">
+                                <span
+                                    *ngIf="formType!=constants.Purchase&& formType!=constants.PurchaseOrder&& formType!=constants.PurchaseReturn">
+                                    {{orderItem.batchName === 'DEFAULT' ? '' : orderItem.batchName}} </span>
+                                <span
+                                    *ngIf="formType==constants.Purchase||formType==constants.PurchaseOrder||formType==constants.PurchaseReturn">
+                                    <input class="form-control form-control-sm" type="text"
+                                        [(ngModel)]="orderItem.batchName" name="batch" #batch="ngModel">
+                                </span>
+                            </td>
+                            <td *ngIf=" isBatchEnabled && !uiPlaceholders.isServiceInvoice" class="cell-right-border"
+                                (click)="editingIdx=idx">
+                                <span> {{orderItem.mfgDate}} </span>
+                            </td>
+                            <td *ngIf="isBatchEnabled && !uiPlaceholders.isServiceInvoice" class="cell-right-border"
+                                (click)="editingIdx=idx">
+                                <span>{{orderItem.expDate}}</span>
+                            </td>
+                            <td *ngIf="isWarehouseEnabled && !uiPlaceholders.isServiceInvoice" class="cell-right-border"
+                                (click)="editingIdx=idx">
+                                <span
+                                    *ngIf="formType!=constants.Purchase&& formType!=constants.PurchaseOrder&&formType!=constants.PurchaseReturn">
+                                    {{orderItem.warehouseName === 'DEFAULT' ? '' : orderItem.warehouseName}}</span>
+                                <span
+                                    *ngIf="formType==constants.Purchase||formType==constants.PurchaseOrder||formType==constants.PurchaseReturn">
+                                    <select class="form-select form-select-sm" name="warehouse"
+                                        [(ngModel)]="orderItem.warehouseName">
+                                        <option *ngFor="let warehouse of warehouses" [value]="warehouse.name">
+                                            {{warehouse.name}}
+                                        </option>
+                                    </select>
+                                </span>
+                            </td>
+                            <td class="cell-right-border" (click)="editingIdx=idx">
+                                <span
+                                    *ngIf="editingIdx!=idx && ((orderItem.type === constants.Item || orderItem.type==constants.OtherLedger))"
+                                    (click)="editingIdx=idx;$event.stopPropagation();">
+                                    {{orderItem.qty>0 ? orderItem.qty : ''}}
+                                </span>
+                                <input
+                                    *ngIf="editingIdx===idx && (orderItem.type === constants.Item || orderItem.type==constants.OtherLedger)"
+                                    type="number" [(ngModel)]="orderItem.qty" class="form-control form-control-sm"
+                                    (keyup)="calcItemPrice(idx)" />
+                            </td>
+                            <td class="cell-right-border" (click)="editingIdx=idx">
+                                <span
+                                    *ngIf="editingIdx!=idx && ((orderItem.type === constants.Item || orderItem.type==constants.OtherLedger))"
+                                    (click)="editingIdx=idx;$event.stopPropagation();">{{orderItem.unit}}</span>
+                                <select
+                                    *ngIf="editingIdx===idx && ((orderItem.type === constants.Item || orderItem.type==constants.OtherLedger))"
+                                    class="form-select form-select-sm" [(ngModel)]="orderItem.unit">
+                                    <option *ngFor="let unit of units" [value]="unit.shortName">
+                                        {{unit.shortName}} - {{unit.fullName}}
+                                    </option>
+                                </select>
+                            </td>
+                            <td class="cell-right-border" (click)="editingIdx=idx">
+                                <span (click)="editingIdx=idx;$event.stopPropagation();"
+                                    *ngIf="editingIdx!=idx && ((orderItem.type === constants.Item || orderItem.type==constants.OtherLedger))">{{orderItem.price}}</span>
+                                <input
+                                    *ngIf="editingIdx===idx && ((orderItem.type === constants.Item || orderItem.type==constants.OtherLedger))"
+                                    type="number" [(ngModel)]="orderItem.price" class="form-control form-control-sm"
+                                    (keyup)="calcItemPrice(idx)" />
+                            </td>
+                            <td *ngIf="isDiscountEnabled" class="cell-right-border" (click)="editingIdx=idx">
+                                <span *ngIf="editingIdx!=idx"
+                                    (click)="editingIdx=idx;$event.stopPropagation();">{{truncateToTwoDecimalPlaces(orderItem.discountInPercent)}}</span>
+                                <input *ngIf="editingIdx===idx" type="number" [(ngModel)]="orderItem.discountInPercent"
+                                    class="form-control form-control-sm" (keyup)="calcItemPrice(idx)" max="100"
+                                    min="0" />
+                            </td>
+                            <td *ngIf="isDiscountEnabled" class="cell-right-border" (click)="editingIdx=idx">
+                                <span *ngIf="editingIdx!=idx"
+                                    (click)="editingIdx=idx;$event.stopPropagation();">{{orderItem.discountInRupees}}</span>
+                                <input *ngIf="editingIdx===idx" type="number" [(ngModel)]="orderItem.discountInRupees"
+                                    class="form-control form-control-sm" (keyup)="calcDiscountPercent(idx)" />
+                            </td>
+                            <td class="cell-right-border" (click)="editingIdx=idx">
+                                <span *ngIf="editingIdx!=idx"
+                                    (click)="editingIdx=idx;$event.stopPropagation();">{{orderItem.taxName}}</span>
+                                <select *ngIf="editingIdx===idx" class="form-select form-select-sm"
+                                    [(ngModel)]="orderItem.taxId" (change)="selectTaxSlab(idx, false)">
+                                    <option *ngFor="let slab of taxSlabs" [value]="slab.id">{{slab.name}}</option>
+                                </select>
+                            </td>
+                            <td class="cell-right-border">
+                                {{orderItem.taxAmount ? orderItem.taxAmount : ''}}
+                            </td>
+                            <td (click)="editingIdx=idx">
+                                <span *ngIf="editingIdx!=idx"
+                                    (click)="editingIdx=idx;$event.stopPropagation();">{{orderItem.totalAmount ?
+                                    orderItem.totalAmount : ''}}</span>
+                                <input *ngIf="editingIdx===idx" type="number" [(ngModel)]="orderItem.totalAmount"
+                                    class="form-control form-control-sm" (keyup)="calcPricePerUnit(idx)" />
+                            </td>
+                        </tr>
+                        <tr class="table-light table-group-divider">
+                            <td class="text-end pe-3 cell-right-border" colspan="2">
+                                <button type="button" class="btn btn-primary btn-sm float-start" (click)="addRow()">
+                                    ADD ROW
+                                </button>
+                                <strong>TOTAL</strong>
+                            </td>
+                            <td class="cell-right-border"></td>
+                            <td class="cell-right-border"></td>
+                            <td *ngIf="isBatchEnabled && !uiPlaceholders.isServiceInvoice" class="cell-right-border">
+                            </td>
+                            <td *ngIf="isBatchEnabled && !uiPlaceholders.isServiceInvoice"
+                                class="text-end pe-3 cell-right-border"></td>
+                            <td *ngIf="isBatchEnabled && !uiPlaceholders.isServiceInvoice"
+                                class="text-end pe-3 cell-right-border"></td>
+                            <td *ngIf="isWarehouseEnabled && !uiPlaceholders.isServiceInvoice"
+                                class="text-end pe-3 cell-right-border"></td>
+                            <td class="cell-right-border">{{getTotalQty()}}</td>
+                            <td class="text-end pe-3 cell-right-border" colspan="2"></td>
+                            <td *ngIf="isDiscountEnabled" class="text-end pe-3 cell-right-border" colspan="2">
+                                {{getTotalDiscount() | currency:'INR':'symbol':'1.2-2'}}
+                            </td>
+                            <td class="text-end pe-3 cell-right-border" colspan="2">
+                                {{getTotalTax() | currency:'INR':'symbol':'1.2-2'}}
+                            </td>
+                            <td class="text-end pe-3">
+                                {{getTotalAmount() | currency:'INR':'symbol':'1.2-2'}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="d-flex">
+            <span *ngIf="order.amountInWords">
+                <strong>Amount in Words :</strong> {{order.amountInWords}}
+            </span>
+            <span class="ms-4 d-flex flex-column">
+                <span *ngIf="order.cgst"><strong>CGST :</strong> {{order.cgst | currency:'INR':'symbol':'1.2-3'}}</span>
+                <span *ngIf="order.sgst"><strong>SGST :</strong> {{order.sgst | currency:'INR':'symbol':'1.2-3'}}</span>
+                <span *ngIf="order.igst"><strong>IGST :</strong> {{order.igst | currency:'INR':'symbol':'1.2-3'}}</span>
+            </span>
+        </div>
+    </div>
+
+    <hr class="mt-4">
+
+    <div class="px-3">
+        <div class="row">
+            <div class="mt-2" [ngClass]="{'col-3':cashOrBank===constants.Cash || cashOrBank==='',
+                'col-2':cashOrBank===constants.Bank}">
+                <div class="form-group"
+                    *ngIf="(!uiPlaceholders.isCustomerNameVisible||formType==constants.Pos) && uiPlaceholders.isAdvanceVisible">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Payment Type</span>
+                    </label>
+                    <select id="type" class="form-select w-100" [(ngModel)]="cashOrBank" (change)="onCashOrBank()">
+                        <option value="">Select</option>
+                        <option [value]="constants.Cash">Cash</option>
+                        <option [value]="constants.Bank">Bank</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-2 mt-2" *ngIf="cashOrBank===constants.Bank">
+                <div class="form-group"
+                    *ngIf="(!uiPlaceholders.isCustomerNameVisible||formType==constants.Pos) && uiPlaceholders.isAdvanceVisible">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Mode of Payment</span>
+                    </label>
+                    <select class="form-select w-100" [(ngModel)]="order.paymentMode">
+                        <option [value]="constants.Cheque">Cheque</option>
+                        <option [value]="constants.DebitCard">Debit Card</option>
+                        <option [value]="constants.CreditCard">Credit Card</option>
+                        <option [value]="constants.UPI">UPI</option>
+                        <option [value]="constants.NetBanking">Net Banking</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-2" [ngClass]="{'col-3':cashOrBank===constants.Cash || cashOrBank==='',
+                'col-2':cashOrBank===constants.Bank}">
+                <div class="form-group" *ngIf="order.paymentMode && order.paymentMode!=constants.Cash">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Bank</span>
+                    </label>
+                    <select id="bank" class="form-select w-100" [(ngModel)]="order.paymentTypeId">
+                        <option *ngFor="let paymentType of paymentTypes" [value]="paymentType.id">
+                            {{paymentType.accountDisplayName}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-2 mt-2 d-flex justify-content-end align-items-center">
+                <div class="form-check form-check-reverse">
+                    <input class="form-check-input pointer" type="checkbox" value="true" id="round-off"
+                        [(ngModel)]="order.hasRoundOff" (change)="roundOffTotalAmount()"
+                        [disabled]="order.transactions?.length>0">
+                    <label class="form-check-label pointer" for="round-off">
+                        Round Off
+                    </label>
+                </div>
+                <div class="form-group ms-2" style="width: 25%;">
+                    <input type="text" class="form-control" readonly [(ngModel)]="order.roundOff"
+                        [disabled]="order.transactions?.length>0">
+                </div>
+            </div>
+            <div class="col-4 mt-2">
+                <div class="form-group">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Total</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="order.totalAmountWithRoundOff" readonly
+                        [disabled]="order.transactions?.length>0">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-3">
+                <div class="form-group position-relative"
+                    *ngIf="(!uiPlaceholders.isCustomerNameVisible||formType==constants.Pos) && uiPlaceholders.isAdvanceVisible">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Reference Date</span>
+                    </label>
+                    <span class="date-preview"
+                        onclick="document.getElementById('sale-purchase-payment-date').showPicker()">
+                        {{order.paymentDate| date:'dd-MM-yyyy'}}
+                    </span>
+                    <input id="sale-purchase-payment-date" type="date" class="form-control" [min]="minDate"
+                        [(ngModel)]="order.paymentDate" #phone="ngModel" name="phone">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group" *ngIf="order.paymentMode!=constants.Cash && cashOrBank!=''">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Reference Number</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="order.paymentReference" #phone="ngModel"
+                        name="phone">
+                </div>
+            </div>
+            <div class="col-2 d-flex justify-content-end align-items-center">
+                <div *ngIf="uiPlaceholders.isAdvanceVisible" class="form-check form-check-reverse">
+                    <input class="form-check-input pointer" type="checkbox" value="true" id="receivedPaid"
+                        [(ngModel)]="order.hasReceivedAdvance" (change)="updateReceivedAmount()"
+                        [disabled]="order.transactions?.length>0">
+                    <label class="form-check-label pointer" for="receivedPaid">
+                        {{uiPlaceholders.receivedPaid}}
+                    </label>
+                </div>
+            </div>
+            <div class="col-4">
+                <div *ngIf="uiPlaceholders.isAdvanceVisible" class="form-group">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">{{uiPlaceholders.receivedPaid}}</span>
+                    </label>
+                    <input id="received" type="number" class="form-control" [(ngModel)]="order.advanceAmount"
+                        (keyup)="updateBalanceAmount()" [disabled]="order.transactions?.length>0">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-3">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Terms</span>
+                </label>
+                <textarea class="form-control" rows="2" [(ngModel)]="order.terms"></textarea>
+            </div>
+            <div class="col-5">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Description</span>
+                </label>
+                <textarea class="form-control" rows="2" [(ngModel)]="order.description"></textarea>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Balance Due</span>
+                    </label>
+                    <input type="number" class="form-control" [ngClass]="{'border-success':order.balanceAmount<=0,
+                        'border-danger':order.balanceAmount>0}" [(ngModel)]="order.balanceAmount" readonly
+                        [disabled]="order.transactions?.length>0">
+                    <span *ngIf="order.transactions?.length>0" class="text-primary">
+                        {{order.transactions.length}} {{order.transactions?.length===1 ? 'transaction' :
+                        'transactions'}} linked
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="px-3 my-4">
+        <div class="row">
+            <div class="col-3 position-relative" (clickOutside)="isSignDropdownOpen=false">
+                <label *ngIf="signatures.length>0" class="ms-2 position-absolute"
+                    style="margin-top: -0.60rem !important;z-index: 1;">
+                    <span class="h6 small bg-white text-muted px-1">Signature</span>
+                </label>
+                <div class="signature-preview" (click)="isSignDropdownOpen=true">
+                    <img *ngIf="selectedSignature" src="{{selectedSignature}}" />
+                    <div *ngIf="!selectedSignature" class="no-image">No Signature Selected</div>
+                    <i class="fa fa-chevron-down"></i>
+                </div>
+                <div class="sign-dropdown" *ngIf="isSignDropdownOpen">
+                    <ul>
+                        <li class="p-2 pointer" [ngClass]="{'selected':order.signatureId===sign.id}"
+                            *ngFor="let sign of signatures" (click)="setSignature(sign.id)">
+                            <img src="{{sign.signature}}" />
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-9">
+                <div class="d-flex justify-content-end pb-3">
+                    <button type="button" class="btn btn-outline-primary me-2" (click)="goBack()">Cancel</button>
+                    <button type="button" class="btn btn-primary" [disabled]="isSubmitDisabled"
+                        (click)="saveOrderDetails()">{{order.id==null?'Save':'Update'}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,173 @@
+<div class="card mb-0">
+    <div class="d-flex align-items-center pb-2 pt-4">
+        <div class="title">
+            <span class="ms-3">{{isDispatchForm ? 'Dispatch Details' : 'Export Details'}}</span>
+        </div>
+    </div>
+    <hr>
+    <!-- <div> -->
+    <div *ngIf="isDispatchForm" class="row m-0">
+        <div class="col-6">
+            <div class="form-group mt-3">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Dispatch Doc No.</span>
+                </label>
+                <input type="text" class="form-control" [(ngModel)]="data.exportAndDispatchDetails.dispatchDocNumber">
+            </div>
+
+            <div class="form-group mt-4">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Destination</span>
+                </label>
+                <input type="text" class="form-control" [(ngModel)]="data.exportAndDispatchDetails.destination">
+            </div>
+
+            <div class="form-group mt-4">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Bill of Lading/LR-RR No.</span>
+                </label>
+                <input type="text" class="form-control" [(ngModel)]="data.exportAndDispatchDetails.billOfLading">
+            </div>
+
+            <div class="form-group mt-4">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Motor Vehicle No.</span>
+                </label>
+                <input type="text" class="form-control" [(ngModel)]="data.exportAndDispatchDetails.motorVehicleNumber">
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div class="form-group mt-3">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Dispatched Through</span>
+                </label>
+                <input type="text" class="form-control" [(ngModel)]="data.exportAndDispatchDetails.dispatchedThrough">
+            </div>
+
+            <div class="form-group mt-4">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Carrier Name/Agent</span>
+                </label>
+                <input type="text" class="form-control" [(ngModel)]="data.exportAndDispatchDetails.agentCarrierName">
+            </div>
+
+            <div class="form-group mt-4 position-relative">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Date</span>
+                </label>
+                <span class="date-preview"
+                    onclick="document.getElementById('export-dispatch-details-billofloading').showPicker()">
+                    {{data.exportAndDispatchDetails.billOfLadingDate| date:'dd-MM-yyyy'}}
+                </span>
+                <input id="export-dispatch-details-billofloading" type="date" class="form-control" [min]="minDate"
+                    [(ngModel)]="data.exportAndDispatchDetails.billOfLadingDate">
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="form-group mt-4">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Delivery Note</span>
+                </label>
+                <textarea class="form-control" rows="3"
+                    [(ngModel)]="data.exportAndDispatchDetails.deliveryNote"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="!isDispatchForm" class="row m-0">
+        <div class="col-4">
+            <div class="form-group mt-3">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Place of Receipt by Shipper</span>
+                </label>
+                <input type="text" class="form-control"
+                    [(ngModel)]="data.exportAndDispatchDetails.placeOfReceiptByShipper">
+            </div>
+
+            <div class="form-group mt-3">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Vessel/Flight No.</span>
+                </label>
+                <input type="text" class="form-control" [(ngModel)]="data.exportAndDispatchDetails.vesselFlightNumber">
+            </div>
+
+            <div class="form-group mt-3">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Port of Loading</span>
+                </label>
+                <input type="text" class="form-control" [(ngModel)]="data.exportAndDispatchDetails.portOfLoading">
+            </div>
+
+            <div class="form-group mt-3">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Port of Discharge</span>
+                </label>
+                <input type="text" class="form-control" [(ngModel)]="data.exportAndDispatchDetails.portOfDischarge">
+            </div>
+
+            <div class="form-group mt-3">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Country to</span>
+                </label>
+                <input type="text" class="form-control" [(ngModel)]="data.exportAndDispatchDetails.countryNumber">
+            </div>
+        </div>
+
+        <div class="col-4">
+            <div class="form-group mt-3">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Shipping Bill No.</span>
+                </label>
+                <input type="text" class="form-control" [(ngModel)]="data.exportAndDispatchDetails.shippingBillNumber">
+            </div>
+
+            <div class="form-group mt-3">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Bill of Entry No.</span>
+                </label>
+                <input type="text" class="form-control" [(ngModel)]="data.exportAndDispatchDetails.billOfEntryNumber">
+            </div>
+
+            <div class="form-group mt-3">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Port Code</span>
+                </label>
+                <input type="text" class="form-control" [(ngModel)]="data.exportAndDispatchDetails.portCode">
+            </div>
+        </div>
+
+        <div class="col-4">
+            <div class="form-group mt-3 position-relative">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Date</span>
+                </label>
+                <span class="date-preview"
+                    onclick="document.getElementById('export-dispatch-details-shippingbilldate').showPicker()">
+                    {{data.exportAndDispatchDetails.shippingBillDate| date:'dd-MM-yyyy'}}
+                </span>
+                <input id="export-dispatch-details-shippingbilldate" type="date" class="form-control" [min]="minDate"
+                    [(ngModel)]="data.exportAndDispatchDetails.shippingBillDate">
+            </div>
+
+            <div class="form-group mt-3 position-relative">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Date</span>
+                </label>
+                <span class="date-preview"
+                    onclick="document.getElementById('export-dispatch-details-billofentrydate').showPicker()">
+                    {{data.exportAndDispatchDetails.billOfEntryDate| date:'dd-MM-yyyy'}}
+                </span>
+                <input id="export-dispatch-details-billofentrydate" type="date" class="form-control" [min]="minDate"
+                    [(ngModel)]="data.exportAndDispatchDetails.billOfEntryDate">
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="d-flex justify-content-end my-4 pe-4">
+        <button class="btn btn-primary px-4 me-3" (click)="submit()">Save</button>
+        <button class="btn btn-outline-primary px-4" (click)="close()">Cancel</button>
+    </div>
+    <!-- </div> -->
+</div>

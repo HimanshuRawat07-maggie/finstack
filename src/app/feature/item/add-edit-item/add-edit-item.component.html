@@ -1,0 +1,447 @@
+<div class=" card mb-0">
+    <!-- heading -->
+    <div class="d-flex align-items-center py-2">
+        <div class="title py-1">
+            <span class="ms-3">{{isEditMode ? 'Edit' : 'Add'}} Product/Service</span>
+        </div>
+        <div class="ms-3 mt-2">
+            <span [ngClass]="isServiceEnable===false?'text-primary':'text-black' "
+                style="font-size: 15px; font-weight: 500;">Product</span>
+            <label class="switch mx-2">
+                <input type="checkbox" (click)="toggleGoodAndService();" [(ngModel)]="isServiceEnable" value="true">
+                <span class="slider round"></span>
+            </label>
+            <span [ngClass]="isServiceEnable===true?'text-primary':'text-black' "
+                style="font-size: 15px; font-weight: 500;">
+                Service/ Capital goods</span>
+        </div>
+    </div>
+    <hr class="m-0">
+    <div>
+        <!-- first Section  -->
+        <div class="row px-3">
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">
+                            {{isServiceEnable ? 'Service/ Capital goods Name' : 'Product Name'}}
+                        </span>
+                    </label>
+                    <input type="text" class="form-control" name="name" [(ngModel)]="itemData.name" #name="ngModel"
+                        (blur)="itemNameAvailablity()">
+                </div>
+            </div>
+            <div class="col-3" *ngIf="!isServiceEnable">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">
+                            Alias
+                        </span>
+                    </label>
+                    <input type="text" class="form-control" name="alisa" [(ngModel)]="itemData.alias" #alias="ngModel"
+                        (blur)="itemAliasAvailablity()">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group mt-4" (clickOutside)="isHsnTableVisible=false">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">
+                            {{isServiceEnable ? 'Service/ Capital goods SAC' : 'Product HSN'}}
+                        </span>
+                    </label>
+                    <input type="text" class="form-control" name="hsn" [(ngModel)]="itemData.hsnCode" #hsn="ngModel"
+                        (keyup)="getHsnCode()">
+                    <div class="card border shadow-sm p-0 position-absolute"
+                        style="max-width: 45%; max-height: 200px; overflow-x: hidden; overflow-y: auto; z-index: 2;"
+                        *ngIf="hsnTable.length>0 && isHsnTableVisible && itemData.hsnCode!.length>2">
+                        <div class="p-2" *ngFor="let item of hsnTable;let idx=index"
+                            style="cursor: pointer;border-bottom:1px solid #eee">
+                            <div class="row" (click)="setHsnCode(item)">
+                                <div class="col-3">{{item.code}}</div>
+                                <div class="col-9">{{item.description}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">
+                            {{isServiceEnable ? 'Service/ Capital goods Code' : 'Product Code'}}
+                        </span>
+                    </label>
+                    <input type="text" class="form-control" name="itemCode" [(ngModel)]="itemData.code"
+                        #itemCode="ngModel">
+                </div>
+            </div>
+        </div>
+        <div class="row px-3">
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Description</span>
+                    </label>
+                    <textarea class="form-control" name="description" [(ngModel)]="itemData.description"
+                        #description="ngModel"></textarea>
+                </div>
+            </div>
+            <div class="col-3 d-flex" style="flex-direction: column;">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Group</span>
+                    </label>
+                    <select type="text" class="form-select w-100" name="productgroup"
+                        [(ngModel)]="itemData.productGroup" #productgroup="ngModel">
+                        <option *ngFor="let itemData of group" [value]="itemData.productGroupName">
+                            {{itemData.productGroupName}}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-3 w-100">
+                    <div class="mt-2">
+                        <span (click)="openModal()" style="color: rgb(97, 97, 249); font-weight: 500; cursor: pointer;">
+                            Add New Item Group
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class=" mt-4">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Unit</span>
+                        </label>
+                        <select type="text" class="form-select w-100" name="units" style="width: 100px;"
+                            [(ngModel)]="itemData.unit" #unit="ngModel">
+                            <option *ngFor="let itemData of units" [value]="itemData.shortName">
+                                {{itemData.shortName}}-{{itemData.fullName}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3 d-flex" style="flex-direction: column;">
+                <div class="form-group mt-4" *ngIf="!isBatchLocationTrackingEnable">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Bar Code</span>
+                    </label>
+                    <input type="text" class="form-control" [(ngModel)]="itemData.productBatch[0].barcode" name="code"
+                        #code="ngModel" (blur)="checkBarcode()">
+                </div>
+                <!-- <i *ngIf="!isBatchLocationTrackingEnable" class="fa-solid fa-barcode assign pointer"
+                    (click)="openBarCodeModal()"></i> -->
+                <!-- <div class=" mt-4">
+                    <button class="btn btn-outline-primary" (click)="assignCode()">Assign Code</button>
+                </div> -->
+                <div class="col-3 w-100 mt-2 d-flex justify-content-end">
+                    <div *ngIf="!isBatchLocationTrackingEnable">
+                        <button class="btn btn-outline-primary" (click)="assignCode()">Assign Code</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex">
+            <div class="ms-2" *ngIf="!isServiceEnable && (isBatchEnabled || isWarehouseEnabled)">
+                <mat-checkbox [(ngModel)]="isBatchLocationTrackingEnable" [disabled]="disableBatchTracking"
+                    (change)="openAddStockBatch()">
+                    {{batchTrackingMsg}}
+                </mat-checkbox>
+            </div>
+            <div class="ms-2" *ngIf="!isServiceEnable && (isManufacturingEnabled)">
+                <mat-checkbox [(ngModel)]="isManuFactureVisible" [disabled]="disableManufacturing">Enable Manufacture
+                    for this product</mat-checkbox>
+            </div>
+        </div>
+        <hr>
+        <!-- Second section  -->
+        <div class="title mt-3">
+            <span class="ms-3">
+                {{!isBatchLocationTrackingEnable ? 'Pricing' : 'Discount and Taxes'}}
+            </span>
+        </div>
+        <div class="row" *ngIf="!isBatchLocationTrackingEnable">
+            <div [ngClass]="{'col-6':!isServiceEnable,'col-12':isServiceEnable}">
+                <div class="sub-title mt-3 ms-3">
+                    <span class="ms-3">Sale Price</span>
+                </div>
+            </div>
+            <div class="col-6" *ngIf="!isServiceEnable">
+                <div class="sub-title mt-3 ms-3">
+                    <span class="ms-3">Purchase Price</span>
+                </div>
+            </div>
+            <div [ngClass]="{'col-6':!isServiceEnable,'col-12':isServiceEnable}">
+                <div class="row px-3 ms-2">
+                    <div class="col-3 d-flex me-3">
+                        <div class="form-group mt-4">
+                            <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                <span class="h6 small bg-white text-muted px-1">Sale Price</span>
+                            </label>
+                            <input type="number" class="form-control input-with-dropdown" name="sale" #sale="ngModel"
+                                [(ngModel)]="itemData.productBatch[0].sellingPrice">
+                        </div>
+                        <div class="form-group mt-4 ms-2">
+                            <select class="form-select" [(ngModel)]="itemData.productBatch[0].sellingPriceHasTax">
+                                <option value="false">Without Tax</option>
+                                <option value="true">With Tax</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6" *ngIf="!isServiceEnable">
+                <div class="row px-3 ms-2">
+                    <div class="col-3 d-flex me-3">
+                        <div class="form-group mt-4">
+                            <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                <span class="h6 small bg-white text-muted px-1">Purchase Price</span>
+                            </label>
+                            <input type="number" class="form-control input-with-dropdown" name="purchase"
+                                [(ngModel)]="itemData.productBatch[0].purchasePrice" #purchase="ngModel">
+                        </div>
+                        <div class="form-group mt-4 ms-2">
+                            <select class="form-select" [(ngModel)]="itemData.productBatch[0].purchasePriceHasTax">
+                                <option value="false">Without Tax</option>
+                                <option value="true">With Tax</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="sub-title mt-3 ms-3">
+                    <span class="ms-3">Taxes</span>
+                </div>
+            </div>
+            <div class="col-6" *ngIf="isDiscountEnabled">
+                <div class="sub-title mt-3 ms-3">
+                    <span class="ms-3">Discount</span>
+                </div>
+            </div>
+        </div>
+        <div class="row px-3 ms-2">
+            <div class="col-6 d-flex">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Tax Rate</span>
+                    </label>
+                    <select class="form-select" style="width: 260px;" name="tax" [(ngModel)]="itemData.taxId"
+                        #tax="ngModel">
+                        <option *ngFor="let taxSlab of gstTaxSlabs" [value]="taxSlab.id">{{taxSlab.name}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-6" *ngIf="isDiscountEnabled">
+                <div class="row px-3 ps-4">
+                    <div class="col-3 d-flex me-3">
+                        <div class="form-group mt-4">
+                            <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                <span class="h6 small bg-white text-muted px-1">Discount</span>
+                            </label>
+                            <input type="number" class="form-control input-with-dropdown" name="purchase"
+                                [(ngModel)]="itemData.discount" #purchase="ngModel">
+                        </div>
+                        <div class="form-group mt-4 ms-2">
+                            <select class="form-select" [ngModel]="itemData.discountInPercentage"
+                                (ngModelChange)="itemData.discountInPercentage=$event=='true'">
+                                <option value="true">Percentage</option>
+                                <option value="false">Amount</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr *ngIf="!isServiceEnable">
+        <!-- Third section  -->
+        <div class="title mt-3" *ngIf="!isServiceEnable">
+            <span class="ms-3">Stocks</span>
+        </div>
+
+        <div class="row px-3" *ngIf="!isServiceEnable">
+            <div class="col-3">
+                <div class="form-group mt-4 position-relative">
+                    <button class="border-0 px-1" (click)="openAddStockBatch()" *ngIf="isBatchLocationTrackingEnable"
+                        style=" position: absolute; right: 0; margin-top: 10px; margin-right: 10px; border-radius: 8px; background-color: #7539FF; color: white;">{{batchBtnTxt}}</button>
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">
+                            {{transactionType=='purchase'?'Current Quantity':'Opening Quantity'}}</span>
+                    </label>
+                    <input type="number" class="form-control" name="OpeningQuantity"
+                        style="padding: 10px 65px 10px 10px;" [(ngModel)]="itemData.openingQty"
+                        #OpeningQuantity="ngModel">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">At Price</span>
+                    </label>
+                    <input type="number" class="form-control" [(ngModel)]="atPrice">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group mt-4 position-relative">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">As Of Date</span>
+                    </label>
+                    <span class="date-preview" onclick="document.getElementById('item-as-of-date').showPicker()">
+                        {{asOfDate| date:'dd-MM-yyyy'}}
+                    </span>
+                    <input id="item-as-of-date" type="date" class="form-control" [(ngModel)]="asOfDate" [min]="minDate">
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group mt-4">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Stock Value</span>
+                    </label>
+                    <input type="number" class="form-control" readonly
+                        [value]="(itemData.openingQty*atPrice)==0?null:(itemData.openingQty*atPrice)">
+                </div>
+            </div>
+        </div>
+
+        <ng-container *ngIf="isManufacturingEnabled && !isServiceEnable && isManuFactureVisible">
+            <hr class="mt-4">
+
+            <div class="title mt-3">
+                <span class="ms-3">Manufacturing</span>
+            </div>
+
+            <div class="px-3 mt-3">
+                <span style="color: gray;">Raw Material</span>
+            </div>
+
+            <div class="mt-4 px-3 ">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">RAW MATERIAL</th>
+                            <th scope="col">QTY</th>
+                            <th scope="col">UNIT</th>
+                            <th scope="col"> PRICE/UNIT(₹)</th>
+                            <th scope="col">ESTIMATED COST(₹)</th>
+                            <th *ngIf="itemData.manufacture.length>1"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of itemData.manufacture; let idx=index">
+                            <td class="cell-right-border">{{idx+1}}</td>
+                            <td class="cell-right-border" style="min-width: 170px">
+                                <select class="form-select w-100" [(ngModel)]="item.name"
+                                    (click)="getManufacturedItemPurchasePrice(item.name,idx)">
+                                    <option *ngFor="let itemData of items" [value]="itemData.name">{{itemData.name}}
+                                    </option>
+                                </select>
+                            </td>
+                            <td class="cell-right-border">
+                                <input type="number" class="form-control" [(ngModel)]="item.quantity">
+                            </td>
+                            <td class="cell-right-border" style="width: 120;">
+                                <input *ngIf="item.name" type="text" class="form-control"
+                                    [value]="getManufacturedItemUnit(item.name,idx)" readonly>
+                                <input *ngIf="!item.name" type="text" class="form-control" readonly>
+                            </td>
+                            <td class="cell-right-border">
+                                <input *ngIf="!item.name" type="number" class="form-control"
+                                    [(ngModel)]="item.pricePerUnit">
+                                <input *ngIf="item.name" type="number" class="form-control"
+                                    [(ngModel)]="item.pricePerUnit">
+                            </td>
+                            <td class="cell-right-border">
+                                <input type="number" class="form-control" [value]="item.quantity*item.pricePerUnit">
+
+                            </td>
+                            <td class="cell-right-border" style="width: 60px;" *ngIf="itemData.manufacture.length>1"><i
+                                    class="fa fa-trash pointer text-danger" (click)="removeRow(idx)"></i></td>
+                        </tr>
+                        <tr class="table-light table-group-divider">
+                            <td class="text-start py-1">
+                                <button class=" btn btn-outline-primary" (click)="addMaterial()">Add Row</button>
+                            </td>
+                            <td class="text-end px-4 py-1" colspan="6">
+                                <span style="font-size: 14px; font-weight: 500;">Total
+                                    :{{getTotalEstimatedCostOfManufacturing() |
+                                    currency:'INR':'symbol':'1.2-2'}}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                <div *ngIf="additionalCost.length>0">
+                    <div class="px-3 mt-4">
+                        <span style="color: gray;">Additional Cost</span>
+                    </div>
+                    <div class="mt-4 px-3 ">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">CHARGES</th>
+                                    <th scope="col">ESTIMATED COST(₹)</th>
+                                    <th>REMOVE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of additionalCost; let i = index">
+                                    <td class="cell-right-border">{{i+1}}</td>
+                                    <td class="cell-right-border">
+                                        <select class="form-select w-100" id="inputGroupSelect01" name="type"
+                                            [(ngModel)]="row.charge">
+                                            <option *ngFor="let option of getOptions(i)" [value]="option">{{
+                                                option }}</option>
+                                        </select>
+                                    </td>
+                                    <td class="cell-right-border" style="max-width: 150px;">
+                                        <input type="number" class="form-control" [(ngModel)]="row.amount"
+                                            (change)="calculateTotal()">
+                                    </td>
+                                    <td><i class="fa-solid fa-trash text-danger pointer"
+                                            (click)="removeAdditionalCost(i)"></i></td>
+                                </tr>
+
+                                <tr class="table-light table-group-divider cell-right-border">
+                                    <td class="text-start py-1">
+                                    </td>
+                                    <td colspan="2" class="text-end py-1">
+                                        <div class="d-flex justify-content-end align-items-center">
+                                            <span class="mx-3" style="font-size: 14px; font-weight: 500;">Total
+                                                :{{getTotalAdditionalCost() | currency:'INR':'symbol':'1.2-2'}}</span>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="p-3" *ngIf="isAddAdditionCostButtonVisible">
+                    <button class="btn btn-primary" (click)="addAdditionalCost()">
+                        <span *ngIf="additionalCost.length>0">Add Row</span>
+                        <span *ngIf="additionalCost==null || additionalCost.length==0">Add Additional Cost</span>
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+
+    <div>
+        <hr class="mt-4">
+        <div class=" d-flex justify-content-end pb-3">
+            <button class="btn btn-gray-outline mx-2" (click)="close()">Cancel</button>
+            <button *ngIf="!isOpenedAsDialog && !isEditMode" class="btn btn-outline-primary mx-2"
+                (click)="onSubmit(false)">Save & New</button>
+            <button class="btn btn-primary mx-2" [disabled]="isSubmitButtonDisable"
+                (click)="isSubmitButtonDisable=true;onSubmit(true)">
+                {{isEditMode ? 'Update' : 'Save'}}
+            </button>
+        </div>
+    </div>
+</div>

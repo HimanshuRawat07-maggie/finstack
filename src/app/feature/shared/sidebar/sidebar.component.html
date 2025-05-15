@@ -1,0 +1,61 @@
+<!-- Sidebar -->
+<div class="sidebar sidebar-six" id="sidebar">
+    <div class="sidebar-header" [ngClass]="{'d-flex justify-content-center':showLetter()}">
+        <div class="sidebar-logo d-flex align-items-center">
+            <a *ngIf="currentUser?.companyLogoUrl?.length > 0">
+                <img id="company-logo" [src]="currentUser?.companyLogoUrl" class="img-fluid logo profilesidebar"
+                    style="height: 40px;" alt="Logo">
+            </a>
+            <span *ngIf="showLetter()" class="company-no-logo">{{getFirstCompanyLetter()}}</span>
+            <span *ngIf="!isMiniSidebar" class="ms-2"
+                style="font-size: 15px; font-weight: 700;">{{currentUser?.companyName}}</span>
+        </div>
+    </div>
+    <!-- <ng-scrollbar thumbClass="custom-scrollbars"> -->
+    <!-- <div class="slimScrollDiv" > -->
+    <div class="sidebar-inner slimScroll">
+        <div id="sidebar-menu sidebar-menu-six" class="sidebar-menu">
+            <ul>
+                <ng-container *ngFor="let mainTittle of side_bar_data">
+                    <ng-container *ngIf="mainTittle.hasPermission()">
+                        <li class="menu-title">
+                            <span>{{ mainTittle.tittle }}</span>
+                        </li>
+                        <ng-container *ngFor="let menu of mainTittle?.menu">
+                            <ng-container *ngIf="menu.hasPermission()">
+                                <li [class.active]="base === menu.base" *ngIf="menu?.hasSubRoute === false"
+                                    [routerLink]="menu.route" (click)="base=menu.base">
+                                    <a>
+                                        <i [class]="menu.icon" [title]="menu?.menuValue"></i>
+                                        <span>{{ menu?.menuValue }}</span>
+                                    </a>
+                                </li>
+                                <li class="submenu" *ngIf="menu.hasSubRoute === true">
+                                    <a href="javascript:void(0)" (click)="expandSubMenus(menu)"
+                                        [ngClass]="{ subdrop: menu.showSubRoute === true }"
+                                        class="d-flex align-items-center">
+                                        <i [class]="menu.icon"></i>
+                                        <span> {{ menu.menuValue }}</span>
+                                        <span class="menu-arrow"></span></a>
+                                    <ul [ngClass]="menu.showSubRoute === true ? 'show-sub-menu' : 'hide-sub-menu'">
+                                        <ng-container *ngFor="let subMenu of menu.subMenus">
+                                            <li *ngIf="subMenu.hasPermission()" (click)="base=subMenu.base">
+                                                <a [class.active]="base === subMenu.base" [routerLink]="subMenu.route">
+                                                    {{ subMenu.menuValue }}
+                                                </a>
+                                            </li>
+                                        </ng-container>
+                                    </ul>
+                                </li>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+                </ng-container>
+            </ul>
+        </div>
+    </div>
+    <!-- </div>     -->
+
+    <!-- </ng-scrollbar> -->
+</div>
+<!-- /Sidebar -->

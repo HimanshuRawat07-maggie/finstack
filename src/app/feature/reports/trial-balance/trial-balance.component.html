@@ -1,0 +1,193 @@
+<div class="card">
+    <div class="py-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="title">
+                <span class="ms-3">Trial Balance</span>
+            </div>
+            <div>
+                <i class=" text-success fa-solid fa-file-excel mx-3 download-pdf-excel" (click)="download()"></i>
+                <i class="text-danger fa-solid fa-file-pdf mx-3 download-pdf-excel" (click)="downloadPdf()"></i>
+                <!-- <mat-menu #menu="matMenu" xPosition="before">
+                    <div mat-menu-item class="menu-item" (click)="downloadAsPdf('LANDSCAPE')">
+                        <span class="text-primary me-2"><i class="fa-solid fa-image"></i></span> Landscape
+                    </div>
+                    <hr class="m-0" />
+                    <div mat-menu-item class="menu-item" (click)="downloadAsPdf('PORTRAIT')">
+                        <span class="text-danger me-2"><i class="fa-solid fa-image-portrait"></i></span> Portrait
+                    </div>
+                </mat-menu> -->
+            </div>
+        </div>
+        <hr />
+        <app-date-filter (dateChange)="onDateChange($event)"></app-date-filter>
+
+        <div class="d-flex p-3">
+            <div>
+                <input type="checkbox" id="collapse" class="pointer" [(ngModel)]="isDataExpand"
+                    (change)="collapseAndExpandData()" /><label for="collapse" class="ms-2 pointer">{{
+                    collapseAndExpandText
+                    }}</label>
+            </div>
+            <div class="ms-3">
+                <input type="checkbox" id="hide" class="pointer" [(ngModel)]="hideZeroBalance" /><label for="hide"
+                    class="ms-2 pointer">Hide Zero Balance</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card p-3">
+    <div class="row" id="divToConvert">
+        <div class="col-12">
+            <ul class="ms-1 w-100">
+                <li class="list-item p-1 list-heading">
+                    <div style="padding-left: 10px"><strong>ACCOUNTS</strong></div>
+                    <div class="d-flex justify-content-end">
+                        <span class="me-3 currency-col heading-col text-white"><strong>Opening Balance</strong></span>
+                        <!-- <span class="me-2 currency-col text-white"><strong>DEBIT</strong></span>
+                        <span class="me-2 currency-col text-white"><strong>CREDIT</strong></span> -->
+                        <span class="me-2 currency-col heading-col text-white"><strong>Closing Balance</strong></span>
+                    </div>
+                </li>
+                <li class="list-item p-1 list-heading">
+                    <div style="padding-left: 10px"></div>
+                    <div class="d-flex justify-content-end">
+                        <!-- <span class="me-2 currency-col text-white"><strong>Opening Balance</strong></span> -->
+                        <span class="me-2 currency-col text-white heading-col-title"><strong>DEBIT</strong></span>
+                        <span class="me-2 currency-col text-white heading-col-title"><strong>CREDIT</strong></span>
+
+                        <span class="me-2 currency-col text-white heading-col-title"><strong>DEBIT</strong></span>
+                        <span class="me-2 currency-col text-white heading-col-title"><strong>CREDIT</strong></span>
+                        <!-- <span class="me-2 currency-col text-white"><strong>Closing Balance</strong></span> -->
+                    </div>
+                </li>
+            </ul>
+
+            <ul class="ms-1 w-100" style="border-bottom: 1px solid #bdbdbd">
+                <ng-container *ngFor="let node of reportData" [ngTemplateOutlet]="treeNode"
+                    [ngTemplateOutletContext]="{ $implicit: node }">
+                </ng-container>
+            </ul>
+
+            <ul class="ms-1 w-100">
+                <li class="list-item p-1 list-heading">
+                    <div style="padding-left: 10px"><strong>TOTAL</strong></div>
+                    <div class="d-flex justify-content-end">
+                        <span class="me-2 currency-col text-white"></span>
+                        <span class="me-2 currency-col text-white"></span>
+                        <span class="me-2 currency-col text-white">
+                            <strong>
+                                {{ getTotalDebit() | currency : "INR" : "symbol" : "1.2-2" }}
+                            </strong>
+                        </span>
+                        <span class="me-2 currency-col text-white">
+                            <strong>
+                                {{ getTotalCredit() | currency : "INR" : "symbol" : "1.2-2" }}
+                            </strong>
+                        </span>
+                    </div>
+                </li>
+            </ul>
+
+            <ng-template #treeNode let-data>
+                <li style="font-size: 13px" class="list-item" *ngIf="
+            !hideZeroBalance ||
+            (hideZeroBalance &&
+              (data.closingCreditBalance > 0 || data.closingDebitBalance > 0))
+          " [ngClass]="{ 'light-list-bg': data.depth === 0 }" [ngStyle]="{ 'padding-left.px': data.depth * 20 + 10 }"
+                    (click)="data.isExpanded = !data.isExpanded">
+                    <div>
+                        <span class="me-2">
+                            <i *ngIf="data?.children?.length > 0" class="fa bold-text" style="font-size: 12px"
+                                [ngClass]="{
+                  'fa-minus': data.isExpanded,
+                  'fa-plus': !data.isExpanded
+                }"></i>
+                        </span>
+                        <span [ngClass]="{ 'bold-text': data?.children?.length > 0 }">
+                            <span *ngIf="data.particularName == 'LEDGER'" class="transaction"
+                                [routerLink]="'/app/report/LEDGER/' + data.particularId">{{ data.title }}</span>
+                            <span *ngIf="data.particularName == 'PARTY'" class="transaction"
+                                [routerLink]="'/app/report/PARTY/' + data.particularId">{{ data.title }}</span>
+                            <span *ngIf="data.particularName == 'PAYMENT_TYPE'" class="transaction"
+                                [routerLink]="'/app/report/BANK/' + data.particularId">{{ data.title }}</span>
+                            <span *ngIf="data.particularName == 'SALE'" class="transaction"
+                                [routerLink]="'/app/report/sale'">{{ data.title }}</span>
+                            <span *ngIf="data.particularName == 'PURCHASE'" class="transaction"
+                                [routerLink]="'/app/report/purchase'">{{ data.title }}</span>
+                            <span *ngIf="data.particularName == 'DEBIT_NOTE'" class="transaction"
+                                [routerLink]="'/app/purchase/return'">{{ data.title }}</span>
+                            <span *ngIf="data.particularName == 'CREDIT_NOTE'" class="transaction"
+                                [routerLink]="'/app/sale/return'">{{ data.title }}</span>
+                            <span *ngIf="data.particularName == 'STOCK_SUMMARY'" class="transaction"
+                                [routerLink]="'/app/report/stock-summary'">{{ data.title }}</span>
+                            <span *ngIf="data.particularName == 'CASH'" class="transaction"
+                                [routerLink]="'/app/report/cash-book/'">{{ data.title }}</span>
+
+                            <span *ngIf="
+                  data.particularName != 'LEDGER' &&
+                  data.particularName != 'PARTY' &&
+                  data.particularName != 'PAYMENT_TYPE' &&
+                  data.particularName != 'SALE' &&
+                  data.particularName != 'PURCHASE' &&
+                  data.particularName != 'CREDIT_NOTE' &&
+                  data.particularName != 'DEBIT_NOTE' &&
+                  data.particularName != 'STOCK_SUMMARY' &&
+                  data.particularName != 'CASH'
+                ">{{ data.title }}</span>
+                        </span>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <span class="me-2 currency-col text-danger">
+                            {{
+                            data.depth > 0
+                            ? data.openingDebitBalance
+                            ? (data.openingDebitBalance
+                            | currency : "INR" : "symbol" : "1.2-2")
+                            : ""
+                            : ""
+                            }}
+                        </span>
+                        <span class="me-2 currency-col text-success">
+                            {{
+                            data.depth > 0
+                            ? data.openingCreditBalance
+                            ? (data.openingCreditBalance
+                            | currency : "INR" : "symbol" : "1.2-2")
+                            : ""
+                            : ""
+                            }}
+                        </span>
+                        <span class="me-2 currency-col text-danger">
+                            {{
+                            data.depth > 0
+                            ? data.closingDebitBalance
+                            ? (data.closingDebitBalance
+                            | currency : "INR" : "symbol" : "1.2-2")
+                            : ""
+                            : ""
+                            }}
+                        </span>
+                        <span class="me-2 currency-col text-success">
+                            {{
+                            data.depth > 0
+                            ? data.closingCreditBalance
+                            ? (data.closingCreditBalance
+                            | currency : "INR" : "symbol" : "1.2-2")
+                            : ""
+                            : ""
+                            }}
+                        </span>
+                    </div>
+                </li>
+                <ng-container *ngIf="data?.children?.length > 0 && data.isExpanded">
+                    <ul class="d-flex flex-column">
+                        <ng-container *ngFor="let child of data.children" [ngTemplateOutlet]="treeNode"
+                            [ngTemplateOutletContext]="{ $implicit: child }">
+                        </ng-container>
+                    </ul>
+                </ng-container>
+            </ng-template>
+        </div>
+    </div>
+</div>

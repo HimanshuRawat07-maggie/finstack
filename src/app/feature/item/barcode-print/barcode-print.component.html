@@ -1,0 +1,48 @@
+<div class="card mb-0">
+    <div class="title p-3 d-flex justify-content-between">
+        <span>Barcode Print And Details</span>
+        <span><button class="btn btn-primary" *ngIf="data?.length!=0" (click)="openPrintModal()">Print</button></span>
+    </div>
+    <hr class="m-0">
+     <div class="p-3">
+        <div style="max-width: 380px;">
+             <i class="fa-solid fa-magnifying-glass"
+                style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+            <input type="text" class="form-control" placeholder="Search Item/Service" [(ngModel)]="filterItemText" name="filter" #filter="ngModel"
+                style="text-align: left ; padding-left: 40px;" (keyup)="filterItems()">  
+         </div>
+   </div>
+      <div class="p-3">
+        <div style="max-height: 62vh;min-height: 62vh; overflow-y: auto;">
+            <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                <thead class="border-bottom">
+                    <tr class="border-bottom purchase-header">
+                        <th class="text-center" scope="col">Select</th>
+                        <th class="text-start ps-3" scope="col" style="border-right: 0px;">Item Name</th>
+                        <th class="text-start" scope="col">Batch</th>
+                        <th class="text-start" scope="col">Warehouse</th>
+                        <th class="text-start" scope="col">No. of Barcodes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of data;let idx=index" class="border-bottom">
+                        <td class="text-center">
+                            <input type="checkbox" class="pointer" [id]="item.id" [(ngModel)]="item.changePrice" (change)="removeData(item.changePrice,item.batchId,idx)">
+                        </td>
+                        <td class="text-start">{{item.name}}</td>
+                        <td class="text-start">{{item.batchName}}</td>
+                        <td class="text-start">
+                            <span *ngIf="item.type!='Service'">{{item.warehouseName}}</span>
+                        </td>
+                        <td class="text-end">
+                            <input type="number" class="form-control" [(ngModel)]="item.barCodeCount" [disabled]="!item.changePrice" (keyup)="setData(item.batchId,item.barCodeCount,idx)">
+                        </td>
+                    </tr>
+                    <tr *ngIf="data.length==0">
+                        <td colspan="5">No Items</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

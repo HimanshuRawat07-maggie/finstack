@@ -1,0 +1,36 @@
+<div class="row mt-2">
+    <div class="col-12 d-flex align-items-center">
+        <select class="form-select mx-4 mt-1" [ngClass]="{'small-select':showCustomOption}" [(ngModel)]="dateFormat"
+            name="date" #date="ngModel" (change)="setDates()">
+            <option value="{{constants.ThisMonth}}">This Month</option>
+            <option value="{{constants.LastMonth}}">Last Month</option>
+            <option value="{{constants.ThisQuarter}}">This Quarter</option>
+            <option value="{{constants.LastQuarter}}">Last Quarter</option>
+            <option value="{{constants.ThisYear}}">This Fin. Year</option>
+            <option value="{{constants.LastYear}}">Last Fin. Year</option>
+            <option value="{{constants.Custom}}" *ngIf="showCustomOption">Custom</option>
+        </select>
+        <input *ngIf="showCustomOption" type="date" class="form-control" name="fromDate" [(ngModel)]="fromDate" [min]="minDate"
+            #frmDate="ngModel" (change)="onDateChange()" [readonly]="dateFormat!=constants.Custom"
+            [disabled]="dateFormat!=constants.Custom">
+        <span *ngIf="showCustomOption" class="mx-3"><strong>to</strong></span>
+        <input *ngIf="showCustomOption" type="date" class="form-control" name="tpDate" [(ngModel)]="toDate" [min]="minDate"
+            #tpDate="ngModel" (change)="onDateChange()" [readonly]="dateFormat!=constants.Custom"
+            [disabled]="dateFormat!=constants.Custom">
+        <!-- <div>  
+            <mat-form-field style="max-height: 10px;" appearance="outline">
+                <mat-date-range-input [rangePicker]="picker" style="margin-top: 10px;">
+                    <input *ngIf="showCustomOption"  matStartDate placeholder="From Date" name="fromDate" [(ngModel)]="fromDate" [min]="minDate"
+                        #frmDate="ngModel" (dateChange)="onDateChange()" [readonly]="dateFormat!=constants.Custom"
+                        [disabled]="dateFormat!=constants.Custom">
+
+                    <input *ngIf="showCustomOption"  matEndDate placeholder="To Date" name="tpDate" [(ngModel)]="toDate" [min]="minDate"
+                        #tpDate="ngModel" (dateChange)="onDateChange()" [readonly]="dateFormat!=constants.Custom"
+                       [disabled]="dateFormat!=constants.Custom">
+                </mat-date-range-input>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker></mat-date-range-picker>
+           </mat-form-field>
+        </div> -->
+    </div>
+</div>

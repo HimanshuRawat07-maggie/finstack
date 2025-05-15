@@ -1,0 +1,69 @@
+<div class="card">
+    <div class="title row m-0 px-2 mt-3">
+        <div class="col-6">
+            <span>Link Payment to Transactions</span>
+        </div>
+        <div class="col-6 d-flex justify-content-end">
+            <i class="fa-solid fa-xmark" (click)="close()" style="cursor: pointer;"></i>
+        </div>
+    </div>
+    <div class="row m-0 px-2">
+        <div class="col-6 d-flex align-items-center">
+            <strong>Party&nbsp;:</strong>&nbsp;{{data.name}}
+        </div>
+        <div class="col-3 offset-3">
+            <div class="form-group mt-2">
+                <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Received</span>
+                </label>
+                <input type="number" class="form-control" [(ngModel)]="data.amount">
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="row mt-4 m-0 px-3 table-responsive">
+        <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+            <thead  class="border-bottom">
+                <tr class="border-bottom purchase-header">
+                    <th width="40"></th>
+                    <th scope="col">DATE</th>
+                    <th scope="col">TYPE</th>
+                    <th scope="col">Ref/Inv No.</th>
+                    <th scope="col">TOTAL</th>
+                    <th scope="col">BALANCE </th>
+                    <th scope="col" width="150">LINKED AMOUNT</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let transaction of data.transactions;let idx=index"  class="border-bottom">
+                    <td class="cell-right-border">
+                        <mat-checkbox [(ngModel)]="transaction.isSelected"
+                            (change)="onSelectTransaction(idx)"></mat-checkbox>
+                    </td>
+                    <td class="cell-right-border">{{transaction.orderDate | date:'dd-MM-yyyy'}}</td>
+                    <td class="cell-right-border">{{transaction.identifier}}</td>
+                    <td class="cell-right-border">
+                        {{transaction.orderPrefix}}{{transaction.orderNumber}}{{transaction.orderSuffix}}
+                    </td>
+                    <td class="cell-right-border">
+                        {{transaction.amount | currency:'INR':'symbol':'1.2-2'}}
+                    </td>
+                    <td class="cell-right-border">
+                        {{(transaction.amount - transaction.paidAmount) | currency:'INR':'symbol':'1.2-2'}}
+                    </td>
+                    <td>
+                        <input type="number" class="form-control-sm" [(ngModel)]="transaction.selectedAmount"
+                            [disabled]="!transaction.isSelected">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <hr>
+    <div class="d-flex justify-content-end align-items-center">
+        <span class="me-4"><strong>Unused Amount</strong>&nbsp;:&nbsp;{{getUnusedAmount() |
+            currency:'INR':'symbol':'1.2-2'}}</span>
+        <button class="btn btn-outline-primary mx-2" (click)="close()">Cancel</button>
+        <button class="btn btn-primary mx-3" (click)="submit()">Save</button>
+    </div>
+</div>

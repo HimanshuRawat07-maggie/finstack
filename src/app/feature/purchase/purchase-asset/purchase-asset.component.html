@@ -1,0 +1,174 @@
+<div class="card">
+    <div class="pt-3">
+        <div class="title ms-3">
+            <span>Purchase Assets</span>
+        </div>
+        <hr>
+        <app-date-filter (dateChange)="onDateChange($event)"></app-date-filter>
+        <!-- <div class=" ms-2 mt-3 d-flex">
+            <div class="mx-3 p-2" style="border-radius: 10px; background-color: #B9F3E7; min-width: 120px;">
+                <span class="ms-1">Paid</span>
+                <p class="mt-1" style="font-size: 18px; font-weight: 500;">{{paid |
+                    currency:'INR':'symbol':'1.2-2'}}
+                </p>
+            </div>
+            <div class=" d-flex align-items-center">
+                <span style="font-size: 40px; font-weight: 400;">+</span>
+            </div>
+            <div class=" mx-3 p-2" style="border-radius: 10px; background-color: #CFE6FE; min-width: 120px;">
+                <span class="ms-1">Unpaid</span>
+                <p class="mt-1" style="font-size: 18px; font-weight: 500;">{{unpaid|
+                    currency:'INR':'symbol':'1.2-2'}}
+                </p>
+            </div>
+            <div class=" d-flex align-items-center">
+                <span style="font-size: 40px; font-weight: 400;">=</span>
+            </div>
+            <div class=" mx-3 p-2" style="border-radius: 10px; background-color: #F8C888; min-width: 120px;">
+                <span class="ms-1">Total</span>
+                <p class="mt-1" style="font-size: 18px; font-weight: 500;">{{total|
+                    currency:'INR':'symbol':'1.2-2'}}
+                </p>
+            </div>
+        </div> -->
+
+        <div class="row p-4 pb-0 mt-1">
+            <div class="col-3">
+                 <div class="card top-item shadow p-2">
+                    <div class="card-header">
+                        <div class="card-icon bg-green">
+                            <i class="fas fa-dollar"></i>
+                        </div>
+                        <div class="card-title">
+                            <p class="title">Paid</p>
+                            <p class="value">{{ paid==null? 0 :paid | currency:'INR':'symbol':'1.2-2' }}</p>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+            <div class="col-3">
+                 <div class="card top-item shadow p-2">
+                    <div class="card-header">
+                        <div class="card-icon  bg-yellow">
+                            <i class="fas fa-dollar"></i>
+                        </div>
+                        <div class="card-title">
+                            <p class="title">Unpaid</p>
+                            <p class="value">{{ unpaid==null? 0 :unpaid | currency:'INR':'symbol':'1.2-2' }}</p>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+            <div class="col-3">
+                 <div class="card top-item shadow p-2">
+                    <div class="card-header">
+                        <div class="card-icon bg-blue">
+                            <i class="fas fa-dollar"></i>
+                        </div>
+                        <div class="card-title">
+                            <p class="title">Total</p>
+                            <p class="value">{{ total==null? 0 :total | currency:'INR':'symbol':'1.2-2' }}</p>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-0">
+    <div class="p-3">
+        <div class="row ">
+            <div class="col-3">
+                <i class="fa-solid fa-magnifying-glass"
+                    style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+                <input type="text" class="form-control" [(ngModel)]="filterText" (keyup)="filterTransactions()" placeholder="Search Transaction"
+                    style="text-align: 10px; min-width: 300px ; padding-left: 40px;">
+            </div>
+            <div class="col-9 d-flex justify-content-end ps-4">
+                <button *ngIf="hasPermission(constants.Add)" class="btn btn-outline-primary"
+                    [routerLink]="'/app/purchase/assets/create'"> Add
+                    Purchase Asset</button>
+            </div>
+        </div>
+        <div class="mt-4">
+            <div style="max-height: 38vh;min-height: 38vh; overflow-y: auto;">
+                <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                    <thead class="border-bottom">
+                        <tr class="border-bottom purchase-header">
+                            <th class="text-start" scope="col">#</th>
+                            <th class="text-start" scope="col">Date</th>
+                            <th class="text-start" scope="col">Invoice No.</th>
+                            <th class="text-start" scope="col">Party Name</th>
+                            <th class="text-start" scope="col">Payment Type</th>
+                            <th class="text-end" scope="col">Amount</th>
+                            <th class="text-end" scope="col">Balance Due</th>
+                            <th class="text-end" scope="col">Status</th>
+                            <th class="text-end pe-2" scope="col"
+                                *ngIf="hasPermission(constants.Edit) || hasPermission(constants.Delete) || hasPermission(constants.View)">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let purchase of filterData; let idx = index" class="border-bottom"
+                            style="cursor: pointer;">
+                            <td class="text-start" style="width:70px;">{{idx+1}}</td>
+                            <td class="text-start">{{purchase.orderDate|date:'dd-MM-yyyy'}}</td>
+                            <td class="text-start ellipse" style="max-width: 150px;">
+                                {{purchase.orderPrefix}}{{purchase.orderNumber}}{{purchase.orderSuffix}}</td>
+                            <td class="text-start ellipse" style="max-width: 150px;" [title]="purchase.partyName"> {{purchase.partyName}}</td>
+                            <td class="text-start" style="max-width: 10px;">{{purchase.paymentType}}</td>
+                            <td class="text-end text-success" style="max-width: 50px;">{{purchase.amount |
+                                currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-end" style="width: 140px;">
+                                <span [ngClass]="purchase.amount!-purchase.paidAmount!>0?'text-danger':'text-success'">
+                                    {{purchase.amount!-purchase.paidAmount! | currency:'INR':'symbol':'1.2-2'}}
+                                </span>
+                            </td>
+                            <td class="text-start" *ngIf="purchase.orderStatus!='Order Created'">
+                                <span class="badge rounded-pill"
+                                    [ngClass]="{'text-bg-success':purchase.orderStatus=='Order Completed','text-bg-danger':purchase.orderStatus=='Order Returned'}"></span>
+                            </td>
+                            <td class="text-start   " *ngIf="purchase.orderStatus=='Order Created'">
+                                <span class="badge rounded-pill" [ngClass]="{'text-bg-success': purchase.paymentStatus=='Paid' || purchase.paymentStatus=='Used', 
+                                        'text-bg-primary':purchase.paymentStatus=='Partial' || purchase.paymentStatus=='Unused',
+                                        'text-bg-danger':purchase.paymentStatus=='Unpaid', } ">
+                                    {{purchase.paymentStatus}}
+                                </span>
+                            </td>
+                            <td class="text-end pe-3"
+                                *ngIf="hasPermission(constants.Edit) || hasPermission(constants.Delete) || hasPermission(constants.View)">
+                                <i class="fa-solid fa-ellipsis-vertical w-100 pointer" [matMenuTriggerFor]="menu"></i>
+                            </td>
+
+                            <mat-menu #menu="matMenu" xPosition="before">
+                                <div *ngIf="hasPermission(constants.View)" mat-menu-item class="menu-item"
+                                    (click)="openPdf(purchase.id,purchase.orderPrefix, purchase.orderNumber,purchase.orderSuffix)">
+                                    <span class="text-primary me-2"><i class="fa fa-file-pdf"></i></span>View/Open PDF
+                                </div>
+                                <hr class="m-0">
+                                <div *ngIf="hasPermission(constants.Edit) "
+                                    mat-menu-item class="menu-item"
+                                    [routerLink]="'/app/purchase/assets/edit/'+purchase.id">
+                                    <span class="text-primary me-2"><i class="fa fa-pencil"></i></span> Edit
+                                </div>
+                                <hr class="m-0"
+                                    *ngIf="hasPermission(constants.Delete)" />
+                                <div *ngIf="hasPermission(constants.Delete)"
+                                    mat-menu-item class="menu-item" (click)="openDeleteDialog(idx)">
+                                    <span class="text-danger me-2"><i class="fa fa-trash"></i></span> Delete
+                                </div>
+                            </mat-menu>
+                        </tr>
+                        <tr *ngIf="filterData.length==0">
+                            <td colspan="10">
+                               No Transactions are Available
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,130 @@
+<!-- <div class="container-fluid bg">
+    <div class="row d-flex justify-content-center align-items-center" style="height: 100vh;">
+        <div class="col-lg-6 col-md-8 col-sm-10 row p-0">
+            <div class="row p-0 m-0 d-flex justify-content-center">
+                <div class="col-lg-7 col-sm-12 mt-4 p-0">
+                   <div class="row">
+                        <div class="col-6">
+                            <div class="background" style="max-height: 400px;"></div>
+                        </div>
+                        <div class="col-6 login-box p-0">
+                             <div class="form p-3">
+                        <div class="d-flex justify-content-center mb-2">
+                            <img class="img-fluid" src="../../../../assets/images/fav.jpg" width="150px" alt="logo"
+                                loading="lazy">
+                        </div>
+                        <div>
+                            <h2 class="heading">Login</h2>
+                        </div>
+                        <form #loginForm="ngForm" (ngSubmit)="onSubmit()">
+
+                            <div class="text-field w100p mt-4">
+                             <input class="text-base w100p" type="text" required placeholder=" " [(ngModel)]="data.email" #email="ngModel"
+                                    name="email" required
+                                    [ngClass]="{'is-invalid':email.touched && email.errors && email.errors['required']}">
+                             <span>Email *</span>
+                              <p  *ngIf="email.touched && email.errors && email.errors['required']"
+                                    class="validation-error ">
+                                    Email is required
+                                </p>
+                            </div>
+                            <div class="text-field w100p mt-4">
+                             <input class="text-base w100p" type="text" required placeholder=" " [(ngModel)]="data.password"
+                                    #password="ngModel" name="password" required
+                                    [ngClass]="{'is-invalid':password.touched && password.errors && password.errors['required']}">
+                             <span>Password</span>
+                             <p *ngIf="password.touched && password.errors && password.errors['required']"
+                                    class="validation-error ">
+                                    Password is required
+                                </p>
+                            </div>
+
+
+                            <div class="mt-2 d-flex justify-content-end">
+                                <span class="link" (click)="navigateTo('forgot-password')">Forgot Password ?</span>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-4 w-100">Login</button>
+                            <div class="mt-5 d-flex justify-content-center">
+                                <span>Don't have an account yet? &nbsp;</span><span class="link-secondary"
+                                    (click)="navigateTo('signup')">Register</span>
+                            </div>
+                        </form>
+                    </div>
+                        </div>
+                   </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+
+
+<div class="container-fluid login-bg">
+    <div class="d-flex justify-content-center my-4">
+        <img class="img-fluid" src="../../../../assets/images/Logo_Spont_Software-witoutbackground.png" width="200px"
+            height="20px" alt="logo" loading="lazy">
+    </div>
+    <div class="row d-flex justify-content-center align-items-center" style="height: 50vh;">
+        <div class="col-lg-7 col-md-8 col-sm-10">
+            <div class="row border">
+                <div class="col-6 p-0">
+                    <div class="background"></div>
+                </div>
+                <div class="col-6 p-0">
+                    <div class="card p-3 px-4" style="height: 100%;">
+                        <div class="d-flex justify-content-center">
+                            <span class="heading">Login</span>
+                        </div>
+                        <div class="mt-5">
+                            <form #loginForm="ngForm" (ngSubmit)="onSubmit()">
+                                <div class="form-field mt-4">
+                                    <input class="form-control w100p" type="text" required placeholder=" "
+                                        [(ngModel)]="data.email" #email="ngModel" name="email" required
+                                        [ngClass]="{'is-invalid':email.touched && email.errors && email.errors['required']}">
+                                    <label class="label">Email</label>
+                                    <p *ngIf="email.touched && email.errors && email.errors['required']"
+                                        class="validation-error ">
+                                        Email is required
+                                    </p>
+                                </div>
+
+
+                                <div class="form-field mt-4">
+                                    <label class="label">Password</label>
+                                    <input class="form-control" type="text" required [(ngModel)]="data.password"
+                                        #password="ngModel" name="password" required
+                                        [ngClass]="{'is-invalid':password.touched && password.errors && password.errors['required']}">
+                                    <p *ngIf="password.touched && password.errors && password.errors['required']"
+                                        class="validation-error ">
+                                        Password is required
+                                    </p>
+                                </div>
+
+                                <div class="form-field mt-4">
+                                    <label class="label">Test</label>
+                                    <input type="text" class="form-control" name="xyz">
+                                    <i class="fa-solid fa-eye input-icons"></i>
+                                </div>
+
+
+
+                                <div class="d-flex justify-content-end">
+                                    <span class="transaction" style="font-weight: 500;"
+                                        (click)="navigateTo('forgot-password')">Forgot Password</span>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 mt-5"
+                                    style="height: 45px;">Login</button>
+                            </form>
+                        </div>
+                        <div class="mt-4 d-flex justify-content-center">
+                            <span>Don't have an account yet? &nbsp;</span><span class="link-secondary"
+                                (click)="navigateTo('signup')">Register</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

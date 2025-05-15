@@ -1,0 +1,95 @@
+<div class="card">
+    <div class="py-3">
+        <div class="title">
+            <span class="ms-3">Stock Summary</span>
+        </div>
+        <hr>
+        <app-date-filter (dateChange)="onDateChange($event)"></app-date-filter>
+        <div class="row mt-3 ps-4">
+            <div class="col-3">
+                <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Product Group</span>
+                </label>
+                <select class="form-select w-100" style="max-height: 37px;" [(ngModel)]="groupName"
+                    (change)="filterData()">
+                    <option value="ALL">All Groups</option>
+                    <option *ngFor="let group of groups" [value]="group.productGroupName">
+                        {{group.productGroupName}}
+                    </option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-0">
+    <div class="p-3">
+        <div class="row ">
+            <div class="col-3 title">
+                <span>TRANSACTIONS</span>
+            </div>
+            <div class="col-9 d-flex justify-content-end align-items-center ps-4">
+                <i class=" text-success fa-solid fa-file-excel mx-3 download-pdf-excel" (click)="download()"
+                    *ngIf="filteredData.length>0"></i>
+                <i class=" text-danger fa-solid fa-file-pdf mx-3 download-pdf-excel" [matMenuTriggerFor]="menu"
+                    *ngIf="filteredData.length>0"></i>
+
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <div mat-menu-item class="menu-item" (click)="downloadAsPdf('LANDSCAPE')">
+                        <span class="text-primary me-2"><i class="fa-solid fa-image"></i></span> Landscape
+                    </div>
+                    <hr class="m-0" />
+                    <div mat-menu-item class="menu-item" (click)="downloadAsPdf('PORTRAIT')">
+                        <span class="text-danger me-2"><i class="fa-solid fa-image-portrait"></i></span> Portrait
+                    </div>
+                </mat-menu>
+            </div>
+        </div>
+        <div class="mt-4">
+            <div style="max-height: 45vh;min-height: 45vh; overflow-y: auto;">
+                <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                    <thead class="border-bottom">
+                        <tr class="border-bottom purchase-header">
+                            <th class="text-start" scope="col" rowspan="2">#</th>
+                            <th class="text-start" scope="col" rowspan="2">Product Name</th>
+                            <th class="text-start" scope="col" rowspan="2">Product Group</th>
+                            <th class="text-center" scope="col" colspan="2">Opening Balance</th>
+                            <th class="text-center" scope="col" colspan="2">Inward</th>
+                            <th class="text-center" scope="col" colspan="2">Outward</th>
+                            <th class="text-center" scope="col" colspan="2">Closing Balance</th>
+                        </tr>
+                        <tr class="border-bottom border-top purchase-header">
+                            <th class="text-end" scope="col">Quantity</th>
+                            <th class="text-end" scope="col">Value</th>
+                            <th class="text-end" scope="col">Quantity</th>
+                            <th class="text-end" scope="col">Value</th>
+                            <th class="text-end" scope="col">Quantity</th>
+                            <th class="text-end" scope="col">Value</th>
+                            <th class="text-end" scope="col">Quantity</th>
+                            <th class="text-end" scope="col">Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of data; let idx = index" class="border-bottom">
+                            <td class="text-start">{{idx+1}}</td>
+                            <td class="text-start">{{item.name}}</td>
+                            <td class="text-start">{{item.groupName}}</td>
+                            <td class="text-end">{{item.openingBalance.quantity}}</td>
+                            <td class="text-end">{{item.openingBalance.stockValue|currency:'INR':'symbol':'1.2-2'}}
+                            </td>
+                            <td class="text-end">{{item.inward.quantity}}</td>
+                            <td class="text-end">{{item.inward.stockValue|currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-end">{{item.outward.quantity}}</td>
+                            <td class="text-end">{{item.outward.stockValue|currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-end">{{item.closingBalance.quantity}}</td>
+                            <td class="text-end">{{item.closingBalance.stockValue|currency:'INR':'symbol':'1.2-2'}}</td>
+                        </tr>
+                        <tr *ngIf="data.length==0">
+                            <td colspan="11">No Transactions Are Available</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

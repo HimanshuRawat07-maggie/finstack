@@ -1,0 +1,89 @@
+<div class="card">
+    <div class="py-3">
+        <div class="title">
+            <span class="ms-3">Item Wise Detail</span>
+        </div>
+        <hr>
+        <app-date-filter (dateChange)="onDateChange($event)"></app-date-filter>
+        <div class="row d-flex align-items-center ps-2">
+            <div class="col-3 mt-3 ms-3">
+                <div class="form-group">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Item</span>
+                    </label>
+                    <select class="form-select w-100" [(ngModel)]="groupId" (change)="this.loadTableData()">
+                        <option *ngFor="let item of Items" [value]="item.id">{{item.name}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-8" style="font-size: 15px; font-weight: 500;" *ngIf="groupId>0">
+                <span class="mx-3">Selling Price :{{selecteditem.sellingPrice?selecteditem.sellingPrice:0}}</span>
+                <span class="mx-3">Purchase Price :{{selecteditem.purchasePrice?selecteditem.purchasePrice:0}}</span>
+                <span class="mx-3">Stock Quantity : {{selecteditem.quantity?selecteditem.quantity:0}}</span>
+                <span class="mx-3">Stock Value :{{selecteditem.stockValue?selecteditem.stockValue:0}}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-0">
+    <div class="p-3">
+        <div class="row ">
+            <div class="col-3 title">
+                <span>TRANSACTIONS</span>
+            </div>
+            <div class="col-9 d-flex justify-content-end ps-4">
+                <i class=" text-success fa-solid fa-file-excel mx-3 download-pdf-excel" *ngIf="data.length>0"
+                    (click)="download()"></i>
+                <i class=" text-danger fa-solid fa-file-pdf mx-3 download-pdf-excel" [matMenuTriggerFor]="menu"
+                    *ngIf="data.length>0"></i>
+
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <div mat-menu-item class="menu-item" (click)="downloadAsPdf('LANDSCAPE')">
+                        <span class="text-primary me-2"><i class="fa-solid fa-image"></i></span> Landscape
+                    </div>
+                    <hr class="m-0" />
+                    <div mat-menu-item class="menu-item" (click)="downloadAsPdf('PORTRAIT')">
+                        <span class="text-danger me-2"><i class="fa-solid fa-image-portrait"></i></span> Portrait
+                    </div>
+                </mat-menu>
+            </div>
+        </div>
+        <div class="mt-4">
+            <div style="max-height: 44vh;min-height: 44vh; overflow-y: auto;">
+                <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                    <thead class="border-bottom">
+                        <tr class="border-bottom purchase-header">
+                            <th class="text-start" scope="col">#</th>
+                            <th class="text-start" scope="col">Date</th>
+                            <th class="text-start" scope="col">Particular</th>
+                            <th class="text-start" scope="col">Voucher No.</th>
+                            <th class="text-start" scope="col" *ngIf="isBatchEnabled">Batch Name</th>
+                            <th class="text-end" scope="col">Rate</th>
+                            <th class="text-end" scope="col">Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of data; let idx = index" class="border-bottom">
+                            <td class="text-start" style="width:70px;">{{idx+1}}</td>
+                            <td class="text-start">{{item.date | date:'dd-MM-yyyy'}}</td>
+                            <td class="text-start">{{item.type}}</td>
+                            <td class="text-start transaction" (click)="openTransaction(data)">
+                                {{item.orderNumber}}
+                            </td>
+                            <td class="text-start ellipse-transaction" *ngIf="isBatchEnabled" [title]="item.batchName">
+                                {{item.batchName}}
+                            </td>
+                            <td class="text-end">{{item.atPrice|currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-end">{{item.stockQuantity}}</td>
+                        </tr>
+                        <tr *ngIf="data.length==0">
+                            <td colspan="11">No Transactions Available</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

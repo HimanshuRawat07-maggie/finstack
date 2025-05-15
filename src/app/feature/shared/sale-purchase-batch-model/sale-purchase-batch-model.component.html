@@ -1,0 +1,122 @@
+<div class="card mb-0">
+    <div class="d-flex align-items-center pb-2 pt-4">
+        <div class="title">
+            <span class="ms-3">Select Batches</span>
+        </div>
+    </div>
+
+    <div>
+        <div class="row px-3">
+            <div class="col-6 d-flex align-items-center">
+                <span><strong>Item Name</strong>&nbsp;:&nbsp;</span>
+                <span>{{data.name}}</span>
+            </div>
+            <div class="col-6 d-flex align-items-center justify-content-end">
+
+            </div>
+        </div>
+        <hr>
+        <div class="row px-3">
+            <div #tableContainer class="mt-4 row table-responsive">
+                <div class="col-12 table-list">
+                    <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                        <thead class="border-bottom">
+                            <tr class="border-bottom purchase-header">
+                                <th *ngIf="isBatchEnabled" scope="col">BATCH NAME</th>
+                                <th *ngIf="isBatchEnabled" scope="col">MFG. DATE</th>
+                                <th *ngIf="isBatchEnabled" scope="col">EXP. DATE</th>
+                                <th scope="col">PURCHASE PRICE</th>
+                                <th scope="col">SALE PRICE</th>
+                                <th *ngIf="isWarehouseEnabled" scope="col">WAREHOUSE</th>
+                                <th *ngIf="isWarehouseEnabled || isBatchEnabled" scope="col">BARCODE</th>
+                                <th scope="col">CURRENT QTY</th>
+                                <th scope="col" width="150">QTY</th>
+                                <th *ngIf="data.showAddBatchBtn && data.batches.length>length"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of data.batches; let idx=index">
+                                <ng-container *ngIf="!item.isEditable">
+                                    <td *ngIf="isBatchEnabled" class="cell-right-border">{{item.batchName}}</td>
+                                    <td *ngIf="isBatchEnabled" class="cell-right-border">
+                                        {{item.mfgDate|date:'MMM-yyyy'}}</td>
+                                    <td *ngIf="isBatchEnabled" class="cell-right-border">
+                                        {{item.expDate|date:'MMM-yyyy'}}</td>
+                                    <td class="cell-right-border">{{item.purchasePrice}}</td>
+                                    <td class="cell-right-border">{{item.sellingPrice}}</td>
+                                    <td *ngIf="isWarehouseEnabled" class="cell-right-border">{{item.warehouseName}}</td>
+                                    <td *ngIf="isWarehouseEnabled || isBatchEnabled" class="cell-right-border">
+                                        {{item.barcode}}</td>
+                                    <td class="cell-right-border">{{item.availableQuantity}}</td>
+                                </ng-container>
+                                <ng-container *ngIf="item.isEditable">
+                                    <td class="cell-right-border" *ngIf="isBatchEnabled">
+                                        <input type="text" class="form-control-sm" [(ngModel)]="item.batchName">
+                                    </td>
+                                    <td class="cell-right-border" *ngIf="isBatchEnabled">
+                                        <div class="form-group position-relative">
+                                            <span class="date-preview"
+                                                onclick="document.getElementById('sale-purchase-batch-mfgdate').showPicker()">
+                                                {{item.mfgDate| date:'dd-MM-yyyy'}}
+                                            </span>
+                                            <input id="sale-purchase-batch-mfgdate" type="date" class="form-control-sm"
+                                                [min]="minDate" [(ngModel)]="item.mfgDate">
+                                        </div>
+                                    </td>
+                                    <td class="cell-right-border" *ngIf="isBatchEnabled">
+                                        <div class=" form-group position-relative">
+                                            <span class="date-preview"
+                                                onclick="document.getElementById('sale-purchase-batch-expdate').showPicker()">
+                                                {{item.expDate| date:'dd-MM-yyyy'}}
+                                            </span>
+                                            <input id="sale-purchase-batch-expdate" type="date" class="form-control-sm"
+                                                [min]="minDate" [(ngModel)]="item.expDate">
+                                        </div>
+                                    </td>
+                                    <td class="cell-right-border">
+                                        <input type="number" class="form-control-sm" [(ngModel)]="item.purchasePrice">
+                                    </td>
+                                    <td class="cell-right-border">
+                                        <input type="number" class="form-control-sm" [(ngModel)]="item.sellingPrice">
+                                    </td>
+                                    <td class="cell-right-border" *ngIf="isWarehouseEnabled">
+                                        <select class="form-select form-select-sm w-100"
+                                            [(ngModel)]="item.warehouseName">
+                                            <option *ngFor="let warehouse of warehouses" value="{{warehouse.name}}">
+                                                {{warehouse.name}}</option>
+                                        </select>
+                                    </td>
+                                    <td class="cell-right-border">
+                                        <input type="text" class="form-control-sm" [(ngModel)]="item.barcode"
+                                            id="{{'itemname-'+idx}}" (keyup)="checkBarcode(idx,$event)">
+                                    </td>
+                                    <td class="cell-right-border"></td>
+                                </ng-container>
+                                <td [ngClass]="data.showAddBatchBtn?'cell-right-border':''">
+                                    <input type="number" class="form-control-sm" [(ngModel)]="item.selectedQuantity">
+                                </td>
+                                <td *ngIf="data.showAddBatchBtn">
+                                    <i *ngIf="item.isEditable" class="fa-solid fa-trash text-danger pointer"
+                                        (click)="removeBatch(idx)"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="!data.showAddBatchBtn" class="d-flex justify-content-end mt-3 p-3">
+            <button class="btn btn-outline-primary px-4 mx-2" (click)="close()">Cancel</button>
+            <button class="btn btn-primary px-4" (click)="submit()">Save</button>
+        </div>
+        <div *ngIf="data.showAddBatchBtn" class="d-flex justify-content-between mt-3 p-3">
+            <button class="btn btn-primary" (click)="addBatch()">
+                Add Batch
+            </button>
+            <div>
+                <button class="btn btn-outline-primary px-4 mx-2" (click)="close()">Cancel</button>
+                <button class="btn btn-primary px-4" (click)="submit()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

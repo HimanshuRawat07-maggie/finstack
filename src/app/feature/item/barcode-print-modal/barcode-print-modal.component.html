@@ -1,0 +1,29 @@
+<div class="card">
+    <div class="p-3 title">
+        <span>Barcode Print</span>
+    </div>
+    <hr class="m-0">
+    
+    <div class="p-3 my-4">  
+        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                <span class="h6 small bg-white text-muted px-1">No of Column</span>
+                            </label>
+          <select name="columns" class="form-select" [(ngModel)]="column" style="width: 200px;" #columns="ngModel" required 
+          [ngClass]="{'is-invalid':columns.touched && columns.errors && columns.errors['required']}">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+        </select>
+        <p *ngIf="columns.touched && columns.errors && columns.errors['required']" class="validation-error ">
+                Columns is required
+        </p>    
+    </div>
+    <hr class="m-0">
+    <div class="d-flex justify-content-end p-3 pb-0">
+        <div class="btn btn-outline-primary" (click)="close()">Cancel</div>
+        <div type="submit" (click)="onSubmit()" class="btn btn-primary ms-3">Save</div>
+    </div>
+</div>
+ 

@@ -1,0 +1,115 @@
+<div class="card mb-0" *ngIf="data.length!=0">
+    <div class="title p-3 d-flex justify-content-between align-items-center">
+        <div>
+            <span class="ms-1">Item Group</span>
+        </div>
+        <div *ngIf="hasPermission(constants.Add)">
+            <button class="btn btn-primary" (click)="openModal()">Add Item Group</button>
+        </div>
+    </div>
+    <hr class="m-0">
+    <div class="p-3">
+        <div style="max-width: 380px;">
+            <i class="fa-solid fa-magnifying-glass"
+                style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+            <input type="text" class="form-control" [(ngModel)]="filterItemText" placeholder="Search Item Group"
+                style="text-align: left ; padding-left: 40px;" (keyup)="filterItems()">
+        </div>
+    </div>
+    <div class="p-3">
+        <div style="max-height: 62vh;min-height: 62vh; overflow-y: auto;">
+            <table style="width: 100%; border: 1px solid rgb(170, 170, 170);" id="main-table">
+                <thead class="border-bottom">
+                    <tr class="border-bottom purchase-header">
+                        <th class="text-start ps-3" scope="col" style="border-right: 0px;" colspan="2">Group</th>
+                        <th class="text-end" scope="col">No. of Items</th>
+                        <th class="text-end" scope="col"
+                            *ngIf="hasPermission(constants.Edit) || hasPermission(constants.Delete)">Actions</th>
+                    </tr>
+                </thead>
+                <ng-container *ngFor="let group of filteredData; let idx = index">
+                    <tbody>
+                        <tr>
+                            <td class="text-start ps-3" style="width: 160px;">{{group.productGroupName}}</td>
+                            <td>
+                                <button [disabled]="!group.productCount||(group.productCount && group.productCount===0)"
+                                    [attr.aria-expanded]="false" class="view-products-btn pointer" type="button"
+                                    data-toggle="collapse" [attr.data-target]="'#collapse-' + idx"
+                                    (click)="idx != expandedGroupIdx && selectItem(idx)">
+                                </button>
+                            </td>
+                            <td class="text-end">{{group.productCount}}</td>
+                            <td class="text-end" style="width: 160px;"
+                                *ngIf="hasPermission(constants.Edit) || hasPermission(constants.Delete)">
+                                <div class="d-flex justify-content-start" *ngIf="group.productGroupName!='Not In Any Group'">
+                                    <div *ngIf="hasPermission(constants.Edit)"
+                                        (click)="openEdit(group.id,group.productGroupName)">
+                                        <span class="text-primary pointer me-2" style="font-size: 17px;"><i
+                                                class="fa-regular fa-pen-to-square"></i></span>
+                                    </div>
+                                    <div *ngIf="hasPermission(constants.Delete)" (click)="openDeleteDialog(group.id)">
+                                        <span class="text-danger ms-2 pointer" style="font-size: 17px;"><i
+                                                class="fa fa-trash"></i></span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td [attr.id]="'collapse-' + idx" class="collapse" colspan="4" data-parent="#main-table">
+                                <table style="width: 100%;border: 1px solid rgb(170, 170, 170);"
+                                    class="item-table my-3">
+                                    <thead class="border-bottom">
+                                        <tr class="border-bottom purchase-header">
+                                            <th class="text-start ps-3" scope="col" style="border-right: 0px;">Item</th>
+                                            <th class="text-end" scope="col">Qty</th>
+                                            <th class="text-end" scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of tableData; let idx = index">
+                                            <td class="text-start ps-3">{{item.productName}}</td>
+                                            <td class="text-end">{{item.availableQuantity}}</td>
+                                            <td class="text-end">
+                                                <i *ngIf="!isLinkVisible" (click)="unlinkProduct(item.productId)"
+                                                    class="fa-solid fa-link-slash text-danger pointer"></i>
+                                                <i *ngIf="isLinkVisible" (click)="linkProduct(item.productId)"
+                                                    class="fa-solid fa-link-slash text-success pointer"></i>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </ng-container>
+                <tr *ngIf="filteredData.length==0">
+                    <td colspan="5">No Groups</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="card mb-0" *ngIf="data.length==0">
+    <div>
+        <div class="row d-flex  align-items-center" style="height: 86vh;">
+            <div class="d-flex justify-content-center">
+                <div>
+                    <div class="d-flex justify-content-center">
+                        <img src="assets/images/empty-dashboard.png" width="300px">
+                    </div>
+                    <div class="d-flex justify-content-center mt-4">
+                        <span style=" font-size: 20px;"> Add your first item group so you can manage your items with
+                            ease</span>
+                    </div>
+                    <div class="d-flex justify-content-center mt-3">
+                        <button class="btn btn-outline-primary" (click)="openModal()">Add Your First
+                            Item Group</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

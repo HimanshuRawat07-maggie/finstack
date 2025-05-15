@@ -1,0 +1,112 @@
+<div class="card mb-0" *ngIf="data.length!=0">
+    <div class="title p-3 d-flex justify-content-between align-items-center">
+        <div>
+            <span class="ms-1">Party</span>
+        </div>
+        <div>
+            <button class="btn btn-primary" (click)="navigateTo('app/party/add-party')"
+                *ngIf="hasPermission(constants.Add)">Add Party</button>
+        </div>
+    </div>
+    <hr class="m-0">
+    <div class="p-3">
+        <div style="max-width: 380px;">
+            <i class="fa-solid fa-magnifying-glass"
+                style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+            <input type="text" class="form-control" [(ngModel)]="filterPartyText"
+                placeholder="Search party by name, phone etc" style="text-align: left ; padding-left: 40px;"
+                (keyup)="filterParty()">
+        </div>
+    </div>
+    <div class="p-3">
+        <div style="min-height: 62vh; max-height: 62vh; overflow-y: auto;">
+            <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                <thead class="border-bottom">
+                    <tr class="border-bottom purchase-header">
+                        <th class="text-start ps-3" scope="col" style="border-right: 0px;">Name</th>
+                        <th class="text-start" scope="col">Contact Info.</th>
+                        <!-- <th class="text-start" scope="col">Main Group</th> -->
+                        <!-- <th class="text-start" scope="col">Sub Group</th> -->
+                        <th class="text-start" scope="col">State</th>
+                        <th class="text-end" scope="col">Closing Balance</th>
+                        <th class="text-end" scope="col"
+                            *ngIf="hasPermission(constants.Edit) || hasPermission(constants.Delete)">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let party of filteredData; let idx = index" class="border-bottom"
+                        style="cursor: pointer;" (click)="openTransactionModal(party)">
+                        <td class="text-start ellipse ps-3" style="max-width: 250px;" [title]="party.name">
+                            <div class="d-flex align-items-center">
+                                <div class="profile-circle me-2" [style.background-color]="party.pfpColor">
+                                    <span class="initials">{{ generateInitials(party.name) }}</span>
+                                </div>
+                                <div>
+                                    {{party.name}}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-start">
+                            <span *ngIf="party.phone">{{party.phone}}
+                                <!-- <i class="fa-brands fa-whatsapp ms-2 text-success" (click)="openWhatsApp(party.phone)"></i> -->
+                            </span><br>
+                            <span style="font-size: 10px;font-weight: 500;">{{party.email}}</span>
+                        </td>
+                        <!-- <td class="text-start">{{party.mainGroup}}</td> -->
+                        <!-- <td class="text-start">{{party.subGroup}}</td> -->
+                        <td class="text-start">{{party.state}}</td>
+                        <td class="text-end ">
+                            <span
+                                [ngClass]="{'text-danger':party.amount<=0,'text-success':party.amount>0}">{{getAmount(party.amount)
+                                | currency:'INR':'symbol':'1.2-2'}}</span><br>
+                            <span class="text-danger" *ngIf="party.amount<=0" style="font-size: 9px;">YOU PAY<i
+                                    class="fa-solid fa-arrow-up"></i></span>
+                            <span class="text-success" *ngIf="party.amount>0" style="font-size: 9px;">YOU RECEIVE<i
+                                    class="fa-solid fa-arrow-up"></i></span>
+                        </td>
+                        <td style="width: 160px;"
+                            *ngIf="hasPermission(constants.Edit) || hasPermission(constants.Delete)">
+                            <div class="d-flex justify-content-end">
+                                <div [routerLink]="'/app/party/edit-party/'+party.id"
+                                    *ngIf="hasPermission(constants.Edit)">
+                                    <span class="text-primary me-3" style="font-size: 17px;"><i
+                                            class="fa-regular fa-pen-to-square"></i></span>
+                                </div>
+                                <div *ngIf="hasPermission(constants.Delete)"
+                                    (click)="openDeleteDialog(party.id,$event)">
+                                    <span class="text-danger ms-3" style="font-size: 17px;"><i
+                                            class="fa fa-trash"></i></span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr *ngIf="filteredData.length==0">
+                        <td colspan="5">No Party</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-0" *ngIf="data.length==0">
+    <div>
+        <div class="row d-flex  align-items-center" style="height: 86vh;">
+            <div class="d-flex justify-content-center">
+                <div>
+                    <div class="d-flex justify-content-center">
+                        <img src="assets/images/empty-dashboard.png" width="300px">
+                    </div>
+                    <div class="d-flex justify-content-center mt-4">
+                        <span style=" font-size: 20px;"> Add your first party with whom you can do your business and
+                            make fortune</span>
+                    </div>
+                    <div class="d-flex justify-content-center mt-3">
+                        <button class="btn btn-outline-primary" (click)="navigateTo('/app/party/add-party')">Add Your
+                            First Party</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

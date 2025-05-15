@@ -1,0 +1,130 @@
+<div class="card">
+    <div class="pt-3">
+        <div class="title" id="title">
+            <span class="ms-3">Sale Register</span>
+        </div>
+        <hr>
+        <app-date-filter [dateFormat]="dateFormat" [fromDate]="fromDate" [toDate]="toDate"
+            (dateChange)="onDateChange($event)"></app-date-filter>
+        <div class="row p-4 pb-0 mt-1">
+            <div class="col-3">
+                <div class="card top-item shadow p-2">
+                    <div class="card-header">
+                        <div class="card-icon bg-green">
+                            <i class="fas fa-dollar"></i>
+                        </div>
+                        <div class="card-title">
+                            <p class="title">Paid</p>
+                            <p class="value">{{ paid==null? 0 :paid | currency:'INR':'symbol':'1.2-2' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card top-item shadow p-2">
+                    <div class="card-header">
+                        <div class="card-icon  bg-yellow">
+                            <i class="fas fa-dollar"></i>
+                        </div>
+                        <div class="card-title">
+                            <p class="title">Unpaid</p>
+                            <p class="value">{{ unpaid==null? 0 :unpaid | currency:'INR':'symbol':'1.2-2' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card top-item shadow p-2">
+                    <div class="card-header">
+                        <div class="card-icon bg-blue">
+                            <i class="fas fa-dollar"></i>
+                        </div>
+                        <div class="card-title">
+                            <p class="title">Total</p>
+                            <p class="value">{{ total==null? 0 :total | currency:'INR':'symbol':'1.2-2' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-0">
+    <div class="p-3">
+        <div class="row ">
+            <div class="col-3 title">
+                <span>TRANSACTIONS</span>
+            </div>
+            <div class="col-9 d-flex justify-content-end ps-4">
+                <i class=" text-success fa-solid fa-file-excel mx-3 download-pdf-excel" (click)="download()"
+                    *ngIf="data.length>0"></i>
+                <i class=" text-danger fa-solid fa-file-pdf mx-3 download-pdf-excel" [matMenuTriggerFor]="menu"
+                    *ngIf="data.length>0"></i>
+
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <div mat-menu-item class="menu-item" (click)="downloadAsPdf('LANDSCAPE')">
+                        <span class="text-primary me-2"><i class="fa-solid fa-image"></i></span> Landscape
+                    </div>
+                    <hr class="m-0" />
+                    <div mat-menu-item class="menu-item" (click)="downloadAsPdf('PORTRAIT')">
+                        <span class="text-danger me-2"><i class="fa-solid fa-image-portrait"></i></span> Portrait
+                    </div>
+                </mat-menu>
+            </div>
+        </div>
+        <div class="mt-4">
+            <div style="max-height: 39vh;min-height: 39vh; overflow-y: auto;">
+                <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                    <thead class="border-bottom">
+                        <tr class="border-bottom sale-header">
+                            <th class="text-start" scope="col">#</th>
+                            <th class="text-start" scope="col">Date</th>
+                            <th class="text-start" scope="col">Party Name</th>
+                            <th class="text-start" scope="col">Voucher No.</th>
+                            <th class="text-start" scope="col">Voucher Type</th>
+                            <th class="text-end" scope="col">Sales Amount</th>
+                            <th class="text-end" scope="col">SGST</th>
+                            <th class="text-end" scope="col">CGST</th>
+                            <th class="text-end" scope="col">IGST</th>
+                            <th class="text-end" scope="col">Others</th>
+                            <th class="text-end" scope="col">Total</th>
+                            <th class="text-end" scope="col">Running Balance</th>
+                            <th class="text-start" scope="col">Status</th>
+                            <th class="text-end" scope="col">Balance Due</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of data; let idx = index" class="border-bottom">
+                            <td class="text-start" style="width:70px;">{{idx+1}}</td>
+                            <td class="text-start">{{item.date|date:'dd-MM-yyyy'}}</td>
+                            <td class="text-start">{{item.partyName}}</td>
+                            <td class="text-start transaction" (click)="openTransaction(item.type,item.id)">
+                                {{item.invoiceNo}}
+                            </td>
+                            <td class="text-start">{{item.type}}</td>
+                            <td class="text-end">{{item.taxableAmount|currency: 'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-end">{{item.sgst}}</td>
+                            <td class="text-end">{{item.cgst}}</td>
+                            <td class="text-end">{{item.igst}}</td>
+                            <td class="text-end">{{item.expenseAmount}}</td>
+                            <td class="text-end">{{item.totalAmount|currency: 'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-end">{{item.runningBalance|currency: 'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-start">
+                                <span class="badge rounded-pill" [ngClass]="{'text-bg-success': item.paymentStatus=='Paid' || item.paymentStatus=='Used', 
+                                        'text-bg-primary':item.paymentStatus=='Partial' || item.paymentStatus=='Unused',
+                                        'text-bg-danger':item.paymentStatus=='Unpaid', } ">
+                                    {{item.paymentStatus}}
+                                </span>
+                            </td>
+                            <td class="text-end">{{item.balanceDue}}</td>
+                        </tr>
+                        <tr *ngIf="data.length==0">
+                            <td colspan="14">No Transactions Are Available</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

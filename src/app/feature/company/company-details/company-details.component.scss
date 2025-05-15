@@ -1,0 +1,25 @@
+.org-logo {
+    padding: 0.25rem;
+    background-color: var(--bs-body-bg);
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+}
+
+.logo-action {
+    min-width: 125px;
+}
+
+.img-download {
+    position: relative;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.img-download>a {
+    position: absolute;
+    background: white;
+    bottom: 5px;
+    right: 20px;
+    opacity: 0.9;
+    background-color: transparent;
+}

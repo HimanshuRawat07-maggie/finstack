@@ -1,0 +1,71 @@
+.item-list-wrapper {
+    height: calc(100vh - 100px);
+}
+
+.item-list {
+    max-height: calc(100vh - 254px);
+    overflow-y: auto;
+}
+
+.table-responsive {
+    max-height: calc(100vh - 194px);
+}
+
+.item-context-menu {
+    position: absolute;
+    min-width: 100px;
+    right: 5px;
+    z-index: 10;
+}
+
+::ng-deep {
+    .mat-mdc-menu-content {
+        padding: 0 !important;
+    }
+
+    .mat-mdc-menu-panel {
+        background-color: white;
+    }
+
+    .mat-mdc-menu-item {
+        min-height: 35px !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+}
+
+th {
+    height: 40px;
+    // border-color: rgb(170, 170, 170)!important;
+    border-right: none !important;
+}
+
+td {
+    height: 55px;
+}
+
+.border-bottom {
+    border-bottom-color: rgb(170, 170, 170) !important;
+}
+
+.view-products-btn {
+    border-radius: 6px;
+    font-size: .8rem !important;
+    font-weight: 600;
+    height: 24px !important;
+    padding: 2px 7px;
+    width: fit-content;
+    border: 1px solid transparent;
+}
+
+.view-products-btn:hover {
+    border: 1px solid rgb(170, 170, 170);
+}
+
+#main-table .view-products-btn:before {
+    content: '+ Show Item';
+}
+
+#main-table .view-products-btn[aria-expanded="true"]:before {
+    content: '- Hide Item';
+}

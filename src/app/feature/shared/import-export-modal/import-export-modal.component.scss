@@ -1,0 +1,58 @@
+.modal-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; /* Ensure the modal takes up the full height */
+  overflow: auto; /* Enable scrolling if content exceeds modal size */
+}
+
+.carousel-container {
+  overflow: hidden;
+  width: 100%; /* Ensure the carousel container takes up the full width */
+  height: 300px; /* Allow the carousel height to adjust based on image size */
+}
+
+.carousel {
+  display: flex;
+  transition: transform 0.5s ease-in-out; /* Smooth transition */
+}
+
+.slide {
+  flex: 0 0 100%; /* Each slide takes the full width */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slide img {
+  max-width: 200px; /* Ensure images don't overflow */
+  max-height: 100%; /* Ensure images don't overflow */
+  height: auto;
+}
+
+.carousel-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent; /* Transparent background */
+  border: none;
+  font-size: 24px; /* Adjust font size as needed */
+  cursor: pointer; /* Change cursor on hover */
+}
+.carousel-nave {
+  // position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent; /* Transparent background */
+  border: none;
+  font-size: 24px; /* Adjust font size as needed */
+  cursor: pointer; /* Change cursor on hover */
+}
+
+.carousel-nav.prev {
+  left: 10px; /* Position the 'Previous' button on the left side */
+}
+
+.carousel-nav.next {
+  right: 10px; /* Position the 'Next' button on the right side */
+}

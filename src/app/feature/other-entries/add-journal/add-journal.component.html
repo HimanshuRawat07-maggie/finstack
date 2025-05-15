@@ -1,0 +1,109 @@
+<div class="card">
+    <div class="title py-2">
+        <span class="ms-3">{{status}} Journal</span>
+    </div>
+    <hr class="m-0">
+    <div class="p-3" style="min-height: 400px;">
+        <div class="row">
+            <div class="col-3">
+                <div class="input-group mt-4">
+                    <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important;z-index: 10;">
+                        <span class="h6 small bg-white text-muted px-1">Journal No<span
+                                class="text-danger">*</span></span>
+                    </label>
+                    <span *ngIf="prefix?.length>0" class="input-group-text"
+                        style="font-size: 13px;font-weight: bold;">{{prefix}}</span>
+                    <input type="number" class="form-control" name="name" [(ngModel)]="transactions.orderNumber"
+                        #name="ngModel">
+                    <span *ngIf="suffix?.length>0" class="input-group-text"
+                        style="font-size: 13px;font-weight: bold;">{{suffix}}</span>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="form-group mt-4 position-relative">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Date</span>
+                    </label>
+                    <span class="date-preview" onclick="document.getElementById('transaction-orderdate').showPicker()">
+                        {{transactions.orderDate| date:'dd-MM-yyyy'}}
+                    </span>
+                    <input id="transaction-orderdate" type="date" class="form-control" name="date" [min]="minDate"
+                        [(ngModel)]="transactions.orderDate" #date="ngModel">
+                </div>
+            </div>
+        </div>
+        <div class="mt-5">
+            <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                <thead  class="border-bottom">
+                    <tr class="border-bottom purchase-header">
+                        <th width="8%">#</th>
+                        <th width="50%" class="text-start">PARTICULARS</th>
+                        <th width="17%">DEBIT</th>
+                        <th width="17%">CREDIT</th>
+                        <th width="8%">DELETE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let transaction of transactions.journals; let i = index"  class="border-bottom">
+                        <td class="cell-right-border">{{i+1}}</td>
+                        <td class="cell-right-border text-start">
+                            <div>
+                                <ng-select name="partyLedger" [items]="" groupBy="group" appendTo="body"
+                                    [searchable]="true" [(ngModel)]="transaction.selectedPartyLedgerAndPayment"
+                                    (change)="setParticularNameAndId(i,transaction.selectedPartyLedgerAndPayment)">
+                                    <ng-template ng-optgroup-tmp let-item="item">
+                                        <span style="color: rgba(0,0,0,0.8);">
+                                            <strong>{{item.group || 'Unnamed group'}}</strong>
+                                        </span>
+                                    </ng-template>
+                                    <ng-option *ngFor="let partyLedgerPayment of partyLedgerAndPaymentType"
+                                        [value]="partyLedgerPayment">{{partyLedgerPayment.title}}</ng-option>
+                                </ng-select>
+                            </div>
+                        </td>
+                        <td class="cell-right-border">
+                            <input type="number" class="form-control" [(ngModel)]="transaction.debit"
+                                (keyup)="clearCredit(i)">
+                        </td>
+                        <td class="cell-right-border">
+                            <input type="number" class="form-control" [(ngModel)]="transaction.credit"
+                                (keyup)="clearDebit(i)">
+                        </td>
+                        <td>
+                            <button mat-icon-button class="text-danger" (click)="deleteRow(i)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr class="table-light table-group-divider">
+                        <td class="text-start py-1">
+                            <button class=" btn btn-outline-primary" (click)="addRow()">Add Row</button>
+                        </td>
+                        <td class="text-end px-4 py-1" colspan="5">
+                            <span class="mx-2" style="font-size: 14px; font-weight: 500;">
+                                Total Debit : {{getTotalDebit() | currency:'INR':'symbol':'1.2-2'}}</span>
+                            <span class="mx-2" style="font-size: 14px; font-weight: 500;">
+                                Total Credit : {{getTotalCredit() | currency:'INR':'symbol':'1.2-2'}}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="col-5">
+                    <div class="form-group mt-2">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Description</span>
+                        </label>
+                        <textarea type="text" class="form-control" rows="4" cols="50" name="description"
+                            [(ngModel)]="transactions.notes" #description="ngModel"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="mb-0">
+    <div class="d-flex justify-content-end p-3">
+        <button class="btn btn-outline-primary mx-2" [routerLink]="'/app/other-entries/journal'">Cancel</button>
+        <button class="btn btn-primary" (click)="onSubmit()">{{transactions.id==null?'Save':'Update'}}</button>
+    </div>
+</div>

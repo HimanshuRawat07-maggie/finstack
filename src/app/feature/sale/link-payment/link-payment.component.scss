@@ -1,0 +1,20 @@
+.table-responsive {
+    max-height: calc(100vh - 400px);
+}
+
+.form-control-sm {
+    width: 100%;
+}
+
+::ng-deep {
+    .mdc-form-field>label {
+        margin: 0;
+    }
+
+    .mat-mdc-checkbox .mdc-checkbox .mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background,
+    .mat-mdc-checkbox .mdc-checkbox .mdc-checkbox__native-control:enabled:indeterminate~.mdc-checkbox__background,
+    .mat-mdc-checkbox .mdc-checkbox .mdc-checkbox__native-control[data-indeterminate=true]:enabled~.mdc-checkbox__background {
+        border-color: #7539FF !important;
+        background-color: #7539FF !important;
+    }
+}

@@ -1,0 +1,27 @@
+<div class="card m-0 p-0">
+    <div class="ps-3 py-2" style="font-size: large; font-weight: 500;">Delete Company</div>
+    <hr class="mt-0">
+    <div class="px-3" style="font-size: 18px;">
+        <div class="form-group mt-4">
+            <mat-checkbox [(ngModel)]="checkField">I confirm that I have read and agree to the company's deletion
+                policy.</mat-checkbox>
+            <form #deleteCompanyForm="ngForm">
+                <div class="mt-3">
+                    <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Password</span>
+                    </label>
+                    <input type="password" class="form-control" [(ngModel)]="password" name="pass" #pass="ngModel" required
+                        [ngClass]="{'is-invalid':pass.touched && pass.errors && pass.errors['required']}">
+                    <p *ngIf="pass.touched && pass.errors && pass.errors['required']" class="validation-error ">
+                        Password is required
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+    <hr class="mb-0 mt-5">
+    <div class="d-flex justify-content-end px-4" mat-dialog-actions>
+        <button type="button" class="btn btn-outline-primary mx-3 " (click)="cancel()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="onSubmit()">Confirm</button>
+    </div>
+</div>

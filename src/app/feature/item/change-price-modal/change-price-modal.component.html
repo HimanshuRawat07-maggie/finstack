@@ -1,0 +1,63 @@
+<div>
+    <div class="p-3 title">
+        <span>Change Price</span>
+    </div>
+    <hr class="m-0">
+    <div class="p-3">
+        <div >
+            <div class="d-flex">
+                <div>
+                    <input type="radio" id="increase" name="inc" [(ngModel)]="isIncreaseEnable" value="true"><label for="increase" class="ms-3">Increase</label>
+                </div>
+              <div class="ms-3">
+                  <input type="radio" id="decrease" name="inc" [(ngModel)]="isIncreaseEnable" value="false"><label for="decrease" class="ms-3">Decrease</label>
+              </div>
+            </div>
+            <div class="d-flex mt-3">
+                <div>
+                    <input type="checkbox" [(ngModel)]="details.salePrice" id="sale"><label class="ms-3" for="sale">Sale Price</label>
+                </div>
+                <div class="ms-3">
+                        <input type="checkbox" [(ngModel)]="details.purchasePrice" placeholder="Enter Value" id="purchase"><label class="ms-3" for="purchase">Purchase Price</label>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4">
+            <div class="mt-1">
+                <span [ngClass]="isPercentageEnable===false?'text-primary':'text-black' "
+                style="font-size: 15px; font-weight: 500;">Amount</span>
+            <label class="switch mx-2">
+                <input type="checkbox" (click)="toggleDiscountAndAmount();" [(ngModel)]="isPercentageEnable" value="true">
+                <span class="slider round"></span>
+            </label>
+            <span [ngClass]="isPercentageEnable===true?'text-primary':'text-black' "
+                style="font-size: 15px; font-weight: 500;">Percentage</span>
+            </div>
+            <div>
+                <form  #amountForm="ngForm">
+                    <div class="form-group mt-3">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                        <span class="h6 small bg-white text-muted px-1">Value</span>
+                    </label>
+                        <input type="number" class="form-control" style="width: 200px;" [(ngModel)]="details.value" name="amount" #amount="ngModel"
+                     required  [ngClass]="{'is-invalid':amount.touched && amount.errors && amount.errors['required']}">
+                    <p *ngIf="amount.touched && amount.errors && amount.errors['required']" class="validation-error ">
+                       Amount is required
+                    </p>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Cutt-off date</span>
+                         </label>
+                        <input type="date" class="form-control" style="width: 200px;">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <hr class="m-0">
+    <div class="d-flex justify-content-end p-3">
+        <button class="btn btn-outline-primary" (click)="close()">Cancel</button>
+        <button type="submit" class="btn btn-primary ms-3" (click)="onSubmit()">Save</button>
+    </div>
+</div>

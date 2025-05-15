@@ -1,0 +1,145 @@
+<div class="card">
+    <div class="py-3">
+        <span class="title ms-3">Party Wise</span>
+        <hr>
+        <app-date-filter (dateChange)="onDateChange($event)"></app-date-filter>
+    </div>
+</div>
+<div class="row ps-2" *ngIf="data.length!=0">
+    <div class="col-3 px-0 py-3 bg-white shadow-sm"
+        style="max-height: 64vh;min-height: 64vh; overflow-y: auto; border-radius: 9px;">
+        <div class="px-2">
+            <i class="fa-solid fa-magnifying-glass"
+                style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+            <input type="text" class="form-control" [(ngModel)]="filterPartyText" placeholder="Search Group"
+                style="text-align: left ; padding-left: 40px;" (keyup)="filterParty()">
+        </div>
+        <div class="row px-3 mt-3 g-0">
+            <div class="col-6">
+                <span style="font-weight: 700;">PARTY</span>
+            </div>
+            <div class="col-5 text-end pe-1">
+                <span style="font-weight: 700;">AMOUNT</span>
+            </div>
+        </div>
+        <div class="row m-0 item-list">
+            <div class="mt-2 pointer" *ngFor="let item of filteredData; let idx = index" (click)="selectItem(idx)">
+                <div class="py-1 row"
+                    [ngStyle]="selectedItem.name==item.name?{'background-color':'#cde2f7'} : {'background-color': 'white'}">
+                    <div class="col-7">
+                        <div class="ellipse w-75" [title]="item.name">{{item.name}}</div>
+                    </div>
+                    <div class="col-4 text-end pe-1">
+                        <span [ngClass]="{'text-success ellipse':item.amount!>=0,'text-danger ellipse':item.amount!<0}"
+                            [title]="getNetAmount(item.amount) | currency:'INR':'symbol':'1.2-2'">
+                            {{getNetAmount(item.amount) | currency:'INR':'symbol':'1.2-2'}}
+                        </span>
+                    </div>
+                    <div class="col-1 p-0 text-center position-relative">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-9">
+        <div class="p-3 bg-white card-box shadow-sm">
+            <div class="row">
+                <div class="col-8 d-flex align-items-center">
+                    <span class="pe-3" style="font-weight: 600;">{{selectedItem.name}}</span>
+                </div>
+                <div class="col-4 d-flex justify-content-end">
+                    <i class=" text-success fa-solid fa-file-excel mx-3 download-pdf-excel" (click)="download()"
+                        *ngIf="filteredTableData.length>0"></i>
+                    <i class=" text-danger fa-solid fa-file-pdf mx-3 download-pdf-excel" [matMenuTriggerFor]="menu"
+                        *ngIf="filteredTableData.length>0"></i>
+
+                    <mat-menu #menu="matMenu" xPosition="before">
+                        <div mat-menu-item class="menu-item" (click)="downloadAsPdf('LANDSCAPE')">
+                            <span class="text-primary me-2"><i class="fa-solid fa-image"></i></span> Landscape
+                        </div>
+                        <hr class="m-0" />
+                        <div mat-menu-item class="menu-item" (click)="downloadAsPdf('PORTRAIT')">
+                            <span class="text-danger me-2"><i class="fa-solid fa-image-portrait"></i></span> Portrait
+                        </div>
+                    </mat-menu>
+                </div>
+            </div>
+        </div>
+        <div class="p-3 pb-4 bg-white card-box shadow-sm mt-3">
+            <div class="row">
+                <div class="col-8">
+                    <span style="font-weight: 700;">TRANSACTIONS</span>
+                </div>
+                <div class="col-4 d-flex align-items-center justify-content-end">
+                    <div>
+                        <i class="fa-solid fa-magnifying-glass"
+                            style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+                        <input type="text" class="form-control" [(ngModel)]="filterText"
+                            placeholder="Search Transaction"
+                            style="text-align: 10px; min-width: 300px ; padding-left: 40px;"
+                            (keyup)="filterTransactions()">
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3 table-responsive" style="max-height: 41vh;min-height: 41vh; overflow-y: auto;">
+                <div class="col-12 table-list">
+                    <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                        <thead class="border-bottom">
+                            <tr class="border-bottom purchase-header">
+                                <th class="text-start" scope="col">#</th>
+                                <th class="text-start" scope="col">Date</th>
+                                <!-- <th class="text-start" scope="col">Particular</th> -->
+                                <th class="text-start" scope="col">Voucher No.</th>
+                                <th class="text-start" scope="col">Voucher Type</th>
+                                <th class="text-end" scope="col">Total Amount</th>
+                                <th class="text-end" scope="col">Due Amount</th>
+                                <!-- <th class="text-end" scope="col">Running Balance</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let data of filteredTableData; let i = index" class="border-bottom">
+                                <td class="text-start">{{i+1}}</td>
+                                <td class="text-start">{{data.date | date:'dd-MM-yyyy'}}</td>
+                                <!-- <td class="text-start">{{data.partyName}}</td> -->
+                                <td class="text-start transaction" (click)="openTransaction(data.type,data.id)">
+                                    {{data.orderPrefix}}{{data.orderNumber}}{{data.orderSuffix}}
+                                </td>
+                                <td class="text-start">{{getTransctionType(data)}}</td>
+                                <td class="text-end">{{getNetAmount(data.total)|currency:'INR':'symbol':'1.2-2'}}</td>
+                                <td class="text-end">{{data.balance|currency:'INR':'symbol':'1.2-2'}}</td>
+                                <!-- <td class="text-end">{{data.runningAmount|currency:'INR':'symbol':'1.2-2'}}</td> -->
+                            </tr>
+                            <tr *ngIf="filteredTableData.length==0">
+                                <td class="text-center" colspan="7">
+                                    No Transactions To Show
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card container-fluid" *ngIf="data.length==0">
+    <div class="container-fluid">
+        <div class="row d-flex  align-items-center" style="height: 80vh;">
+            <div class="d-flex justify-content-center">
+                <div>
+                    <div class="d-flex justify-content-center">
+                        <img src="assets/images/empty-dashboard.png" width="300px">
+                    </div>
+                    <div class="d-flex justify-content-center mt-4">
+                        <span style=" font-size: 20px;"> Add your first party with whom you can do your business and
+                            make fortune</span>
+                    </div>
+                    <div class="d-flex justify-content-center mt-3">
+                        <button class="btn btn-outline-primary" (click)="navigateTo('/app/party/add-party')">Add Your
+                            First Party</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

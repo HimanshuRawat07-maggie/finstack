@@ -1,0 +1,42 @@
+.text-field{
+    height: 39px;
+    border-radius: 10px;
+    width: 100%;
+    border: 2px solid #aaa;
+    font-size: 13px;
+}
+
+.text-field:focus{
+     border: 2px solid rgb(196, 196, 196);
+      outline: 0;
+}
+
+.form-input span{
+    position: absolute;
+    right: 94%;
+    bottom: 66%;
+    font-size: 13px;
+    color: gray;
+    width: fit-content;
+    transition: all 0.1s ease;
+}
+
+.text-field:placeholder-shown + span {
+      position: absolute;
+    right: 94%;
+    bottom: 66%;
+    font-size: 13px;
+    color: gray;
+    width: fit-content;
+    transition: all 0.1s ease;
+}
+
+.form-input  input:focus + span,
+.form-input input:not(:placeholder-shown) {
+    top: 22%;
+    padding: 3px;
+    left: 17px;
+    background-color: white;
+}
+
+

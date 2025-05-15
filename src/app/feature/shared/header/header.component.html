@@ -1,0 +1,96 @@
+<!-- Header -->
+<div class="header header-one header-six">
+    <!-- Sidebar Toggle -->
+
+    <!-- <a href="javascript:void(0);" id="toggle_btn" (click)="toggleSidebar()">
+        <span class="toggle-bars">
+            <span class="bar-icons"></span>
+            <span class="bar-icons"></span>
+            <span class="bar-icons"></span>
+            <span class="bar-icons"></span>
+        </span>
+    </a> -->
+    <!-- /Sidebar Toggle -->
+
+    <!-- Mobile Menu Toggle -->
+    <a href="javascript:void(0);" class="mobile_btn" id="mobile_btn">
+        <i class="fas fa-bars"></i>
+    </a>
+    <!-- /Mobile Menu Toggle -->
+
+    <!-- Mobile Menu Toggle -->
+    <a *ngIf="!isBackIconVisible" class="back-btn" (click)="goBack()"> <i class="fa fa-arrow-left"></i> </a>
+    <!-- /Mobile Menu Toggle -->
+
+    <!-- Header Menu -->
+    <ul class="nav nav-tabs user-menu">
+        <li *ngIf="currentUser?.companyRole=='COMPANY_ADMIN' && showSubscriptionBtn"
+            class="nav-item d-flex align-items-center">
+            <span>{{getSubscriptionMessage()}}
+                <strong>{{getSubscriptionEndingDate() | date:'dd-MM-yyyy'}}</strong>
+            </span>
+            <button type="button" class="btn btn-danger ms-2" (click)="openSubscribeModal()">Subscribe</button>
+        </li>
+        <!-- <li class="nav-item">
+            <button type="button" class="btn btn-success" [routerLink]="'/app/sale/invoice/create'">Add Sale</button>
+        </li>
+        <li class="nav-item">
+            <button type="button" class="btn btn-danger" [routerLink]="'/app/purchase/bills/create'">Add
+                Purchase</button>
+        </li> -->
+
+        <li class="nav-item dropdown user-name" (click)="toggleSidebarRight()" (clickOutside)="isSidebarOpen=false">
+            <span>{{currentUser?.companyName}}</span>
+            <span class="name-letter">{{getFirstNameLetter()}}</span>
+            <i class="fa-solid fa-caret-down ms-2"></i>
+
+            <div class="sidebar-right border ps-0" [ngClass]="{'active': isSidebarOpen}">
+                <hr class="m-0">
+                <div class="px-2 py-3 d-flex align-items-center justify-content-between">
+                    <span class="ms-2" style="font-size: 15px; font-weight: 600; color: #111;">My Companies</span>
+
+                    <span (click)="openModal()" class=" mx-2">
+                        <button class="btn btn-outline-primary">Add Company</button>
+                    </span>
+                </div>
+                <hr class="m-0">
+                <div style="height: calc(100vh - 188px);overflow-y: auto;">
+                    <div class="p-1 d-flex align-items-center" *ngFor="let company of data;let idx=index"
+                        style="cursor: pointer;border-bottom:1px solid #eee;max-height: 50px; min-height: 45px;"
+                        [ngStyle]="companyId==company.id?{'background-color':'#cde2f7'} : {'background-color': 'white'}">
+                        <div class="row m-0 w-100">
+                            <div class="col-2 justify-content-center d-flex align-items-center"
+                                (click)="switchCompany(idx)">
+                                <img *ngIf=" company.logo!=null" [src]="company.logo" width="38" height="38"
+                                    style="border-radius: 50%;border: 1px solid #eee;">
+                                <span *ngIf="company.logo==null" class="company-no-logo">
+                                    <i class="fa-solid fa-building"></i>
+                                </span>
+                            </div>
+                            <div class="col-8 d-flex align-items-center px-1" (click)="switchCompany(company.id)">
+                                {{company.name}}
+                            </div>
+                            <div class="col-2 d-flex align-items-center justify-content-center text-danger"
+                                *ngIf="companyId==company.id">
+                                <mat-icon (click)="openDeleteCompanyDialog(company.id)">delete</mat-icon>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- <div class="p-1 d-flex align-items-center logout-item" (click)="logOut()">
+                    <div class="row m-0 w-100">
+                        <div class="col-2 justify-content-center d-flex align-items-center">
+                            <span class="company-no-logo"><i class="fa-solid fa-right-from-bracket"></i></span>
+                        </div>
+                        <div class="col-10 d-flex align-items-center px-1">
+                            <strong>Logout</strong>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+        </li>
+    </ul>
+    <!-- /Header Menu -->
+</div>
+<!-- /Header -->

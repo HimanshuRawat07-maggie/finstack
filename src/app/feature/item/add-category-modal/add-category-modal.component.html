@@ -1,0 +1,22 @@
+<div class="card">
+    <div class="title py-3 ms-3">
+        {{status}} Item Group
+    </div>
+    <hr class="my-0">
+    <form #GroupForm="ngForm" (ngSubmit)="onSubmit()">
+        <div class="form-group my-5 w-50 ms-4">
+            <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                <span class="h6 small bg-white text-muted px-1">Group Name</span>
+            </label>
+            <input type="text" class="form-control" [(ngModel)]="categoryName.name" name="name" #name="ngModel" required
+                [ngClass]="{'is-invalid':name.touched && name.errors && name.errors['required']}">
+            <p *ngIf="name.touched && name.errors && name.errors['required']" class="validation-error ">
+                Name is required
+            </p>
+        </div>
+    </form>
+    <hr class="mb-0">
+    <div class="d-flex justify-content-end px-4 mt-3">
+        <button class="btn btn-primary" (click)="onSubmit()">{{categoryName.id==null?'Save':'Update'}}</button>
+    </div>
+</div>

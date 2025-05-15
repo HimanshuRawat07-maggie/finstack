@@ -1,0 +1,18 @@
+.small-select {
+    width: 15%;
+    height: 35px;
+}
+
+input {
+    width: 20%;
+}
+
+.mat-datepicker-content .mat-calendar {
+    max-height: 200px; /* Adjust the max-height as needed */
+}
+
+/* Reduce the height of the calendar cells */
+.mat-calendar-body-cell {
+    height: 30px; /* Adjust the height as needed */
+    line-height: 30px; /* Adjust line-height for vertical centering */
+}

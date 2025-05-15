@@ -1,0 +1,82 @@
+<div class="card">
+    <div class="py-3">
+        <div class="title ms-3">
+            <span>Journals</span>
+        </div>
+        <hr>
+        <app-date-filter (dateChange)="onDateChange($event)"></app-date-filter>
+    </div>
+</div>
+
+<div class="card mb-0">
+    <div class="p-3">
+        <div class="row ">
+            <div class="col-3">
+                <i class="fa-solid fa-magnifying-glass"
+                    style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+                <input type="text" class="form-control" [(ngModel)]="filterText" (keyup)="filterTransactions()" placeholder="Search Transaction"
+                    style="text-align: 10px; min-width: 300px ; padding-left: 40px;">
+            </div>
+            <div class="col-9 d-flex justify-content-end ps-4">
+                <button *ngIf="hasPermission(constants.Add)" type="button" class="btn btn-outline-primary"
+                    [routerLink]="'create'">Add Journal</button>
+            </div>
+        </div>
+        <div class="mt-4">
+            <div style="max-height: 51vh;min-height: 51vh; overflow-y: auto;">
+                <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                    <thead class="border-bottom">
+                        <tr class="border-bottom journal-header">
+                            <th class="text-start ps-2" scope="col">#</th>
+                            <th class="text-start" scope="col">Date</th>
+                            <th class="text-start" scope="col">Particular</th>
+                            <th class="text-start" scope="col">Journal Number</th>
+                            <th class="text-end" scope="col">Amount</th>
+                            <th class="text-end pe-2" scope="col"
+                                *ngIf="hasPermission(constants.Edit) || hasPermission(constants.Delete) || hasPermission(constants.View)">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let journal of filterData; let idx = index" class="border-bottom"
+                            style="cursor: pointer;">
+                            <td class="text-start ps-3" style="width:70px;">{{idx+1}}</td>
+                            <td class="text-start" style="width: 150px;">{{journal.orderDate|date:'dd-MM-yyyy'}}</td>
+                            <td class="text-start ellipse" style="max-width: 150px;" [title]="journal.particularName">{{journal.particularName}}</td>
+                            <td class="text-start ellipse" style="max-width: 150px;">
+                                {{journal.orderPrefix}}{{journal.orderNumber}}{{journal.orderSuffix}}</td>
+                            <td class="text-end ellipse text-success" style="max-width: 150px;">{{journal.amount|currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-end pe-3 " style="width: 150px;"
+                                *ngIf="hasPermission(constants.Edit) || hasPermission(constants.Delete) || hasPermission(constants.View)">
+                                <i class="fa-solid fa-ellipsis-vertical w-100 pointer" [matMenuTriggerFor]="menu"></i>
+                            </td>
+
+                                <mat-menu #menu="matMenu" xPosition="before">
+                                <div *ngIf="hasPermission(constants.Edit)" mat-menu-item class="menu-item"
+                                    (click)="openPdf(journal.id,journal.orderPrefix, journal.orderNumber,journal.orderSuffix)">
+                                    <span class="text-primary me-2"><i class="fa fa-file-pdf"></i></span>View/Open PDF
+                                </div>
+                                <hr class="m-0">
+                                <div *ngIf="hasPermission(constants.Edit)" mat-menu-item class="menu-item"
+                                    [routerLink]="'/app/other-entries/journal/edit/'+journal.id">
+                                    <span class="text-primary me-2"><i class="fa fa-pencil"></i></span> Edit
+                                </div>
+                                <hr class="m-0" *ngIf="hasPermission(constants.Edit)" />
+                                <div *ngIf="hasPermission(constants.Delete)" mat-menu-item class="menu-item"
+                                    (click)="openDeleteDialog(idx)">
+                                    <span class="text-danger me-2"><i class="fa fa-trash"></i></span> Delete
+                                </div>
+                              </mat-menu>
+                        </tr>
+                        <tr *ngIf="filterData.length==0">
+                            <td colspan="10">
+                                No Transactions are Available
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

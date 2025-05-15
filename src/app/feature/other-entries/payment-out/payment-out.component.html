@@ -1,0 +1,82 @@
+<div class="card">
+    <div class="py-3">
+        <div class="title ms-3">
+            <span>Receipt</span>
+        </div>
+        <hr>
+        <app-date-filter (dateChange)="onDateChange($event)"></app-date-filter>
+    </div>
+</div>
+
+<div class="card p-3 mb-0">
+    <div class="row">
+        <div class="col-3">
+            <i class="fa-solid fa-magnifying-glass"
+                style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+            <input type="text" class="form-control" [(ngModel)]="filterText" (keyup)="filterTransactions()" placeholder="Search Transaction"
+                style="text-align: 10px; min-width: 300px ; padding-left: 40px;">
+        </div>
+        <div class="col-9 d-flex justify-content-end ps-4">
+            <button *ngIf="hasPermission(constants.Add)" class="btn btn-outline-primary"
+                (click)="navigateTo('app/other-entries/add-payment-out') ">Add Receipt</button>
+        </div>
+    </div>
+    <div class="mt-4">
+          <div style="max-height: 51vh;min-height: 51vh; overflow-y: auto;">
+                <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                    <thead class="border-bottom">
+                        <tr class="border-bottom receipt-header">
+                            <th class="text-start ps-2" scope="col">#</th>
+                            <th class="text-start" scope="col">Date</th>
+                            <th class="text-start" scope="col">Invoice No.</th>
+                            <th class="text-start" scope="col">Party/ Ledger Name</th>
+                            <th class="text-start" scope="col">Payment Type</th>
+                            <th class="text-end" scope="col">Amount</th>
+                            <th class="text-end pe-2" scope="col"
+                                *ngIf="hasPermission(constants.Edit) || hasPermission(constants.Delete) || hasPermission(constants.View)">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let receipt of filterData; let idx = index" class="border-bottom"
+                            style="cursor: pointer;">
+                            <td class="text-start ps-3" style="width:70px;">{{idx+1}}</td>
+                            <td class="text-start">{{receipt.orderDate|date:'dd-MM-yyyy'}}</td>
+                            <td class="text-start ellipse" style="max-width: 150px;">
+                                {{receipt.orderPrefix}}{{receipt.orderNumber}}{{receipt.orderSuffix}}</td>
+                            <td class="text-start ellipse" style="max-width: 150px;" [title]="receipt.partyName">{{receipt.partyName && receipt.partyName.length>0 ? receipt.partyName :receipt.ledgerName}}</td>
+                            <td class="text-start" style="max-width: 10px;">{{receipt.paymentType}}</td>
+                            <td class="text-end text-success" style="max-width: 50px;">{{receipt.amount |currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-end pe-3"
+                                *ngIf="hasPermission(constants.Edit) || hasPermission(constants.Delete) || hasPermission(constants.View)">
+                                <i class="fa-solid fa-ellipsis-vertical w-100 pointer" [matMenuTriggerFor]="menu"></i>
+                            </td>
+
+                                <mat-menu #menu="matMenu" xPosition="before">
+                            <div *ngIf="hasPermission(constants.Edit)" mat-menu-item class="menu-item"
+                                (click)="openPdf(receipt.id,receipt.orderPrefix, receipt.orderNumber,receipt.orderSuffix)">
+                                <span class="text-primary me-2"><i class="fa fa-file-pdf"></i></span>View/Open PDF
+                            </div>
+                            <hr class="m-0">
+                            <div *ngIf="hasPermission(constants.Edit)" mat-menu-item class="menu-item"
+                                [routerLink]="'/app/other-entries/edit-payment-out/'+ receipt.id">
+                                <span class="text-primary me-2"><i class="fa fa-pencil"></i></span> Edit
+                            </div>
+                            <hr class="m-0" *ngIf="hasPermission(constants.Edit)" />
+                            <div *ngIf="hasPermission(constants.Delete)" mat-menu-item class="menu-item"
+                                (click)="openDeleteDialog(idx)">
+                                <span class="text-danger me-2"><i class="fa fa-trash"></i></span> Delete
+                            </div>
+                        </mat-menu>
+                        </tr>
+                        <tr *ngIf="filterData.length==0">
+                            <td colspan="10">
+                                No Transactions are Available
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+    </div>
+</div>

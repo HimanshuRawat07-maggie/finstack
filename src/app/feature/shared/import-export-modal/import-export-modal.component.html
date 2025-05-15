@@ -1,0 +1,25 @@
+<div>
+    <div class="title p-3 d-flex justify-content-between">
+        <span>Import & Export</span>
+        <span><i class="fa-solid fa-xmark pointer" (click)="close()"></i></span>
+    </div>
+    <hr class="m-0">
+    <div class="p-3 d-flex align-items-center">
+        <span>Download Our Tool For Import</span>
+        <a href="https://spont-sync-tool.s3.ap-south-1.amazonaws.com/1.0.0/SpontSoftware.msi"><button class="btn btn-primary ms-3">Download</button></a>
+    </div>
+    <hr class="m-0">
+    
+ `  <div class="p-2" >
+       <div class="carousel-container">
+          <button class="carousel-nav prev"  (click)="prevSlide()">&#10094;</button> 
+  <div class="carousel" [style.transform]="'translateX(-' + currentSlide * 100 + '%)'">
+    <div class="slide" *ngFor="let image of images; let i = index" [class.active]="i === currentSlide">
+      <img class="shadow border" [src]="image.src" [alt]="image.alt" />
+    </div>
+  </div>
+  <button class="carousel-nav next" (click)="nextSlide()">&#10095;</button> 
+</div>
+ </div>
+
+</div>  

@@ -1,0 +1,42 @@
+<div class="card mb-0">
+    <div class="d-flex justify-content-between title p-3">
+        <span>{{details.type=='invoice'?'E-Invoice':'E-Way Bill'}} Details</span>
+        <i class="fa-solid fa-x pointer" (click)="close(false)"></i>
+    </div>
+    <hr class="m-0">
+    <form #gstPortalForm="ngForm" (ngSubmit)="onSubmit()">
+        <div class="p-3">
+            <div class="form-group">
+                <label for="exampleInputEmail1">GSTIN</label>
+                <input type="text" class="form-control" [(ngModel)]="details.gst" #gst="ngModel" name="gst" disabled>
+            </div>
+            <div class="form-group mt-4">
+                <label for="exampleInputEmail1">Username</label>
+                <input type="text" class="form-control" [(ngModel)]="data.username" #username="ngModel" name="username"
+                    required
+                    [ngClass]="{'is-invalid':username.touched && username.errors && username.errors['required']}">
+                <p *ngIf="username.touched && username.errors && username.errors['required']" class="validation-error ">
+                    Username is required
+                </p>
+            </div>
+            <div class="form-field mt-4">
+                <label for="exampleInputEmail1">Password</label>
+                <input type="{{isPasswordVisible?'text':'password'}}" class="form-control" [(ngModel)]="data.password"
+                    #password="ngModel" name="password" required
+                    [ngClass]="{'is-invalid':password.touched && password.errors && password.errors['required']}">
+                <i *ngIf="isPasswordVisible" (click)="isPasswordVisible=false"
+                    class="fa-regular fa-eye input-icons"></i>
+                <i *ngIf="!isPasswordVisible" (click)="isPasswordVisible=true"
+                    class="fa-regular fa-eye-slash input-icons"></i>
+            </div>
+            <p *ngIf="password.touched && password.errors && password.errors['required']" class="validation-error ">
+                Password is required
+            </p>
+        </div>
+        <hr class="m-0">
+        <div class="d-flex justify-content-end p-3">
+            <button type="button" class="btn btn-outline-primary me-2" (click)="close(false)">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+    </form>
+</div>

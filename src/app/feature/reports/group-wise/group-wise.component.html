@@ -1,0 +1,143 @@
+<div class="card">
+    <div class="py-3">
+        <div class="title ms-3">
+            <span>Group Wise</span>
+        </div>
+        <hr>
+        <app-date-filter (dateChange)="onDateChange($event)"></app-date-filter>
+    </div>
+</div>
+
+<div class="row ps-2" *ngIf="data.length!=0">
+    <div class="col-3 px-0 py-3 bg-white shadow-sm" style="max-height: 64vh;min-height: 64vh; overflow-y: auto; border-radius: 9px;">
+        <div class="px-2">
+            <i class="fa-solid fa-magnifying-glass"
+                style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+            <input type="text" class="form-control" [(ngModel)]="filterLedgerText" placeholder="Search Group"
+                style="text-align: left ; padding-left: 40px;" (keyup)="filterLedger()">
+        </div>
+        <div class="row px-3 mt-3 g-0">
+            <div class="col-6">
+                <span style="font-weight: 500;">NAME</span>
+            </div>
+        </div>
+        <div class="row m-0 item-list px-2">
+            <div class="mt-2 pointer" *ngFor="let item of filteredData; let idx = index" (click)="selectItem(idx)">
+                <div class="py-1 row"
+                    [ngStyle]="selectedItem==item?{'background-color':'#cde2f7'} : {'background-color': 'white'}">
+                    <div class="col-11 d-flex align-items-center">
+                        <div class="group-ellipse" [title]="item.name">{{item.name}}</div>
+                    </div>
+                    <div class="col-4 text-end pe-1">
+                    </div>
+                    <div class="col-1 p-0 text-center position-relative">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-9">
+        <div class="p-3 bg-white card-box shadow-sm">
+            <div class="row">
+                <div class="col-8 d-flex align-items-center">
+                    <span style="font-weight: 600;" class="me-5">{{selectedItem.name}}</span>
+                    <div class="form-group" *ngIf="filteredTableData.length>0 && partyAndLedgerArray.length>2">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Party</span>
+                        </label>
+                        <select class="form-select" [(ngModel)]="particularFilter" name="particular"
+                            #particular="ngModel" style="min-width: 150px; max-height: 35px;"
+                            (change)="filterTransactionsByParticular()">
+                            <option *ngFor="let particular of partyAndLedgerArray">{{particular}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-4 d-flex justify-content-end">
+                    <i class=" text-success fa-solid fa-file-excel mx-3 download-pdf-excel" (click)="download()"
+                        *ngIf="filteredTableData.length>0"></i>
+                    <i class=" text-danger fa-solid fa-file-pdf mx-3 download-pdf-excel" [matMenuTriggerFor]="menu"
+                        *ngIf="filteredTableData.length>0"></i>
+
+                    <mat-menu #menu="matMenu" xPosition="before">
+                        <div mat-menu-item class="menu-item" (click)="downloadAsPdf('LANDSCAPE')">
+                            <span class="text-primary me-2"><i class="fa-solid fa-image"></i></span> Landscape
+                        </div>
+                        <hr class="m-0" />
+                        <div mat-menu-item class="menu-item" (click)="downloadAsPdf('PORTRAIT')">
+                            <span class="text-danger me-2"><i class="fa-solid fa-image-portrait"></i></span> Portrait
+                        </div>
+                    </mat-menu>
+                </div>
+            </div>
+        </div>
+        <div class="mt-3 p-3 pb-4 bg-white card-box shadow-sm">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <span class="title">TRANSACTIONS</span>
+                </div>
+                <div>
+                    <i class="fa-solid fa-magnifying-glass"
+                        style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+                    <input type="text" class="form-control" placeholder="Search Transaction"
+                        style="text-align: 10px; min-width: 300px ; padding-left: 40px;" [(ngModel)]="filterText"
+                        (keyup)="filterTransactions()">
+                </div>
+            </div>
+            <div class="row mt-3 table-responsive">
+                <div class="col-12 table-list" style="max-height: 41vh;min-height: 41vh; overflow-y: auto;">
+                    <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                        <thead  class="border-bottom">
+                        <tr class="border-bottom purchase-header">
+                        <th class="text-start" scope="col">#</th>
+                        <th class="text-start" scope="col">Date</th>
+                        <th class="text-start" scope="col">Particular</th>
+                        <th class="text-start" scope="col">Voucher No.</th>
+                        <th class="text-start" scope="col">Voucher Type</th>
+                        <th class="text-end" scope="col">Total Amount</th>
+                        <th class="text-end" scope="col">Due Amount</th>
+                        <th class="text-end" scope="col">Running Balance</th>
+                    </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let expense of filteredTableData;let idx=index "  class="border-bottom">
+                                <td class="text-start">{{idx+1}}</td>
+                                <td class="text-start">{{expense.date | date:'dd-MM-yyyy'}}</td>
+                                <td class="text-start">{{expense.partyName?
+                                    expense.partyName:expense.ledgerName}}</td>
+                                <td class="text-start transaction" (click)="openTransaction(expense.type,expense.id)">
+                                    {{expense.invoiceNo}}
+                                </td>
+                                <td class="text-start">{{expense.type}}</td>
+                                <td class="text-end">{{expense.totalAmount|currency:'INR':'symbol':'1.2-2'}}</td>
+                                <td class="text-end">{{expense.balance|currency:'INR':'symbol':'1.2-2'}} </td>
+                                <td class="text-end">{{expense.runningAmount|currency:'INR':'symbol':'1.2-2'}} </td>
+                            </tr>
+                            <tr *ngIf="filteredTableData.length==0">
+                                <td class="text-center" colspan="9">
+                                    No Transactions To Show
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card container-fluid" *ngIf="data.length==0">
+    <div class="container-fluid">
+        <div class="row d-flex  align-items-center" style="height: 80vh;">
+            <div class="d-flex justify-content-center">
+                <div>
+                    <div class="d-flex justify-content-center">
+                        <img src="assets/images/empty-dashboard.png" width="300px">
+                    </div>
+                    <div class="d-flex justify-content-center mt-4">
+                        <span style=" font-size: 20px;">No Report To Show</span><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

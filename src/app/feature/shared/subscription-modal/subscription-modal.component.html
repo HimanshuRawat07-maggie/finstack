@@ -1,0 +1,23 @@
+<div class="card m-0">
+    <div class="row m-0">
+        <div class="col-12 d-flex justify-content-end align-items-center">
+            <span (click)="cancel()"><i class="fa fa-times"></i></span>
+        </div>
+        <div class="col-12 d-flex justify-content-center align-items-center my-3">
+            <div class="upgrade-title">{{data.title}}</div>
+        </div>
+        <div class="col-12 d-flex justify-content-center align-items-center p-3 pb-0">
+            <img src="assets/images/upgrade.jpg" width="60%" />
+        </div>
+        <div class="col-12 d-flex flex-column justify-content-center align-items-center pt-0 p-3 mb-3"
+            mat-dialog-actions>
+            <div class="mb-3 text-center" style="font-size: 14px;">
+                <span [innerHtml]="data.message"></span>
+            </div>
+            <button type="button" class="btn btn-primary" (click)="subscribe()">
+                {{data.btnText ? data.btnText : 'Subscribe'}}
+            </button>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,44 @@
+<div class="py-3 card">
+    <div class=" ms-3 title">
+        Company Change
+    </div>
+    <hr>
+    <div class="row mx-3 my-5">
+        <div class="col-4">
+            <div class="form-group position-relative">
+                <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Company</span>
+                </label>
+                <i class="fa-solid fa-caret-down"
+                    style="position: absolute; margin-top: 12px; margin-right: 15px;right: 0;"
+                    (click)="toggleCompanyDetailBox()"></i>
+                <!-- <select type="text" class="form-select w-100" [(ngModel)]="companyId" style="padding-right: 40px;">
+                    <option *ngFor="let company of data" [value]="company.id">{{company.name}}</option>
+                </select> -->
+                <input type="text" class="form-control">
+                <div class="card border shadow-sm p-0 position-absolute"
+                    style=" max-height: 200px; overflow-x: hidden; overflow-y: auto; z-index: 2;"
+                    *ngIf="isCompanyDetailBoxVisible">
+                    <div class="p-2" *ngFor="let company of data"
+                        style="cursor: pointer;border-bottom:1px solid #eee;max-height: 50px; min-height: 50px;">
+                        <div class="row" (click)="setCompanyId(company.id)">
+                            <div class="col-3 d-flex align-items-center">
+                                <img *ngIf=" company.logo!=null" [src]="company.logo" width="40px" height="40px">
+                                <i *ngIf="company.logo==null" class="fa-solid fa-building" width="40px"
+                                    height="40px"></i>
+                            </div>
+                            <div class="col-9 d-flex align-items-center">{{company.name}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-8 d-flex align-items-center">
+            <span (click)="openModal()" class="link"><i class="fa-solid fa-plus"></i> Add Company</span>
+        </div>
+    </div>
+    <hr>
+    <div class="d-flex justify-content-end px-4 mt-3">
+        <button class="btn btn-primary" (click)="switch()">Switch</button>
+    </div>
+</div>

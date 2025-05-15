@@ -1,0 +1,76 @@
+<div class="card mb-0" *ngIf="data.length!=0">
+    <div class="title p-3 d-flex justify-content-between align-items-center">
+       <div>
+         <span class="ms-1">Godown</span>
+       </div>
+       <div>
+        <button class="btn btn-primary" (click)="openModal()" *ngIf="hasPermission(constants.Add)">Add Godown</button>
+       </div>
+    </div>
+    <hr class="m-0">
+   <div class="p-3">
+        <div style="max-width: 380px;">
+             <i class="fa-solid fa-magnifying-glass"
+                style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+            <input type="text" class="form-control" [(ngModel)]="filterWarehouseText" placeholder="Search Godown"
+                style="text-align: left ; padding-left: 40px;" (keyup)="filterWarehouse()">  
+         </div>
+   </div>
+    <div class="p-3">
+        <div style="max-height: 62vh;min-height: 62vh; overflow-y: auto;">
+            <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                <thead class="border-bottom">
+                    <tr class="border-bottom purchase-header">
+                        <th class="text-start ps-3" scope="col" style="border-right: 0px;">Name</th>
+                        <th class="text-end" scope="col">No. of Items</th>
+                        <!-- <th class="text-start" scope="col">Last Updated</th> -->
+                        <th class="text-end" scope="col" *ngIf="hasPermission(constants.Edit)||hasPermission(constants.Delete)">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let warehouse of filteredData; let idx = index" class="border-bottom" style="cursor: pointer;"
+                    (click)="openTransactionModal(warehouse)" >
+                            <td class="text-start ps-3" style="width: 300px;">{{warehouse.name}}</td>
+                            <td class="text-end">{{warehouse.items}}</td>
+                            <!-- <td class="text-start">--</td> -->
+                        <td style="width: 160px;" *ngIf="hasPermission(constants.Edit) || hasPermission(constants.Delete)">
+                           <div class="d-flex justify-content-end" *ngIf="warehouse.name!='DEFAULT'">
+                            <div  (click)="openEdit(warehouse.id!,$event)" *ngIf="hasPermission(constants.Edit)">
+                                <span class="text-primary me-3" style="font-size: 17px;"><i class="fa-regular fa-pen-to-square"></i></span> 
+                           </div>
+                              <div *ngIf="hasPermission(constants.Delete)" (click)="openDeleteDialog(warehouse.id,$event)">
+                                 <span class="text-danger ms-3" style="font-size: 17px;"><i class="fa fa-trash"></i></span>
+                              </div>
+                           </div>
+                        </td>
+                    </tr>
+                    <tr *ngIf="filteredData.length==0">
+                        <td class="text-center" colspan="3">No Godown</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-0" *ngIf="data.length==0">
+    <div>
+        <div class="row d-flex  align-items-center" style="height: 86vh;">
+            <div class="d-flex justify-content-center">
+                <div>
+                    <div class="d-flex justify-content-center">
+                        <img src="assets/images/empty-dashboard.png" width="300px">
+                    </div>
+                    <div class="d-flex justify-content-center mt-4">
+                        <span style=" font-size: 20px;"> Add your first warehouse so you can store your items with
+                            effortlessly</span>
+                    </div>
+                    <div class="d-flex justify-content-center mt-3">
+                        <button class="btn btn-outline-primary" (click)="openModal()">Add Your First
+                            Warehouse</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

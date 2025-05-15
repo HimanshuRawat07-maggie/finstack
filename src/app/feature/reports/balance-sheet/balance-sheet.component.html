@@ -1,0 +1,179 @@
+<div class="card">
+    <div class="py-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="title">
+                <span class="ms-3">Balance Sheet</span>
+            </div>
+            <div>
+                <i class=" text-success fa-solid fa-file-excel mx-3 download-pdf-excel" (click)="download()"></i>
+                <i class="text-danger fa-solid fa-file-pdf mx-3 download-pdf-excel" (click)="downloadPdf()"></i>
+
+                <!-- <mat-menu #menu="matMenu" xPosition="before">
+          <div mat-menu-item class="menu-item" (click)="downloadAsPdf('LANDSCAPE')">
+            <span class="text-primary me-2"><i class="fa-solid fa-image"></i></span> Landscape
+          </div>
+          <hr class="m-0" />
+          <div mat-menu-item class="menu-item" (click)="downloadAsPdf('PORTRAIT')">
+            <span class="text-danger me-2"><i class="fa-solid fa-image-portrait"></i></span> Portrait
+          </div>
+        </mat-menu> -->
+            </div>
+        </div>
+        <hr />
+        <app-date-filter (dateChange)="onDateChange($event)"></app-date-filter>
+        <div class="d-flex p-3">
+            <div>
+                <input type="checkbox" class="pointer" id="collapse" [(ngModel)]="isDataExpand"
+                    (change)="collapseAndExpandData()" /><label for="collapse" class="ms-2 pointer">{{
+                    collapseAndExpandText
+                    }}</label>
+            </div>
+            <div class="ms-3">
+                <input type="checkbox" class="pointer" id="zero" [(ngModel)]="hideZeroBalance" /><label
+                    class="ms-2 pointer" for="zero">Hide Zero Balance</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card p-3">
+    <div class="row" id="divToConvert">
+        <div class="col-6 pe-0">
+            <ul class="ms-1 w-100">
+                <li class="list-item p-1 list-heading">
+                    <div style="padding-left: 10px"><strong>ACCOUNTS</strong></div>
+                    <div class="d-flex justify-content-end">
+                        <span class="me-2 currency-col text-white"><strong>AMOUNT</strong></span>
+                    </div>
+                </li>
+            </ul>
+
+            <!-- All Entries -->
+            <ul class="ms-1 w-100" style="border-bottom: 1px solid #bdbdbd">
+                <ng-container *ngFor="let node of liabilitiesData" [ngTemplateOutlet]="treeNode"
+                    [ngTemplateOutletContext]="{ $implicit: node }">
+                </ng-container>
+            </ul>
+        </div>
+
+        <div class="col-6 ps-0">
+            <ul class="ms-1 w-100">
+                <li class="list-item p-1 list-heading">
+                    <div style="padding-left: 10px"><strong>ACCOUNTS</strong></div>
+                    <div class="d-flex justify-content-end">
+                        <span class="me-2 currency-col text-white"><strong>AMOUNT</strong></span>
+                    </div>
+                </li>
+            </ul>
+
+            <!-- All Entries -->
+            <ul class="ms-1 w-100" style="border-bottom: 1px solid #bdbdbd">
+                <ng-container *ngFor="let node of assetsData" [ngTemplateOutlet]="treeNode"
+                    [ngTemplateOutletContext]="{ $implicit: node }">
+                </ng-container>
+            </ul>
+        </div>
+
+        <div class="col-6 pe-0">
+            <ul class="ms-1 w-100" style="border-bottom: 1px solid #bdbdbd">
+                <li class="list-item light-list-bg">
+                    <div style="padding-left: 10px"><strong>TOTAL</strong></div>
+                    <div class="d-flex justify-content-end">
+                        <span class="me-2 currency-col">
+                            <strong>{{
+                                getNetAmount(liabilitiesData[0])
+                                | currency : "INR" : "symbol" : "1.2-2"
+                                }}</strong>
+                        </span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="col-6 ps-0">
+            <ul class="ms-1 w-100" style="border-bottom: 1px solid #bdbdbd">
+                <li class="list-item light-list-bg">
+                    <div style="padding-left: 10px"><strong>TOTAL</strong></div>
+                    <div class="d-flex justify-content-end">
+                        <span class="me-2 currency-col">
+                            <strong>{{
+                                getNetAmount(assetsData[0])
+                                | currency : "INR" : "symbol" : "1.2-2"
+                                }}</strong>
+                        </span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <ng-template #treeNode let-data>
+        <li class="list-item" [ngClass]="{ 'light-list-bg': data.depth === 0 }"
+            *ngIf="!hideZeroBalance || (hideZeroBalance && data.netAmount != 0)"
+            (click)="data.isExpanded = !data.isExpanded">
+            <div [ngStyle]="{ 'padding-left.px': data.depth * 20 + 10 }">
+                <span class="me-2">
+                    <i *ngIf="data?.children?.length > 0" class="fa bold-text" style="font-size: 12px" [ngClass]="{
+              'fa-minus': data.isExpanded,
+              'fa-plus': !data.isExpanded
+            }"></i>
+                </span>
+                <span style="font-size: 13px" [ngClass]="{ 'bold-text': data?.children?.length > 0 }">
+                    <span *ngIf="data.particularName == 'LEDGER'" class="transaction"
+                        [routerLink]="'/app/report/LEDGER/' + data.particularId">{{ data.title }}</span>
+                    <span *ngIf="data.particularName == 'PARTY'" class="transaction"
+                        [routerLink]="'/app/report/PARTY/' + data.particularId">{{ data.title }}</span>
+                    <span *ngIf="data.particularName == 'PAYMENT_TYPE'" class="transaction"
+                        [routerLink]="'/app/report/BANK/' + data.particularId">{{ data.title }}</span>
+                    <span *ngIf="data.particularName == 'SALE'" class="transaction" [routerLink]="'/app/report/sale'">{{
+                        data.title }}</span>
+                    <span *ngIf="data.particularName == 'PURCHASE'" class="transaction"
+                        [routerLink]="'/app/report/purchase'">{{
+                        data.title }}</span>
+                    <span *ngIf="data.particularName == 'DEBIT_NOTE'" class="transaction"
+                        [routerLink]="'/app/purchase/return'">{{
+                        data.title }}</span>
+                    <span *ngIf="data.particularName == 'CREDIT_NOTE'" class="transaction"
+                        [routerLink]="'/app/sale/return'">{{
+                        data.title }}</span>
+                    <span *ngIf="data.particularName == 'STOCK_SUMMARY'" class="transaction"
+                        [routerLink]="'/app/report/stock-summary'">{{ data.title }}</span>
+                    <span *ngIf="data.particularName == 'CASH'" class="transaction"
+                        [routerLink]="'/app/report/cash-book/'">{{
+                        data.title }}</span>
+
+                    <span *ngIf="
+              data.particularName != 'LEDGER' &&
+              data.particularName != 'PARTY' &&
+              data.particularName != 'PAYMENT_TYPE' &&
+              data.particularName != 'SALE' &&
+              data.particularName != 'PURCHASE' &&
+              data.particularName != 'CREDIT_NOTE' &&
+              data.particularName != 'CASH' &&
+              data.particularName != 'DEBIT_NOTE' &&
+              data.particularName != 'STOCK_SUMMARY'
+            ">{{ data.title }}</span>
+                </span>
+            </div>
+            <div class="d-flex justify-content-end"
+                [ngStyle]="{ 'padding-right.px': data.depth > 1 ? data.depth * 50 : 0 }">
+                <span class="me-2 currency-col" [ngClass]="{ 'fw-normal': data.depth > 0 }" [ngClass]="{
+            'text-danger': data.netAmount < 0,
+            'text-success': data.netAmount > 0
+          }">
+                    {{
+                    data.depth > 0
+                    ? (getNetAmount(data) | currency : "INR" : "symbol" : "1.2-2")
+                    : ""
+                    }}
+                </span>
+            </div>
+        </li>
+        <ng-container *ngIf="data?.children?.length > 0 && data.isExpanded">
+            <ul class="d-flex flex-column">
+                <ng-container *ngFor="let child of data.children" [ngTemplateOutlet]="treeNode"
+                    [ngTemplateOutletContext]="{ $implicit: child }">
+                </ng-container>
+            </ul>
+        </ng-container>
+    </ng-template>
+</div>

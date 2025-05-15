@@ -1,0 +1,114 @@
+<div class="card">
+    <div class="py-3">
+        <div class="title">
+            <span class="ms-3">E-Way Bill</span>
+        </div>
+    </div>
+    <hr class="m-0">
+    <form #EWayBillForm="ngForm">
+        <div class="px-2">
+            <div class="row g-0">
+                <div class="col-6 px-1">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">TransIN/GSTIN</span>
+                        </label>
+                        <input type="text" class="form-control" name="gstin" [(ngModel)]="data.transInOrGSTIN"
+                            #gstin="ngModel">
+                    </div>
+                </div>
+                <div class="col-6 px-1">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Distance In Km</span>
+                        </label>
+                        <input type="number" class="form-control" name="distance" [(ngModel)]="data.distance"
+                            #distance="ngModel" required
+                            [ngClass]="{'is-invalid':distance.touched && distance.errors && distance.errors['required']}">
+                        <p *ngIf="distance.touched && distance.errors && distance.errors['required']"
+                            class="validation-error ">
+                            Distance is required
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-0">
+                <div class="col-6 px-1">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Transport Mode</span>
+                        </label>
+                        <select type="text" class="form-select w-100" name="mode" [(ngModel)]="data.transportMode"
+                            #mode="ngModel">
+                            <option value="Road">Road</option>
+                            <option value="Rail">Rail</option>
+                            <option value="Air">Air</option>
+                            <option value="Ship">Ship</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-6 px-1">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Transporter Name</span>
+                        </label>
+                        <input type="text" class="form-control" name="name" [(ngModel)]="data.transporterName"
+                            #name="ngModel">
+                    </div>
+                </div>
+            </div>
+            <div class="row g-0" *ngIf="data.transportMode=='Road'">
+                <div class="col-6 px-1">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Vechile Type</span>
+                        </label>
+                        <select type="text" class="form-select w-100" name="type" [(ngModel)]="data.vehicleType"
+                            #type="ngModel">
+                            <option value="ODC">ODC</option>
+                            <option value="Regular">Regular</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-6 px-1">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Vechile number</span>
+                        </label>
+                        <input type="text" class="form-control" name="vechilenumber" [(ngModel)]="data.vehicleNumber"
+                            #vechilenumber="ngModel">
+                    </div>
+                </div>
+            </div>
+            <div class="row g-0" *ngIf="data.transportMode!='Road' && data.transportMode">
+                <div class="col-6 px-1">
+                    <div class="form-group mt-4 position-relative">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Transport Document Date</span>
+                        </label>
+                        <span class="date-preview"
+                            onclick="document.getElementById('e-way-transport-document-date').showPicker()">
+                            {{data.transportDocumentDate| date:'dd-MM-yyyy'}}
+                        </span>
+                        <input id="e-way-transport-document-date" type="date" class="form-control" name="docdate" [min]="minDate"
+                            [(ngModel)]="data.transportDocumentDate" #docdate="ngModel">
+                    </div>
+                </div>
+                <div class="col-6 px-1">
+                    <div class="form-group mt-4">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Transport Document Number</span>
+                        </label>
+                        <input type="text" class="form-control" name="docnumber"
+                            [(ngModel)]="data.transportDocumentNumber" #docnumber="ngModel">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <hr>
+    <div class="d-flex justify-content-end me-2">
+        <button class="btn btn-outline-primary mx-2" (click)="close()">Cancel</button>
+        <button class="btn btn-primary" (click)="onSubmit()">Save</button>
+    </div>
+</div>

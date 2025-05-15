@@ -1,0 +1,65 @@
+<div>
+    <div class="py-3">
+        <div class="title ms-3">
+            {{status}} Company
+        </div>
+        <hr>
+        <form #AddCompanyForm="ngForm" (ngSubmit)="onSubmit()">
+            <div class=" my-4 px-2">
+                <div class="row g-0">
+                    <div class="col-6 px-1">
+                        <div class="form-group">
+                            <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                <span class="h6 small bg-white text-muted px-1">Company Name</span>
+                            </label>
+                            <input type="text" class="form-control" name="name" #name="ngModel" [(ngModel)]="data.name"
+                                [ngClass]="{'is-invalid':name.touched && name.errors && name.errors['required']}"
+                                required>
+                            <p *ngIf="name.touched && name.errors && name.errors['required']" class="validation-error ">
+                                Company name is required
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-6 px-1"  *ngIf="details.type!='split'">
+                        <div class="form-group">
+                            <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                <span class="h6 small bg-white text-muted px-1">Company Phone Number</span>
+                            </label>
+                            <input type="number" class="form-control" [(ngModel)]="data.businessPhone" #phone="ngModel"
+                                name="phone">
+                        </div>
+                    </div>
+                     <div class="col-6 px-1" *ngIf="details.type=='split'">
+                        <div class="form-group">
+                            <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                <span class="h6 small bg-white text-muted px-1">Data Start From</span>
+                            </label>
+                            <input type="date" class="form-control" name="date" [(ngModel)]="splitCompany.splitFromDate"  #date="ngModel" [min]="minDate" required
+                             [ngClass]="{'is-invalid':date.touched && date.errors && date.errors['required']}">
+                            <p *ngIf="date.touched && date.errors && date.errors['required']" class="validation-error ">
+                                Date is required
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-0 mt-3"  *ngIf="details.type!='split'">
+                    <div class="col-6 px-1">
+                        <div class="form-group">
+                            <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                <span class="h6 small bg-white text-muted px-1">Company Email</span>
+                            </label>
+                            <input type="text" class="form-control" [(ngModel)]="data.businessEmail"  #email="ngModel"
+                                name="email">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <hr>
+        <div class="d-flex justify-content-end px-4 mt-3">
+            <button class="btn btn-outline-primary mx-3" (click)="cancel()">Cancel</button>
+            <button class="btn btn-primary" (click)="onSubmit()">Save</button>
+        </div>
+
+    </div>
+</div>

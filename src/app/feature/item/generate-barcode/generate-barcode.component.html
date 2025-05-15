@@ -1,0 +1,27 @@
+<div>
+    <div class="title py-3">
+        <span class="ms-3">Generate Barcode</span>
+    </div>
+    <hr class="m-0">
+    <div class="py-3" style="max-height: 250px;overflow: auto;">
+        <div *ngFor="let item of data"  class="px-3 my-2 d-flex align-items-center">
+            <div>
+                <input type="checkbox" [id]="item.id" [(ngModel)]="item.isbarCode" (change)="getData(item.isbarCode,item.id)"  *ngIf="details.type!='print'">
+            </div>
+            <div>
+                <input type="number" class="form-control"  *ngIf="details.type=='print'">
+            </div>
+            <div>
+                <label class="mx-3" for={{item.id}}>{{item.name}}</label>
+            </div>
+        </div>
+        <div *ngIf="data.length==0" class="d-flex justify-content-center pb-3">
+            <span style="font-size: 15px;">No Item Are Without Barcode</span>
+        </div>
+    </div>
+    <hr class="m-0">
+    <div class="p-3 d-flex justify-content-end">
+        <button  class="btn btn-outline-primary mx-3" (click)="close()">Cancel</button>
+        <button type="submit" class="btn btn-primary me-3" (click)="onSubmit()">Generate</button>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+<div class="card">
+   <div class="d-flex justify-content-between align-items-center p-3">
+     <div class="title">
+        <span>Subscribe</span>
+      </div>
+      <div class="title">
+        <i class="fa-solid fa-xmark" (click)="close()"></i>
+      </div>
+   </div>
+    <hr class="m-0">
+    <div class="p-3">
+        <span>Activate With Code</span>
+          <div>
+            <div class="form-group my-3">
+               <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                  <span class="h6 small bg-white text-muted px-1">Code</span>
+                </label>
+               <input type="text" class="form-control" [(ngModel)]="code" name="name" #name="ngModel" required
+                [ngClass]="{'is-invalid':name.touched && name.errors && name.errors['required']}">
+               <p *ngIf="name.touched && name.errors && name.errors['required']" class="validation-error ">
+                 Code is required
+                 </p>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-primary" (click)="onSubmit()">Submiit</button>
+            </div>
+        </div>
+        <div class="d-flex align-items-center">
+            <div class="line"></div>
+            <div style="font-size: 16px;" class="mx-3">or</div>
+            <div class="line"></div>
+        </div>
+        <button class="btn btn-primary" (click)="initiatePayment()">Pay Now</button>
+    </div>
+</div>

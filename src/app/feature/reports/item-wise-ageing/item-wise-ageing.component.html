@@ -1,0 +1,75 @@
+<div class="card">
+    <div class="py-3">
+        <div class="title">
+            <span class="ms-3">Item Wise Ageing</span>
+        </div>
+        <hr>
+        <app-date-filter (dateChange)="onDateChange($event)"></app-date-filter>
+    </div>
+</div>
+
+<div class="card mb-0">
+    <div class="p-3">
+        <div class="row ">
+            <div class="col-3">
+                <div class="title">
+                    <span>TRANSACTIONS</span>
+                </div>
+            </div>
+            <div class="col-9 d-flex justify-content-end ps-4">
+                <i class=" text-success fa-solid fa-file-excel mx-3 download-pdf-excel" (click)="download()"
+                    *ngIf="data.length>0"></i>
+                <i class=" text-danger fa-solid fa-file-pdf mx-3 download-pdf-excel" [matMenuTriggerFor]="menu"
+                    *ngIf="data.length>0"></i>
+
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <div mat-menu-item class="menu-item" (click)="downloadAsPdf('LANDSCAPE')">
+                        <span class="text-primary me-2"><i class="fa-solid fa-image"></i></span> Landscape
+                    </div>
+                    <hr class="m-0" />
+                    <div mat-menu-item class="menu-item" (click)="downloadAsPdf('PORTRAIT')">
+                        <span class="text-danger me-2"><i class="fa-solid fa-image-portrait"></i></span> Portrait
+                    </div>
+                </mat-menu>
+            </div>
+        </div>
+        <div class="mt-4">
+            <div style="max-height: 53vh;min-height: 53vh; overflow-y: auto;">
+                <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                    <thead class="border-bottom">
+                        <tr class="border-bottom purchase-header">
+                            <th class="text-start" scope="col" rowspan="2">#</th>
+                            <th class="text-start" scope="col" rowspan="2">Item Name</th>
+                            <th class="text-start" scope="col" rowspan="2">Group Name</th>
+                            <th class="text-start" scope="col" rowspan="2">Total Quantity</th>
+                            <th class="text-center" scope="col" colspan="2">Less Than 6 Months</th>
+                            <th class="text-center" scope="col" colspan="2">More Than 6 Months</th>
+                            <th class="text-end" scope="col" rowspan="2">Negative Stock</th>
+                        </tr>
+                        <tr class="border-bottom border-top purchase-header">
+                            <th class="text-end">Quantity</th>
+                            <th class="text-end">Stock Value</th>
+                            <th class="text-end">Quantity</th>
+                            <th class="text-end">Stock Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let report of data;let idx=index">
+                            <td class="text-start">{{idx+1}}</td>
+                            <td class="text-start">{{report.name}}</td>
+                            <td class="text-start">{{report.groupName}}</td>
+                            <td class="text-start">{{report.totalQuantity>=0?report.totalQuantity:''}}</td>
+                            <td class="text-end">{{report.lessThan6?.quantity}}</td>
+                            <td class="text-end">{{report.lessThan6?.stockValue|currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-end">{{report.greaterThan6?.quantity}}</td>
+                            <td class="text-end">{{report.greaterThan6?.stockValue|currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-end">
+                                <span>{{report.totalQuantity>=0?'':report.totalQuantity}}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

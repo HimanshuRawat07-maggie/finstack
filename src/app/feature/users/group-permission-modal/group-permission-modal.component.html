@@ -1,0 +1,51 @@
+<div class="card">
+    <div class="py-3">
+        <span class="ms-3 title">Master Groups</span>
+    </div>
+    <hr class="mt-0">
+    <div class="group">
+        <div class="p-3">
+            <div class="mx-4 table-responsive">
+                <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                    <thead  class="border-bottom">
+                        <tr class="border-bottom purchase-header">
+                            <th scope="col">MODULE</th>
+                            <th width="25%"><mat-checkbox (change)="selectAll($event.checked)">Select All
+                                </mat-checkbox></th>
+                            <th scope="col" width="12%">VIEW</th>
+                            <th scope="col" width="12%">ADD</th>
+                            <th scope="col" width="12%">EDIT</th>
+                            <th scope="col" width="12%">DELETE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let group of groups; let idx=index"  class="border-bottom">
+                            <td class="cell-right-border text-start ps-4">{{group.name | titlecase}}</td>
+                            <td class="cell-right-border">
+                                <mat-checkbox (change)="selectAllForModule(group.name,$event.checked)">Select
+                                    All</mat-checkbox>
+                            </td>
+                            <td class="cell-right-border">
+                                <mat-checkbox [(ngModel)]="permissions[group.name].canView"></mat-checkbox>
+                            </td>
+                            <td class="cell-right-border">
+                                <mat-checkbox [(ngModel)]="permissions[group.name].canCreate"></mat-checkbox>
+                            </td>
+                            <td class="cell-right-border">
+                                <mat-checkbox [(ngModel)]="permissions[group.name].canEdit"></mat-checkbox>
+                            </td>
+                            <td>
+                                <mat-checkbox [(ngModel)]="permissions[group.name].canDelete"></mat-checkbox>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <hr class="m-0">
+    <div class="d-flex justify-content-end px-4 my-3">
+        <button class="btn btn-outline-primary mx-2" (click)="cancel()">Cancel</button>
+        <button class="btn btn-primary" (click)="save()">Save</button>
+    </div>
+</div>

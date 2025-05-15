@@ -1,0 +1,15 @@
+.stepper{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid gray;
+}
+
+.line{
+    width: 26vw;
+    height: 1px;
+    background: 1px gray;
+}

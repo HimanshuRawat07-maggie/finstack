@@ -1,0 +1,48 @@
+<div class="card mb-0">
+    <div class="title py-3 d-flex justify-content-between align-items-center">
+        <div>
+            <span class="ms-3">Users</span>
+        </div>
+        <div>
+            <button class="btn btn-primary mx-3" (click)="addUserOrCaModal('USER')">Add User</button>
+        </div>
+    </div>
+    <hr class="mt-0">
+      <div class="mt-4 p-3">
+            <div style="max-height: 68vh;min-height: 68vh; overflow-y: auto;">
+                <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                    <thead class="border-bottom">
+                        <tr class="border-bottom purchase-header">
+                              <th class="text-start">#</th>
+                              <th class="text-start">NAME</th>
+                              <th class="text-start">EMAIL</th>
+                              <th class="text-end">PERMISSIONS</th>
+                              <th class="text-end">DELETE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr  *ngFor="let item of tableData;let idx = index" class="border-bottom pointer">
+                           <td>{{idx+1}}</td>
+                           <td class="text-start">
+                              <span>{{item.name}}</span>
+                           </td>
+                           <td class="text-start">{{item.email}}</td>
+                           <td class="text-end">
+                              <button *ngIf="item.companyRole!='COMPANY_ADMIN'" class="btn btn-outline-primary"
+                                 (click)="openModal(item.id)">Edit Permissions</button>
+                           </td>
+                           <td class="text-end">
+                              <mat-icon class="text-danger" style="cursor: pointer;" (click)="deleteUser(item.id)"
+                                 *ngIf="item.companyRole!='COMPANY_ADMIN'">delete</mat-icon>
+                           </td>
+                        </tr>
+                        <tr *ngIf="tableData?.length==0">
+                            <td colspan="10">
+                                 No CA are Available
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+</div>

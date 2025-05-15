@@ -1,0 +1,91 @@
+<div class="card mb-0" *ngIf="data.length!=0">
+    <div class="title p-3 d-flex justify-content-between align-items-center">
+        <div>
+            <span class="ms-1">Bank</span>
+        </div>
+        <div>
+            <button class="btn btn-primary" (click)="addBank()" *ngIf="hasPermission(constants.Add)">Add Bank</button>
+        </div>
+    </div>
+    <hr class="m-0">
+    <div class="p-3">
+        <div style="max-width: 380px;">
+            <i class="fa-solid fa-magnifying-glass"
+                style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+            <input type="text" class="form-control" [(ngModel)]="filterBankText" placeholder="Search Bank"
+                style="text-align: left ; padding-left: 40px;" (keyup)="filterBank()">
+        </div>
+    </div>
+    <div class="p-3">
+        <div style="min-height: 62vh; max-height: 62vh; overflow-y: auto;">
+            <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                <thead class="border-bottom">
+                    <tr class="border-bottom purchase-header">
+                        <th class="text-start ps-3" scope="col" style="border-right: 0px;">Name</th>
+                        <th class="text-end" scope="col">Opening Balance</th>
+                        <th class="text-start" scope="col">Bank Name</th>
+                        <th class="text-start" scope="col">Account Number</th>
+                        <th class="text-start" scope="col">Account Name</th>
+                        <th class="text-end" scope="col">Balance</th>
+                        <th class="text-end" scope="col"
+                            *ngIf="hasPermission(constants.Edit) || hasPermission(constants.Delete)">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let bank of filteredData; let idx = index" class="border-bottom"
+                        style="cursor: pointer;" (click)="openTransactionModal(bank)">
+                        <td class="text-start ellipse ps-3" style="max-width: 250px;" [title]="bank.accountDisplayName">
+                            <div class="d-flex align-items-center">
+                                <div *ngIf="bank.isDefault==true" title="Default Bank" class="default me-2"></div>
+                                {{bank.accountDisplayName}}
+                            </div>
+                        </td>
+                        <td class="text-end text-danger">{{bank.openingBalance| currency:'INR':'symbol':'1.2-2'}}</td>
+                        <td class="text-start">{{bank.bankName}}</td>
+                        <td class="text-start">{{bank.accountNumber}}</td>
+                        <td class="text-start">{{bank.accountName}}</td>
+                        <td class="text-end text-success">{{bank.totalBalance | currency:'INR':'symbol':'1.2-2'}}</td>
+                        <td style="width: 160px;"
+                            *ngIf="hasPermission(constants.Edit) || hasPermission(constants.Delete)">
+                            <div class="d-flex justify-content-end">
+                                <div (click)="openEdit(bank.id!,$event)" *ngIf="hasPermission(constants.Edit)">
+                                    <span class="text-primary me-3" style="font-size: 17px;"><i
+                                            class="fa-regular fa-pen-to-square"></i></span>
+                                </div>
+                                <div *ngIf="hasPermission(constants.Delete)" (click)="openDeleteDialog(bank.id,$event)">
+                                    <span class="text-danger ms-3" style="font-size: 17px;"><i
+                                            class="fa fa-trash"></i></span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr *ngIf="filteredData.length==0">
+                        <td colspan="5">No Banks</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="card mb-0" *ngIf="data.length==0">
+    <div>
+        <div class="row d-flex  align-items-center" style="height: 86vh;">
+            <div class="d-flex justify-content-center">
+                <div>
+                    <div class="d-flex justify-content-center">
+                        <img src="assets/images/empty-dashboard.png" width="300px">
+                    </div>
+                    <div class="d-flex justify-content-center mt-4">
+                        <span style=" font-size: 20px;"> Add your bank details so you can do you transactions
+                            effortlessly</span>
+                    </div>
+                    <div class="d-flex justify-content-center mt-3">
+                        <button class="btn btn-outline-primary" (click)="addBank()">Add Your Bank</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

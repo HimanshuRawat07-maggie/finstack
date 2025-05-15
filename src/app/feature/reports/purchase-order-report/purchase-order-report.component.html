@@ -1,0 +1,83 @@
+<div class="card">
+    <div class="py-3">
+        <div class="title">
+            <span class="ms-3">Purchase Order</span>
+        </div>
+        <hr>
+        <app-date-filter (dateChange)="onDateChange($event)"></app-date-filter>
+        <div class="mt-3 row ps-4">
+            <div class="col-2">
+                <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Party </span>
+                </label>
+                <select class=" form-select w-100" name="party" [(ngModel)]="partyId" #party="ngModel"
+                    (change)="loadTableData()">
+                    <option *ngFor="let party of parties" [value]="party.id">{{party.name}}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card p-3 mb-0">
+    <div class="row ">
+        <div class="col-3 title">
+            <span>TRANSACTIONS</span>
+        </div>
+        <div class="col-9 d-flex justify-content-end ps-4">
+            <i class=" text-success fa-solid fa-file-excel mx-3 download-pdf-excel" *ngIf="data.length>0"
+                (click)="download()"></i>
+            <i class=" text-danger fa-solid fa-file-pdf mx-3 download-pdf-excel" [matMenuTriggerFor]="menu"
+                *ngIf="data.length>0"></i>
+
+            <mat-menu #menu="matMenu" xPosition="before">
+                <div mat-menu-item class="menu-item" (click)="downloadAsPdf('LANDSCAPE')">
+                    <span class="text-primary me-2"><i class="fa-solid fa-image"></i></span> Landscape
+                </div>
+                <hr class="m-0" />
+                <div mat-menu-item class="menu-item" (click)="downloadAsPdf('PORTRAIT')">
+                    <span class="text-danger me-2"><i class="fa-solid fa-image-portrait"></i></span> Portrait
+                </div>
+            </mat-menu>
+        </div>
+    </div>
+    <div class="mt-4">
+        <div style="max-height: 44vh;min-height: 44vh; overflow-y: auto;">
+            <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                <thead class="border-bottom">
+                    <tr class="border-bottom purchase-header">
+                        <th class="text-start" scope="col">#</th>
+                        <th class="text-start" scope="col">Date</th>
+                        <th class="text-start" scope="col">Party Name</th>
+                        <th class="text-start" scope="col">Voucher No.</th>
+                        <th class="text-start" scope="col">Voucher Type</th>
+                        <th class="text-end" scope="col">Quantity</th>
+                        <th class="text-end" scope="col">Amount</th>
+                        <th class="text-end" scope="col">Tax</th>
+                        <th class="text-end" scope="col">Total</th>
+                        <th class="text-start" scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let report of data; let idx=index" class="border-bottom">
+                         <td class="text-start">{{idx+1}}</td>
+                        <td class="text-start">{{report.date|date:'dd-MM-yyyy'}}</td>
+                        <td class="text-start">{{report.partyName}}</td>
+                        <td class="text-start transaction" (click)="openTransaction(report.type,report.id)">{{report.invoiceNo}}</td>
+                        <td class="text-start">{{report.type}}</td>
+                        <td class="text-end">{{report.quantity}}</td>
+                        <td class="text-end">{{report.taxableAmount+report.expenseAmount|currency:'INR':'symbol':'1.2-2'}}</td>
+                        <td class="text-end">{{report.igst +report.cgst+report.sgst}}</td>
+                        <td class="text-end">{{report.totalAmount|currency:'INR':'symbol':'1.2-2'}}</td>
+                        <td class="text-start">{{report.orderStatus}}</td>
+                    </tr>
+                    <tr *ngIf="data.length==0">
+                        <td colspan="11">
+                            No Transactions Are Available
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

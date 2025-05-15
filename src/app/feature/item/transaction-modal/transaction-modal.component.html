@@ -1,0 +1,408 @@
+<div class="card" style="max-height: 670px;">
+    <div class="title p-3 d-flex justify-content-between">
+        <div *ngIf="details.type!='bank'">{{data.name}}</div>
+        <div *ngIf="details.type=='bank'">{{data.accountDisplayName}}</div>
+        <div>
+            <span>
+
+            </span>
+            <span>
+                <button class="btn btn-primary mx-3 p-0 px-0" style="width: 70px;" *ngIf="details.type=='item'" style="height: 25px;"
+                    [routerLink]="'/app/item/edit-item/'+data.id" (click)="close()">Edit</button>
+                <button class="btn btn-primary mx-3 p-0 px-0" style="width: 70px;" *ngIf="details.type=='party'" style="height: 25px;"
+                    [routerLink]="'/app/party/edit-party/'+data.id" (click)="close()">Edit</button>
+            </span>
+            <i class="fa-solid fa-xmark" (click)="close()" style="cursor: pointer;"></i>
+        </div>
+    </div>
+
+    <div class="px-3">
+        <div class="p-3 pb-0 card" style="background-color: #F0F2F5;">
+            <div *ngIf="details.type=='item'">
+                <div class="card p-4">
+                    <div class="d-flex">
+                        <div style="width: 300px;">
+                            <span style="font-size: 10px; color: rgb(93, 93, 93);">Manufacture Name</span><br>
+                            <span style="font-weight: 500; font-size: 15px;">{{data.name}}</span>
+                        </div>
+                        <div style="width: 400px;">
+                            <span style="font-size: 10px; color: rgb(93, 93, 93);">Purchase Price</span><br>
+                            <span style="font-weight: 500; font-size: 15px;" class="text-success">{{data.purchasePrice
+                                |currency:'INR':'symbol':'1.2-2'}}</span>
+                        </div>
+                        <div style="width: 300px;">
+                            <span style="font-size: 10px; color: rgb(93, 93, 93);">Stock Quantity </span><br>
+                            <span style="font-weight: 500; font-size: 15px;"
+                                [ngClass]="{'text-success':data.quantity>0,'text-danger':data.quantity<=0}">{{data.quantity}}</span>
+                        </div>
+                        <div style="width: 400px;">
+                            <span style="font-size: 10px; color: rgb(93, 93, 93);">HSN</span><br>
+                            <span style="font-weight: 500; font-size: 15px;">{{data.hsnCode}}</span>
+                        </div>
+                    </div>
+                    <div class="d-flex mt-3">
+                        <div style="width: 300px;">
+                            <span style="font-size: 10px; color: rgb(93, 93, 93);">Product Group</span><br>
+                            <span style="font-weight: 500; font-size: 15px;">{{data.productGroup}}</span>
+                        </div>
+                        <div style="width: 400px;">
+                            <span
+                                style="font-size: 10px; color: rgb(93, 93, 93);">{{data.discountInPercentage?'Discount(%)':'Discount(Rs)'}}</span><br>
+                            <span style="font-weight: 500; font-size: 15px;"
+                                class="text-success">{{data.discountInPercentage?
+                                data.discount+'%':data.discount}}</span>
+                        </div>
+                        <div style="width: 300px;">
+                            <span style="font-size: 10px; color: rgb(93, 93, 93);">Selling Price</span><br>
+                            <span style="font-weight: 500; font-size: 15px;" class="text-success">{{data.sellingPrice
+                                |currency:'INR':'symbol':'1.2-2'}}</span>
+                        </div>
+                        <div style="width: 400px;">
+                            <span style="font-size: 10px; color: rgb(93, 93, 93);">Stock Value</span><br>
+                            <span style="font-weight: 500; font-size: 15px;"
+                                [ngClass]="{'text-success':data.stockValue>0,'text-danger':data.stockValue<=0}">{{data.stockValue
+                                |currency:'INR':'symbol':'1.2-2'}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex align-items-center gap-4">
+                            <div class="title">
+                                <span>Transactions</span>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button *ngIf="data.manufacturedProduct" class="btn btn-primary p-0 px-2"
+                                    style="height: 25px;"  [routerLink]="'/app/item/manufacture/' + data.id"
+                                    (click)="close()">Manufacture
+                                    Item</button>
+                                <button *ngIf="data.type=='Product'" class="btn btn-primary p-0 px-0"
+                                    style="height: 25px;"
+                                    (click)="openAdjustItemDialog(data.id)">Adjust Item</button>
+                            </div>
+                        </div>
+                        <div>
+                            <i class="fa-solid fa-magnifying-glass"
+                                style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+                            <input type="text" class="form-control" [(ngModel)]="filterText"
+                                placeholder="Search Transaction"
+                                style="text-align: 10px; min-width: 300px ; padding-left: 40px;"
+                                (keyup)="filterTransactions()">
+                        </div>
+                    </div>
+                    <div style="max-height: 230px; overflow-y: auto;" class="mt-3">
+                        <table style="width: 100%; border: 1px solid rgb(170, 170, 170);" >
+                            <thead class="border-bottom">
+                                <tr class="border-bottom purchase-header">
+                                    <th class="text-start">#</th>
+                                    <th class="text-start">Type</th>
+                                    <th class="text-start">Invoice</th>
+                                    <th class="text-start">Name</th>
+                                    <th class="text-start">Date</th>
+                                    <th class="text-end">Quantity</th>
+                                    <th class="text-end">Price Per Unit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let data of filteredTableData; let i = index" class="border-bottom">
+                                    <td class="text-start">{{i+1}}</td>
+                                    <td class="text-start">{{getTransactionType(data)}}</td>
+                                    <td class="transaction text-start" (click)="openTransaction(data.transactionType,data.id)" style="max-width: 200px;">
+                                        {{data.orderPrefix}}{{data.billNumber}}{{data.orderSuffix}}
+                                    </td>
+                                    <td class="text-start" style="width: 200px;">
+                                        <span *ngIf="data.partyName">{{data.partyName}}</span>
+                                        <span *ngIf="data.customerName">{{data.customerName}}</span>
+                                    </td>
+                                    <td class="text-start">{{data.orderDate | date:'dd-MM-yyyy'}}</td>
+                                    <td class="text-end">{{data.reservedQuantity}}</td>
+                                    <td class="text-end">{{data.pricePerUnit|currency:'INR':'symbol':'1.2-2'}}</td>
+                                </tr>
+                                <tr *ngIf="filteredTableData.length==0">
+                                    <td class="text-center" colspan="8">
+                                        No Transactions To Show
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="details.type=='party'">
+                <div class="card">
+                    <div class="d-flex justify-content-between">
+                        <div class="title">
+                            <span>Transactions</span>
+                        </div>
+                        <div>
+                            <i class="fa-solid fa-magnifying-glass"
+                                style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+                            <input type="text" class="form-control" [(ngModel)]="filterText"
+                                placeholder="Search Transaction"
+                                style="text-align: 10px; min-width: 300px ; padding-left: 40px;"
+                                (keyup)="filterTransactions()">
+                        </div>
+                    </div>
+                    <div style="max-height: 350px; max-width: 100%; overflow: auto;" class="mt-3">
+                        <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                            <thead class="border-bottom">
+                                <tr class="border-bottom purchase-header">
+                                    <th class="text-start">#</th>
+                                    <th class="text-start">Voucher Type</th>
+                                    <th class="text-start">Invoice</th>
+                                    <th class="text-start">Date</th>
+                                    <th class="text-end">Net Amount</th>
+                                    <th class="text-end">Tax Amount</th>
+                                    <th class="text-end">Total Amount</th>
+                                    <th class="text-end">Amount Paid/Received</th>
+                                    <th class="text-end">Amount Pending</th>
+                                    <th class="text-start">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let data of filteredTableData; let i = index" class="border-bottom">
+                                    <td class="text-start" style="width: 60px;">{{i+1}}</td>
+                                    <td class="text-start" style="min-width: 150px;">{{data.type}}</td>
+                                    <td class="transaction text-start ellipse" (click)="openTransaction(data.type,data.id)"
+                                        style="max-width: 131px;min-width: 125px;">
+                                        {{data.orderPrefix}}{{data.orderNumber}}{{data.orderSuffix}}
+                                    </td>
+                                    <td class="text-start" style="min-width: 120px;">{{data.date | date:'dd-MM-yyyy'}}
+                                    </td>
+                                    <td class="text-end" style="min-width: 150px;">{{data.netAmount
+                                        |currency:'INR':'symbol':'1.2-2'}}</td>
+                                    <td class="text-end" style="min-width: 150px;">{{data.taxAmount
+                                        |currency:'INR':'symbol':'1.2-2'}}</td>
+                                    <td class="text-end" style="min-width: 150px;">{{data.total
+                                        |currency:'INR':'symbol':'1.2-2'}}</td>
+                                    <td class="text-end text-success" style="min-width: 150px;">{{data.paymentOut
+                                        |currency:'INR':'symbol':'1.2-2'}}</td>
+                                    <td class="text-end text-danger" style="min-width: 150px;">{{data.balance
+                                        |currency:'INR':'symbol':'1.2-2'}}</td>
+                                    <td class="text-start" style="min-width: 150px;">
+                                            <span class="badge rounded-pill" [ngClass]="{'text-bg-success': data.paymentStatus=='Paid' || data.paymentStatus=='Used', 
+                                        'text-bg-primary':data.paymentStatus=='Partial' || data.paymentStatus=='Unused',
+                                        'text-bg-danger':data.paymentStatus=='Unpaid', } ">
+                                        {{data.paymentStatus}}
+                                    </span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="filteredTableData.length==0">
+                                    <td class="text-center" colspan="9">
+                                        No Transactions To Show
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="details.type=='warehouse'">
+                <div class="card">
+                    <div class="d-flex justify-content-between">
+                        <div class="title">
+                            <span>Transactions</span>
+                        </div>
+                        <div>
+                            <i class="fa-solid fa-magnifying-glass"
+                                style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+                            <input type="text" class="form-control" [(ngModel)]="filterText"
+                                placeholder="Search Transaction"
+                                style="text-align: 10px; min-width: 300px ; padding-left: 40px;"
+                                (keyup)="filterTransactions()">
+                        </div>
+                    </div>
+                    <div style="max-height: 350px; max-width: 100%; overflow: auto;" class="mt-3">
+                        <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                            <thead class="border-bottom">
+                                <tr class="border-bottom purchase-header">
+                                    <th class="text-start" scope="col">#</th>
+                                    <th class="text-start" scope="col">Name</th>
+                                    <th class="text-start" scope="col">Batch Name</th>
+                                    <th class="text-start" scope="col">Mfg Date</th>
+                                    <th class="text-start" scope="col">Exp Date</th>
+                                    <th class="text-end" scope="col">Quantity</th>
+                                    <th class="text-end" scope="col">Purchase Price</th>
+                                    <th class="text-end" scope="col">Selling Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let warehouse of filteredTableData; let i = index" class="border-bottom">
+                                    <td class="text-start" style="width: 60px;">{{i+1}}</td>
+                                    <td class="text-start ellipse" style="max-width: 131px;min-width: 125px;">
+                                        {{warehouse.productName}}</td>
+                                    <td class="text-start" style="min-width: 120px;">{{warehouse.batchName}}</td>
+                                    <td class="text-start" style="min-width: 150px;">{{warehouse.mfgDate}}</td>
+                                    <td class="text-start" style="min-width: 150px;">{{warehouse.expDate}}</td>
+                                    <td class="text-end" style="min-width: 150px;">{{warehouse.quantity}}</td>
+                                    <td class="text-end text-success" style="min-width: 150px;">
+                                        {{warehouse.purchasePrice |currency:'INR':'symbol':'1.2-2'}}</td>
+                                    <td class="text-end text-success" style="min-width: 150px;">
+                                        {{warehouse.sellingPrice |currency:'INR':'symbol':'1.2-2'}}</td>
+                                </tr>
+                                <tr *ngIf="filteredTableData.length==0">
+                                    <td class="text-center" colspan="9">
+                                        No Transactions To Show
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="details.type=='bank'">
+                <div class="card">
+                    <div class="d-flex justify-content-between">
+                        <div class="title">
+                            <span>Transactions</span>
+                        </div>
+                        <div>
+                            <i class="fa-solid fa-magnifying-glass"
+                                style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+                            <input type="text" class="form-control" [(ngModel)]="filterText"
+                                placeholder="Search Transaction"
+                                style="text-align: 10px; min-width: 300px ; padding-left: 40px;"
+                                (keyup)="filterTransactions()">
+                        </div>
+                    </div>
+                    <div style="max-height: 350px; max-width: 100%; overflow: auto;" class="mt-3">
+                        <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                            <thead class="border-bottom">
+                                <tr class="border-bottom purchase-header">
+                                    <th class="text-start" scope="col">#</th>
+                                    <th class="text-start" scope="col">Date</th>
+                                    <th class="text-start" scope="col">Voucher Type</th>
+                                    <th class="text-start" scope="col">Voucher No.</th>
+                                    <th class="text-start" scope="col">Particular</th>
+                                    <th class="text-end" scope="col">Payment-In</th>
+                                    <th class="text-end" scope="col">Payment-Out</th>
+                                    <th class="text-start" scope="col">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let bank of filteredTableData; let i = index" class="border-bottom">
+                                    <td class="text-start" style="width: 60px;">{{i+1}}</td>
+                                    <td class="text-start ellipse" style="max-width: 131px;min-width: 125px;">
+                                        {{bank.date|date:'dd-MM-yyyy'}}</td>
+                                    <td class="text-start">{{bank.type}}</td>
+                                    <td class="text-start transaction" style="min-width: 120px;" (click)="openTransaction(bank.type,bank.id)">
+                                        {{bank.orderPrefix}}{{bank.orderNumber}}{{bank.orderSuffix}}</td>
+                                    <td class="text-start" style="min-width: 150px;">
+                                          <span *ngIf="bank.partyName">{{bank.partyName}}</span>
+                                        <span *ngIf="bank.customerName">{{bank.customerName}}</span>
+                                        <span *ngIf="bank.ledgerName">{{bank.ledgerName}}</span>
+                                    <td class="text-end text-success" style="min-width: 150px;">
+                                        {{bank.paymentIn|currency:'INR':'symbol':'1.2-2'}}</td>
+                                    <td class="text-end text-danger" style="min-width: 150px;">
+                                        {{bank.paymentOut|currency:'INR':'symbol':'1.2-2'}}</td>
+                                    <td>
+                                        <span class="badge rounded-pill"
+                                            [ngClass]="{'text-bg-success': bank.paymentStatus=='Paid' || bank.paymentStatus=='Used', 
+                                                                            'text-bg-primary':bank.paymentStatus=='Partial' || bank.paymentStatus=='Unused',
+                                                                            'text-bg-danger':bank.paymentStatus=='Unpaid', } ">
+                                            {{bank.paymentStatus}}
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="filteredTableData.length==0">
+                                    <td class="text-center" colspan="9">
+                                        No Transactions To Show
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="details.type=='ledger'">
+                <div class="card p-4">
+                    <div class="d-flex">
+                        <div style="width: 300px;">
+                            <span style="font-size: 10px; color: rgb(93, 93, 93);">Ledger Name</span><br>
+                            <span style="font-weight: 500; font-size: 15px;">{{data.name}}</span>
+                        </div>
+                        <div style="width: 300px;">
+                            <span style="font-size: 10px; color: rgb(93, 93, 93);">Balance</span><br>
+                            <span style="font-weight: 500; font-size: 15px;"
+                                [ngClass]="{'text-success':data.totalAmount>0,'text-danger':data.totalAmount<=0}">{{data.totalAmount
+                                |currency:'INR':'symbol':'1.2-2'}}</span>
+                        </div>
+                        <div style="width: 400px;">
+                            <span style="font-size: 10px; color: rgb(93, 93, 93);">HSN</span><br>
+                            <span style="font-weight: 500; font-size: 15px;">{{data.hsnCode}}</span>
+                        </div>
+                    </div>
+                    <div class="d-flex mt-3">
+                        <div style="width: 300px;">
+                            <span style="font-size: 10px; color: rgb(93, 93, 93);">Group Name</span><br>
+                            <span style="font-weight: 500; font-size: 15px;">{{data.masterGroupName}}</span>
+                        </div>
+                        <div style="width: 300px;">
+                            <span style="font-size: 10px; color: rgb(93, 93, 93);">Opening Balance</span><br>
+                            <span style="font-weight: 500; font-size: 15px;"
+                                [ngClass]="{'text-success':data.openingBalance>0,'text-danger':data.openingBalance<=0}"
+                                class="text-success">{{data.openingBalance
+                                |currency:'INR':'symbol':'1.2-2'}}</span>
+                        </div>
+                        <div style="width: 400px;">
+                            <span style="font-size: 10px; color: rgb(93, 93, 93);">As Of Date</span><br>
+                            <span style="font-weight: 500; font-size: 15px;">{{data.asOfDate}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="d-flex justify-content-between">
+                        <div class="title">
+                            <span>Transactions</span>
+                        </div>
+                        <div>
+                            <i class="fa-solid fa-magnifying-glass"
+                                style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+                            <input type="text" class="form-control" [(ngModel)]="filterText"
+                                placeholder="Search Transaction"
+                                style="text-align: 10px; min-width: 300px ; padding-left: 40px;"
+                                (keyup)="filterTransactions()">
+                        </div>
+                    </div>
+                    <div style="max-height: 350px; max-width: 100%; overflow: auto;" class="mt-3">
+                        <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                            <thead class="border-bottom">
+                                <tr class="border-bottom purchase-header">
+                                    <th class="text-start" scope="col">#</th>
+                                    <th class="text-start" scope="col">Date</th>
+                                    <th class="text-start" scope="col">Invoice</th>
+                                    <th class="text-start" scope="col">Transaction Type</th>
+                                    <th class="text-start" scope="col">Payment Type</th>
+                                    <th class="text-end" scope="col">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let ledger of filteredTableData; let i = index" class="border-bottom">
+                                    <td class="text-start" style="width: 60px;">{{i+1}}</td>
+                                    <td class="text-start ellipse" style="max-width: 131px;min-width: 125px;">
+                                        {{ledger.orderDate|date:'dd-MM-yyyy'}}</td>
+                                    <td class="text-start ellipse transaction" style="min-width: 120px;" (click)="openTransaction(ledger.identifier,ledger.id)">
+                                        {{ledger.orderPrefix}}{{ledger.orderNumber}}{{ledger.orderSuffix}}</td>
+                                    <td class="text-start" style="min-width: 150px;">{{ledger.identifier}}</td>
+                                    <td class="text-start" style="min-width: 150px;">{{ledger.paymentMode}}</td>
+                                    <td class="text-end" style="min-width: 150px;"
+                                        [ngClass]="ledger.amount && ledger.amount > 0 ? 'text-success' : 'text-danger'">
+                                        {{ledger.amount|currency:'INR':'symbol':'1.2-2'}}</td>
+                                </tr>
+                                <tr *ngIf="filteredTableData.length==0">
+                                    <td class="text-center" colspan="9">
+                                        No Transactions To Show
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

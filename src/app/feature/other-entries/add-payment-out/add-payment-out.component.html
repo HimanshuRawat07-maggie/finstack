@@ -1,0 +1,181 @@
+<div class="card">
+    <form #paymentOutFrom="ngForm" (ngSubmit)="onSubmit()">
+        <div class="title py-3">
+            <span class="ms-3">{{status}} Receipt</span>
+        </div>
+        <hr class="m-0">
+        <div class="py-2">
+            <div class="row mx-3">
+                <div class="col-3">
+                    <div class="form-group mt-4">
+                        <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important;z-index: 10;">
+                            <span class="h6 small bg-white text-muted px-1">Party/Ledger
+                                <span class="text-danger">*</span>
+                            </span>
+                        </label>
+                        <ng-select class="w-100" name="partyLedger" [items]="" groupBy="group" [searchable]="true"
+                            [(ngModel)]="selectedPartyLedger" (change)="getTransactionById(false)" required>
+                            <ng-template ng-optgroup-tmp let-item="item">
+                                 <div class="d-flex justify-content-between">
+                                 <span style="color: rgba(0,0,0,0.8);">
+                                    <strong>{{item.group || 'Unnamed group'}}</strong>
+                                </span>
+                                    <!-- <span style="color: rgba(0,0,0,0.8);">
+                                        <strong>Balance</strong>
+                                    </span> -->
+                               </div>
+                            </ng-template>
+                            <ng-option *ngFor="let partyLedger of partyAndLedger"
+                                [value]="partyLedger">
+                              <div class="d-flex justify-content-between align-items-center">
+                             <span>
+                                {{partyLedger.title}}
+                            </span>
+                              <span [ngClass]="{'text-success':partyLedger.amount!>=0,'text-danger':partyLedger.amount!<0}">
+                                    {{getNetAmount(partyLedger.amount) | currency:'INR':'symbol':'1.2-2'}}
+                                    <i class="fa fa-arrow-trend-down"></i>
+                                </span>
+                           </div>
+                            </ng-option>
+                        </ng-select>
+                    </div>
+                </div>
+                <div class="col-4 offset-5">
+                    <div class="input-group mt-4">
+                        <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important;z-index: 10;">
+                            <span class="h6 small bg-white text-muted px-1">Voucher No<span
+                                    class="text-danger">*</span></span>
+                        </label>
+                        <span *ngIf="prefix?.length>0" class="input-group-text"
+                            style="font-size: 13px;font-weight: bold;">{{prefix}}</span>
+                        <input type="text" class="form-control" name="receipt" [(ngModel)]="data.orderNumber"
+                            #receipt="ngModel">
+                        <span *ngIf="suffix?.length>0" class="input-group-text"
+                            style="font-size: 13px;font-weight: bold;">{{suffix}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="mx-4">
+                <div class="row">
+                    <div class="mt-4" [ngClass]="{'col-3':cashOrBank===constants.Cash,
+                            'col-2':cashOrBank===constants.Bank}">
+                        <div class="form-group">
+                            <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                <span class="h6 small bg-white text-muted px-1">Payment Type</span>
+                            </label>
+                            <select class="form-select w-100" [(ngModel)]="cashOrBank" name="type"
+                                (change)="onCashOrBank()">
+                                <option [value]="constants.Cash">Cash</option>
+                                <option [value]="constants.Bank">Bank</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-2 mt-4" *ngIf="cashOrBank===constants.Bank">
+                        <div class="form-group">
+                            <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                <span class="h6 small bg-white text-muted px-1">Mode of Payment</span>
+                            </label>
+                            <select class="form-select w-100" [(ngModel)]="data.paymentMode" name="mode">
+                                <option [value]="constants.Cheque">Cheque</option>
+                                <option [value]="constants.DebitCard">Debit Card</option>
+                                <option [value]="constants.CreditCard">Credit Card</option>
+                                <option [value]="constants.UPI">UPI</option>
+                                <option [value]="constants.NetBanking">Net Banking</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4 col-2" *ngIf="cashOrBank===constants.Bank">
+                        <div class="form-group" *ngIf="data.paymentMode!=constants.Cash">
+                            <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                <span class="h6 small bg-white text-muted px-1">Bank</span>
+                            </label>
+                            <select id="bank" class="form-select w-100" [(ngModel)]="data.paymentTypeId" name="bank">
+                                <option *ngFor="let paymentType of paymentTypes" [value]="paymentType.id">
+                                    {{paymentType.accountDisplayName}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-3">
+                        <div class="form-group position-relative">
+                            <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                <span class="h6 small bg-white text-muted px-1">Voucher Date</span>
+                            </label>
+                            <span class="date-preview"
+                                onclick="document.getElementById('payment-out-payment-date').showPicker()">
+                                {{data.paymentDate| date:'dd-MM-yyyy'}}
+                            </span>
+                            <input id="payment-out-payment-date" type="date" class="form-control" [min]="minDate"
+                                [(ngModel)]="data.paymentDate" #refDate="ngModel" name="refDate">
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-group" *ngIf="cashOrBank===constants.Bank">
+                            <label class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                <span class="h6 small bg-white text-muted px-1">Reference Number</span>
+                            </label>
+                            <input type="text" class="form-control" [(ngModel)]="data.paymentReference"
+                                #refNumber="ngModel" name="refNumber">
+                        </div>
+                    </div>
+                    <div class="col-4 offset-2">
+                        <div class="form-group position-relative">
+                            <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                <span class="h6 small bg-white text-muted px-1">Receipt Date<span
+                                        class="text-danger">*</span></span>
+                            </label>
+                            <span class="date-preview"
+                                onclick="document.getElementById('payment-out-order-date').showPicker()">
+                                {{data.orderDate| date:'dd-MM-yyyy'}}
+                            </span>
+                            <input id="payment-out-order-date" type="date" class="form-control" name="date" [min]="minDate"
+                                [(ngModel)]="data.orderDate" #date="ngModel">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mx-3 mt-5">
+                <div class="col-5">
+                    <div class="form-group mt-2">
+                        <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                            <span class="h6 small bg-white text-muted px-1">Description</span>
+                        </label>
+                        <textarea type="text" class="form-control" rows="4" cols="50" name="description"
+                            [(ngModel)]="data.notes" #description="ngModel"></textarea>
+                    </div>
+                </div>
+                <div class="col-4 offset-3 d-flex align-items-end">
+                    <div class="form-group w-100">
+                        <div class="form-group mt-2">
+                            <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                                <span class="h6 small bg-white text-muted px-1">Amount</span>
+                            </label>
+                            <input type="number" class="form-control" name="received" [(ngModel)]="data.amount"
+                                #received="ngModel">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <hr>
+    <div class="row mb-3 mx-3">
+        <div class="col-6 d-flex align-items-center">
+            <button *ngIf="showLinkPaymentBtn || data?.transactions?.length>0" class="btn btn-outline-primary"
+                (click)="openLinkPayment()">
+                Adjustment Against Bill
+            </button>
+
+            <span class="ms-2">{{getSelectedTransactionMessage()}}</span>
+        </div>
+        <div class="col-6 d-flex justify-content-end align-items-center">
+            <span *ngIf="data?.transactions?.length>0" class="me-4">
+                <strong>Unused Amount</strong>&nbsp;:&nbsp;{{getUnusedAmount() |
+                currency:'INR':'symbol':'1.2-2'}}</span>
+            <button class="btn btn-outline-primary mx-2" [routerLink]="'/app/other-entries/payment-out'">Cancel</button>
+            <button class="btn btn-primary" (click)="onSubmit();">Save</button>
+        </div>
+    </div>
+</div>

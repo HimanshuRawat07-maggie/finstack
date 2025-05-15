@@ -1,0 +1,52 @@
+<div class="card mb-0">
+    <div class="title p-3 d-flex justify-content-between">
+        <span>Price List</span>
+        <span><button class="btn btn-primary" (click)="openChangePriceModal()">Change Price</button></span>
+    </div>
+    <hr class="m-0">
+     <div class="p-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+               <i class="fa-solid fa-magnifying-glass" style=" position: absolute; margin-top: 11px; margin-left: 10px;"></i>
+               <input type="text" class="form-control" placeholder="Search Item/Service" [(ngModel)]="filterItemText" name="filter" #filter="ngModel"
+                style="text-align: left ; padding-left: 40px;min-width: 300px;" (keyup)="filterItems()" >  
+            </div>
+            <div>
+                <input type="checkbox" class="pointer" id="all" [(ngModel)]="selectAllItems" (change)="selectAll()"><label class="ms-3 pointer" for="all">Select All</label>
+            </div>
+        </div>
+   </div>
+      <div class="p-3">
+        <div style="max-height: 62vh;min-height: 62vh; overflow-y: auto;">
+            <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                <thead class="border-bottom">
+                    <tr class="border-bottom purchase-header">
+                        <th class="text-center" scope="col">Select</th>
+                        <th class="text-start ps-3" scope="col" style="border-right: 0px;">Item Name</th>
+                        <th class="text-start" scope="col">Batch</th>
+                        <th class="text-start" scope="col">Warehouse</th>
+                        <th class="text-end" scope="col">Selling Price</th>
+                        <th class="text-end" scope="col">Purchase Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of data" class="border-bottom">
+                        <td class="text-center">
+                            <input type="checkbox" class="pointer" [id]="item.id" [(ngModel)]="item.ischangePrice" (change)="getIdForChangePrice(item.ischangePrice,item.name,item.batchName,item.warehouseName)">
+                        </td>
+                        <td class="text-start">{{item.name}}</td>
+                        <td class="text-start">{{item.batchName}}</td>
+                        <td class="text-start">
+                            <span *ngIf="item.type!='Service'">{{item.warehouseName}}</span>
+                        </td>
+                        <td class="text-end text-success">{{item.sellingPrice|currency:'INR':'symbol':'1.2-2'}}</td>
+                        <td *ngIf="item.type!='Service'" class="text-end text-danger">{{item.purchasePrice|currency:'INR':'symbol':'1.2-2'}}</td>
+                    </tr>
+                    <tr *ngIf="data.length==0">
+                        <td colspan="6" class="text-center">No Items</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

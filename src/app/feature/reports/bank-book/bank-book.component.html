@@ -1,0 +1,95 @@
+<div class="card">
+    <div class="py-3">
+        <div class="title">
+            <span class="ms-3">Bank Book</span>
+        </div>
+        <hr>
+        <app-date-filter (dateChange)="onDateChange($event)"></app-date-filter>
+        <div class="row mt-3 ps-4">
+            <div class="col-3">
+                <label for="input1" class="ms-2 position-absolute" style="margin-top: -0.60rem !important">
+                    <span class="h6 small bg-white text-muted px-1">Bank</span>
+                </label>
+                <select class="form-select w-100" style="max-height: 37px;" [(ngModel)]="bankid"
+                    (change)="loadTableData()">
+                    <option *ngFor="let data of banks" [value]="data.id">{{data.accountDisplayName}}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-0">
+    <div class="p-3">
+        <div class="row ">
+            <div class="col-3">
+                <div class="title">
+                    <span>TRANSACTIONS</span>
+                </div>
+            </div>
+            <div class="col-9 d-flex justify-content-end ps-4">
+                <i class=" text-success fa-solid fa-file-excel mx-3 download-pdf-excel" (click)="download()"
+                    *ngIf="data.length>0"></i>
+                <i class=" text-danger fa-solid fa-file-pdf mx-3 download-pdf-excel" [matMenuTriggerFor]="menu"
+                    *ngIf="data.length>0"></i>
+
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <div mat-menu-item class="menu-item" (click)="downloadAsPdf('LANDSCAPE')">
+                        <span class="text-primary me-2"><i class="fa-solid fa-image"></i></span> Landscape
+                    </div>
+                    <hr class="m-0" />
+                    <div mat-menu-item class="menu-item" (click)="downloadAsPdf('PORTRAIT')">
+                        <span class="text-danger me-2"><i class="fa-solid fa-image-portrait"></i></span> Portrait
+                    </div>
+                </mat-menu>
+            </div>
+        </div>
+        <div class="mt-4">
+            <div style="max-height: 45vh;min-height: 45vh; overflow-y: auto;">
+                <table style="width: 100%; border: 1px solid rgb(170, 170, 170);">
+                    <thead class="border-bottom">
+                        <tr class="border-bottom purchase-header">
+                            <th class="text-start ps-2" scope="col">#</th>
+                            <th class="text-start" scope="col">Date</th>
+                            <th class="text-start" scope="col">Particular</th>
+                            <th class="text-start" scope="col">Voucher No.</th>
+                            <th class="text-start" scope="col">Voucher Type</th>
+                            <th class="text-end" scope="col">Deposit</th>
+                            <th class="text-end" scope="col">Withdraw</th>
+                            <th class="text-end" scope="col">Running Balance</th>
+                            <th class="text-start" scope="col">Transaction Type</th>
+                            <th class="text-end" scope="col">Ref. No.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of data; let idx = index" class="border-bottom">
+                            <td class="text-start" style="width:70px;">{{idx+1}}</td>
+                            <td class="text-start">{{item.date|date:'dd-MM-yyyy'}}</td>
+                            <td class="text-start">
+                                <span *ngIf="item.partyName">{{item.partyName}}</span>
+                                <span *ngIf="item.ledgerName">{{item.ledgerName}}</span>
+                                <span *ngIf="item.customerName">{{item.customerName}}</span>
+                            </td>
+                            <td class="text-start transaction" (click)="openTransaction(item.type,item.id)">{{item.invoiceNo}}</td>
+                            <td class="text-start">{{item.type}}</td>
+                            <td class="text-end">{{item.cashIn | currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-end">{{item.cashOut| currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-end">{{item.runningAmount| currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-start">{{item.paymentMode}}</td>
+                            <td class="text-end">{{item.paymentReference}}</td>
+                        </tr>
+                        <tr class="total-row" *ngIf="data.length">
+                            <td class="text-start" colspan="5">Total</td>
+                            <td class="text-end">{{getTotalCredit()| currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td class="text-end">{{getTotalDebit()| currency:'INR':'symbol':'1.2-2'}}</td>
+                            <td colspan="2"></td>
+                        </tr>
+                        <tr *ngIf="data.length==0">
+                            <td colspan="9">No Transactions Are Available</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
